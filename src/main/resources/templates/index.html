@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="images/gelicon_icon.png" type="image/x-icon">
+  <title></title>
+  <script>
+	function capitalClick() {
+		var url = './capital';
+		document.location.href = url;
+		return;
+		var delimiter = '?';
+		var alias = document.getElementById("alias").value;
+		if (alias) {
+			url = url + delimiter + 'alias=' + alias;
+			delimiter = '&';
+		}
+		document.location.href = url;
+	};
+  </script>
+ </head>
+ <body>
+	<div>
+		<button class="button_capital" id="button_capital1" title="Система Капитал" onclick="capitalClick()"><img th:src="@{images/capital.png}">Капитал CSE</button>
+	</div>
+ </body>
+</html>

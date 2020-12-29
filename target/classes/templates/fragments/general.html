@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<th:block th:fragment="header">
+		<title>Капитал</title>
+		<style type="text/css">
+			body { /* Именно так, без точки */
+				margin: 0; /* Убираем отступы */
+			}
+			.body {
+				font-size: 40px; /* Размер шрифта */
+				border: solid 2px red;
+			}
+			.content_panel { /* Основаня панель */
+				background: Lime; 
+				margin-bottom: 40px; /* Чтобы не залезало под footer */
+			}
+			#footer { /* Полоска снизу окна */
+				position: fixed; /* Фиксированное положение */
+				bottom: 0; /* Внизу */
+				background-color: #f1f1f1;
+				color: black;
+				width: 100%; /* Надо, так как вложенные элементы прибиваются по сторонам */
+				overflow: hidden; /* Отменяем действие float */
+			}
+			#footer_message_box { / Надпись слева /
+				position: absolute;
+				float: left; /* Состыковка с другим слоем по горизонтали */
+				11width: 600px; /* Ограничим, так как по умолчанию ширина блока равна ширине родителя */
+				border: solid LightGrey;
+				border-width: 0px 1px 0px 0px;
+				padding: 0px 5px 0px 5px;
+			}
+			#db_message_box { /* Надпись справа */
+				1color: red;
+				1min-width: 100px;
+				position: absolute;
+				right: 0;
+				text-align: right;
+				border: solid LightGrey;
+				border-width: 0px 0px 0px 1px;
+				padding: 0px 5px 0px 5px;
+			}
+			.error_message {
+				float: left;
+				padding: 0px 0px 0px 10px
+                color: red;
+			}
+		</style> 
+	</th:block>
+</body>
+</html>

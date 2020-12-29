@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="images/gelicon_icon.png" type="image/x-icon">
+	<title>Добавление Единицы измерения</title>
+  <style type="text/css">
+	body { /* Именно так, без точки */
+		1margin: 0; /* Убираем отступы */
+	}
+	.body {
+		font-size: 20px; /* Размер шрифта */
+		border: solid 2px red;
+	}
+    .field {
+        margin-top: 30px;
+    }
+
+    .field input{
+        position: fixed;
+        left: 250px;
+		float: left;
+    }
+	.PanelButton {
+        margin-top: 30px;
+		height: 50px;
+		display: inline-block; /* Чтобы был по ширине кнопок */
+		border: 1px solid LightGrey;
+	}
+	.button_action { /* Кнопка-действие */
+		height: 100%;
+		width: 200px;
+		vertical-align: middle;
+		padding: 0;
+		margin: 0;
+        margin-left: 10px;
+        margin-right: 10px;
+		float:left;
+		cursor: pointer;
+		border-radius: 8px;
+		border: 1px solid #cecece;
+	}
+	.has-error {
+        position: fixed;
+        color: red;
+        left: 250px;
+        padding: 5px 0px;
+    }
+  </style> 
+  <script>
+	function closeWindow() {
+		window.close();
+	};	
+  }
+  </script>
+ </head>
+ <body>
+	<form th:object="${edizm}" th:action="@{/edizm/post}" method="post">
+		<h1>Добавить единицу измерения</h1>
+		<input type="hidden" th:field="*{id}">
+		<div class="field">Наименование*: <input type="text" th:field="*{name}" placeholder="Введите наименование"></div>
+        <div class="has-error" th:if="${#fields.hasErrors('name')}" th:text="${#fields.errors('name')}"></div>
+		<div class="field">Обозначение*: <input type="text" th:field="*{notation}" placeholder="Введите обозначение"></div>
+        <div class="has-error" th:if="${#fields.hasErrors('notation')}" th:text="${#fields.errors('notation')}"></div>
+		<div class="field">Невозможность изменения*: <input type="checkbox" th:checked="*{BlockflagB}" name="blockflagB"></p></div>
+		<div class="field">Код*: <input type="text" th:field="*{code}" placeholder="Введите код"></div>
+        <div class="has-error" th:if="${#fields.hasErrors('code')}" th:text="${#fields.errors('code')}"></div>
+		<div class="PanelButton">
+			<button type="submit" class="button_action">Согласен</button>
+		</div>
+		<div class="has-error" th:if="${#fields.hasErrors('id')}" th:errors="*{id}"></div>
+	</form>
+ </body>
+</html>

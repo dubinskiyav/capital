@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru">
+<head th:insert="~{fragments/general::head}">
+<body>
+<style>
+    div.fld {
+        margin-top: 30px;
+    }
+
+    div.fld input{
+        position: fixed;
+        left: 200px;
+    }
+
+    .has-error {
+        position: fixed;
+        color: red;
+        left: 200px;
+        padding: 5px 0px;
+    }
+
+</style>
+
+<h1>Создать нового студента</h1>
+
+<form th:object="${student}" th:action="@{/poststudent}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <div class="fld">Имя*: <input type="text" th:field="*{name}"></div>
+    <div class="fld">
+        <div>Фамилия*: <input type="text" th:field="*{surname}"></div>
+        <div class="has-error" th:if="${#fields.hasErrors('surname')}" th:text="${#fields.errors('surname')}"></div>
+    </div>
+    <div class="fld">Отчество: <input type="text" th:field="*{mname}"></div>
+    <!--<div class="fld">Дата рождения: <input type="date" th:field="*{bdate}"></div>-->
+    <div class="fld">Номер ЗК*: <input type="text" th:field="*{zkNumber}"></div>
+    <div class="fld"><div><input type="submit"></div>
+</form>
+
+</body>
+</html>

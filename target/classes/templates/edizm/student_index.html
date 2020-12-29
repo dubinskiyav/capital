@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru">
+<head th:insert="~{fragments/general::head}">
+<body>
+    <h1>Список студентов</h1>
+    <div th:text="${datetime}">Дата/время</div>
+    <a href="/add">Новый+</a>
+    <hr>
+    <table>
+        <thead>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Зачетная книжка</th>
+            <th>День рождения</th>
+            <th></th>
+        </thead>
+        <tbody>
+            <tr th:each="s,staterow:${students}">
+                <td th:text="${s.name}"></td>
+                <td th:text="${s.surname}"></td>
+                <td th:text="${s.mname}"></td>
+                <td th:text="${s.zkNumber}"></td>
+                <td th:text="${s.bdate}"></td>
+                <td><a th:href="@{'/edit/'+${s.id}}">Изменить</a> <a th:href="@{'/delete/'+${s.id}}">Удалить</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

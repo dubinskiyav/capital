@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<th:block th:fragment="header">
+		<style type="text/css">
+			.main_table_panel { /* Панель основной таблицы */
+				min-height: 100px;
+				background: #f1f1f1; 
+				border: solid 0px red;
+			}
+			.table_header { /* Заголовок таблицы */
+				height: 20px;
+				border: solid LightGrey; 
+				border-width: 0px 0px 1px 0px;
+				background: #f1f1f1; 
+			}
+			.table_header_left_block { /* Левый блок */
+				float: left; 
+			}
+			.table_header_item_left {
+				text-align: left;
+				color: red;
+				text-transform: uppercase;
+				font-weight: bold;
+				float: left; 
+				padding: 0px 5px 0px 5px;
+			}
+			.table_header_right_block { /* Правый блок */
+				float: right;
+			}
+			.table_header_item_right {
+				float: right; 
+				padding: 0px 5px 0px 5px;
+			}
+			.master_table { /* Мастер таблица */
+				text-align: left;
+				width: 100%;
+				border: 0;
+				1background: Ivory;
+				border-collapse: collapse; /* Убираем двойные границы между ячейками */
+			}
+			.master_table th{ /* Ячейки - заголовки */
+				border: 0px solid red;
+			}
+			.master_table td{ /* Ячейки */
+				border: 0px solid red;
+			}
+			.master_table td:nth-child(even){ /* Четные столбцы */
+				1background-color: Cornsilk;
+			}
+			.master_table td:nth-child(5),th:nth-child(5){ /* Пятый столбец заголовок и данные */
+				text-align: center;
+			}
+			.master_table tr td:nth-child(odd){ /* Нечетные столбцы */
+				1background-color: Bisque;
+			}
+			.master_table caption { 
+				caption-side: top; /* Заголовок над таблицей */
+				text-align: left;
+				color: red;
+				text-transform: uppercase;
+				font-weight: bold;
+				border: solid LightGrey;
+				border-width: 0px 0px 1px 0px;
+            }
+			.main_table_footer {
+				min-height: 20px;
+				background: #f1f1f1; 
+				border: solid LightGrey;
+				border-width: 1px 0px;
+			}
+		</style> 
+	</th:block>
+</body>
+</html>

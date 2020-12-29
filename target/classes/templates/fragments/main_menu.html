@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<th:block th:fragment="header">
+		<style type="text/css">
+			.main_menu { /* Главное меню */
+				background: #f1f1f1; 
+				min-height: 20px;
+			}
+			.main_menu .dropdown { /* Элемент главного меню (заголовок-кнопка и выпадающий список) */ 
+				position: relative;
+				display: inline-block;
+			}
+			.main_menu .dropbtn { /* Кнопка-команда в строчке главного меню */
+				background-color: #f1f1f1;
+				padding: 4px;
+				border: none;
+			}
+			.main_menu .dropdown_content { /* Выпадающий прямоугольник элемента главного меню */
+				display: none;
+				position: absolute;
+				background-color: #f1f1f1;
+				min-width: 160px;
+				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+				1z-index: 1;
+			}
+			.main_menu .dropdown_content a {
+				color: black;
+				padding: 4px 10px;
+				text-decoration: none; /* Отменяем подчеркивание у ссылки */
+				display: block;
+			}
+			.main_menu .dropdown_content a:hover {background-color: #ddd;} /* Подсвечиваем пункт */
+			.main_menu .dropdown:hover .dropdown_content {display: block;}
+			.main_menu .dropdown:hover .dropbtn {background-color: #ddd;}
+    
+			.main_menu .dropdown_content1 { /* Выпадающий прямоугольник элемента главного меню */
+				display: none;
+				position: absolute;
+				background-color: #f1f1f1;
+				min-width: 160px;
+				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+				z-index: 1;
+				float: right;
+				top:0px;
+				left:100%;
+			}
+			.main_menu .dropdown1:hover .dropdown_content1 {display: block;}
+		</style> 
+	</th:block>
+</body>
+</html>
