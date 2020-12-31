@@ -84,6 +84,7 @@ public class MaterialRepositoryJdbc implements MaterialRepository{
                         + " WHERE id = ? ",
                 id
         );
+
         return result;
     }
 
