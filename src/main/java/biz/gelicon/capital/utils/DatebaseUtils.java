@@ -39,7 +39,7 @@ public class DatebaseUtils {
     }
 
     // Возвращает следующее значение генератора
-    public Integer getSequenceNextValue(
+    public static Integer getSequenceNextValue(
             String sequenceName,
             JdbcTemplate jdbcTemplate
     ) {

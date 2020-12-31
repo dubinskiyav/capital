@@ -45,6 +45,7 @@ public class CapitalApplication implements CommandLineRunner {
         if (false) {
             testEdizm();
         }
+
         // Установим тип СУБД
         DatebaseUtils.setDbType(jdbcTemplate);
     }

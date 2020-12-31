@@ -78,7 +78,7 @@ public class Edizm {
 
     @Override
     public String toString() {
-        return "edizm{"
+        return "Edizm{"
                 + "id=" + id + ", "
                 + "name=" + name + ", "
                 + "notation=" + notation + ", "
