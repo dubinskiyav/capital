@@ -1,4 +1,4 @@
-package biz.gelicon.dub_test_spring;
+package biz.gelicon.capital;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
