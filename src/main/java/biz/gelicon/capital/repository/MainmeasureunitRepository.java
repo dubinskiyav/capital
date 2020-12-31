@@ -77,6 +77,18 @@ public class MainmeasureunitRepository implements TableRepository<Mainmeasureuni
     }
 
     @Override
+    public int insupd(Mainmeasureunit mainmeasureunit) {
+        if (mainmeasureunit == null) {
+            return -1;
+        }
+        if (mainmeasureunit.getMainMeasureunitId() == null) {
+            return insert(mainmeasureunit);
+        } else {
+            return update(mainmeasureunit);
+        }
+    }
+
+    @Override
     public List<Mainmeasureunit> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT measureunit_id "

@@ -94,6 +94,18 @@ public class EdizmRepository implements TableRepository<Edizm> {
     }
 
     @Override
+    public int insupd(Edizm edizm) {
+        if (edizm == null) {
+            return -1;
+        }
+        if (edizm.getId() == null) {
+            return insert(edizm);
+        } else {
+            return update(edizm);
+        }
+    }
+
+    @Override
     public List<Edizm> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT edizm_id, "

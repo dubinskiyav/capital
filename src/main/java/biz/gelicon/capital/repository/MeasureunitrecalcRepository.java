@@ -88,6 +88,18 @@ public class MeasureunitrecalcRepository implements TableRepository<Measureunitr
     }
 
     @Override
+    public int insupd(Measureunitrecalc measureunitrecalc) {
+        if (measureunitrecalc == null) {
+            return -1;
+        }
+        if (measureunitrecalc.getId() == null) {
+            return insert(measureunitrecalc);
+        } else {
+            return update(measureunitrecalc);
+        }
+    }
+
+    @Override
     public List<Measureunitrecalc> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "

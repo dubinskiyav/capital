@@ -85,6 +85,18 @@ public class MaterialmeasureunitRepository implements TableRepository<Materialme
     }
 
     @Override
+    public int insupd(Materialmeasureunit materialmeasureunit) {
+        if (materialmeasureunit == null) {
+            return -1;
+        }
+        if (materialmeasureunit.getId() == null) {
+            return insert(materialmeasureunit);
+        } else {
+            return update(materialmeasureunit);
+        }
+    }
+
+    @Override
     public List<Materialmeasureunit> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "

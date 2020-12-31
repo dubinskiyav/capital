@@ -82,6 +82,18 @@ public class MeasureRepository implements TableRepository<Measure>{
     }
 
     @Override
+    public int insupd(Measure measure) {
+        if (measure == null) {
+            return -1;
+        }
+        if (measure.getId() == null) {
+            return insert(measure);
+        } else {
+            return update(measure);
+        }
+    }
+
+    @Override
     public List<Measure> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "

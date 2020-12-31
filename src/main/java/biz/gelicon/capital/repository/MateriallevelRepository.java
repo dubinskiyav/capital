@@ -94,6 +94,18 @@ public class MateriallevelRepository implements TableRepository<Materiallevel>{
     }
 
     @Override
+    public int insupd(Materiallevel materiallevel) {
+        if (materiallevel == null) {
+            return -1;
+        }
+        if (materiallevel.getId() == null) {
+            return insert(materiallevel);
+        } else {
+            return update(materiallevel);
+        }
+    }
+
+    @Override
     public List<Materiallevel> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "

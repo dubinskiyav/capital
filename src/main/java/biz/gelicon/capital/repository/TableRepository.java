@@ -4,16 +4,18 @@ import java.util.List;
 
 public interface TableRepository<T> {
 
-    int count();
+    int count(); // Количество записей в таблице
 
-    int insert(T t);
+    int insert(T t); // Добавление записи
 
-    int update(T t);
+    int update(T t); // Изменение записи
 
-    int delete(Integer id);
+    int delete(Integer id); // Удаление записи
 
-    List<T> findAll();
+    int insupd(T t); // Добавление или изменение записи
 
-    T findById(Integer id);
+    List<T> findAll(); // Все записи
+
+    T findById(Integer id); // Запись по id
 
 }
