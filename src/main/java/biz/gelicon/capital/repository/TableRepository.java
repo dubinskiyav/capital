@@ -2,7 +2,7 @@ package biz.gelicon.capital.repository;
 
 import java.util.List;
 
-public interface TableRepo<T> {
+public interface TableRepository<T> {
 
     int count();
 

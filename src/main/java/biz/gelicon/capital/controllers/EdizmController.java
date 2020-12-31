@@ -2,7 +2,7 @@ package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.model.Edizm;
 import biz.gelicon.capital.validators.EdizmValidator;
-import biz.gelicon.capital.repository.EdizmRepositoryJdbc;
+import biz.gelicon.capital.repository.EdizmRepository;
 import biz.gelicon.capital.utils.DatebaseUtils;
 import biz.gelicon.capital.utils.ErrorJ;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class EdizmController {
     Connection connection;
 
     @Autowired
-    private EdizmRepositoryJdbc edizmRepositoryJdbc;
+    private EdizmRepository edizmRepositoryJdbc;
 
     @Autowired
     private ApplicationContext context;
