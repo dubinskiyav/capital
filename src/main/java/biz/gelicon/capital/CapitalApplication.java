@@ -1,6 +1,7 @@
 package biz.gelicon.capital;
 
 import biz.gelicon.capital.model.Unitmeasure;
+import biz.gelicon.capital.repository.UnitmeasureRepository;
 import biz.gelicon.capital.utils.DatebaseUtils;
 import biz.gelicon.capital.utils.Proba;
 import biz.gelicon.capital.utils.TestAnnotation;
@@ -44,7 +45,11 @@ public class CapitalApplication implements CommandLineRunner {
         // Установим тип СУБД
         DatebaseUtils.setDbType(jdbcTemplate);
         // Тесты
+        UnitmeasureRepository unitmeasureRepository = new UnitmeasureRepository();
         Unitmeasure unitmeasure = new Unitmeasure();
+        unitmeasure.setId(1);
+        unitmeasureRepository.delete(unitmeasure);
+
         unitmeasure.setName("имя");
         System.out.println(unitmeasure.getName());
         Field field = unitmeasure.getClass().getDeclaredField("name");

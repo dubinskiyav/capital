@@ -1,6 +1,11 @@
 package biz.gelicon.capital.repository;
 
+import biz.gelicon.capital.utils.Captable;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 
 public interface TableRepository<T extends Id> {
 
@@ -12,7 +17,37 @@ public interface TableRepository<T extends Id> {
 
     int delete(Integer id); // Удаление записи
 
-    default int del(Integer id) {
+    default int delete(T t) {
+        Class<? extends TableRepository> cls = (Class<? extends TableRepository>) t.getClass();
+        if (cls.isAnnotationPresent(Captable.class)) {
+            System.out.println("да");
+            Captable an = (Captable)t.getClass().getAnnotation(Captable.class);
+            String sqlText = ""
+                    + " DELETE FROM " + an.tableName()
+                    + " WHERE " + an.pkName() + " = " + t.getId();
+            if (false) {
+                Field field = null;
+                try {
+                    field = this.getClass().getDeclaredField("jdbcTemplate");
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+                field.setAccessible(true);
+                JdbcTemplate jdbcTemplate = null;
+                try {
+                    jdbcTemplate = (JdbcTemplate) field.get(this);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                int result = -1;
+                result = jdbcTemplate.update(sqlText);
+                return result;
+            } else {
+
+            }
+        } else {
+            System.out.println("нет");
+        }
 
         return 0;
     }
