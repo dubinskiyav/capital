@@ -1,6 +1,6 @@
 package biz.gelicon.capital.repository;
 
-import biz.gelicon.capital.model.Materialmeasureunit;
+import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.utils.DatebaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class MaterialmeasureunitRepository implements TableRepository<Materialmeasureunit>{
+public class UnitmeasureRepository implements TableRepository<Unitmeasure>{
 
-    private static final Logger logger = LoggerFactory.getLogger(MaterialmeasureunitRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(UnitmeasureRepository.class);
     private boolean logFlag = false;
 
     // Spring Boot создаст и отконфигурирует DataSource и JdbcTemplate
@@ -33,43 +33,43 @@ public class MaterialmeasureunitRepository implements TableRepository<Materialme
         Integer i = jdbcTemplate
                 .queryForObject(""
                                 + " SELECT COUNT(*) "
-                                + " FROM   materialmeasureunit ",
+                                + " FROM   unitmeasure ",
                         Integer.class);
         return Objects.requireNonNullElse(i, 0);
     }
 
     @Override
-    public int insert(Materialmeasureunit materialmeasureunit) {
+    public int insert(Unitmeasure measure) {
         if (logFlag) {
-            logger.info("Saving...{}", materialmeasureunit.toString());
+            logger.info("Saving...{}", measure.toString());
         }
         // Установим следующее значение id
-        materialmeasureunit.setId(DatebaseUtils.getSequenceNextValue("materialmeasureunit_id_gen",jdbcTemplate));
+        measure.setId(DatebaseUtils.getSequenceNextValue("measure_id_gen",jdbcTemplate));
         Integer result = -1;
         result = jdbcTemplate.update(""
-                        + " INSERT INTO materialmeasureunit ("
+                        + " INSERT INTO unitmeasure ("
                         + "   id, "
-                        + "   material_id, "
-                        + "   measureunit_id "
-                        + " ) VALUES(?,?,?)",
-                materialmeasureunit.getId(),
-                materialmeasureunit.getMaterialId(),
-                materialmeasureunit.getMeasureunitId()
+                        + "   name, "
+                        + "   short_name "
+                        + " ) VALUES(?,?)",
+                measure.getId(),
+                measure.getName(),
+                measure.getShortName()
         );
         return result;
     }
 
     @Override
-    public int update(Materialmeasureunit materialmeasureunit) {
+    public int update(Unitmeasure measure) {
         //Названия параметров должны совпадать с полями
         // и обязательно должны быть геттеры на все поля
         int result = -1;
         result = namedParameterJdbcTemplate.update(""
-                        + " UPDATE materialmeasureunit SET "
-                        + "   material_id = :materialId, "
-                        + "   measureunit_id = :measureunitId "
+                        + " UPDATE unitmeasure SET "
+                        + "   name = :name, "
+                        + "   short_name = :shortName "
                         + " WHERE id = :id ",
-                new BeanPropertySqlParameterSource(materialmeasureunit));
+                new BeanPropertySqlParameterSource(measure));
         return result;
     }
 
@@ -77,7 +77,7 @@ public class MaterialmeasureunitRepository implements TableRepository<Materialme
     public int delete(Integer id) {
         int result = -1;
         result = jdbcTemplate.update(""
-                        + " DELETE FROM materialmeasureunit "
+                        + " DELETE FROM unitmeasure "
                         + " WHERE id = ? ",
                 id
         );
@@ -85,49 +85,49 @@ public class MaterialmeasureunitRepository implements TableRepository<Materialme
     }
 
     @Override
-    public int insupd(Materialmeasureunit materialmeasureunit) {
-        if (materialmeasureunit == null) {
+    public int insupd(Unitmeasure measure) {
+        if (measure == null) {
             return -1;
         }
-        if (materialmeasureunit.getId() == null) {
-            return insert(materialmeasureunit);
+        if (measure.getId() == null) {
+            return insert(measure);
         } else {
-            return update(materialmeasureunit);
+            return update(measure);
         }
     }
 
     @Override
-    public List<Materialmeasureunit> findAll() {
+    public List<Unitmeasure> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "
-                        + "        material_id,"
-                        + "        measureunit_id "
-                        + " FROM   materialmeasureunit "
-                        + " ORDER BY 1 ",
+                        + "        name, "
+                        + "        short_name "
+                        + " FROM   unitmeasure "
+                        + " ORDER BY name ",
                 (rs, rowNum) ->
-                        new Materialmeasureunit(
+                        new Unitmeasure(
                                 rs.getInt("id"),
-                                rs.getInt("material_id"),
-                                rs.getInt("measureunit_id")
+                                rs.getString("name"),
+                                rs.getString("short_name")
                         )
         );
     }
 
     @Override
-    public Materialmeasureunit findById(Integer id) {
+    public Unitmeasure findById(Integer id) {
         String sql = ""
                 + " SELECT id, "
-                + "        material_id,"
-                + "        measureunit_id "
-                + " FROM   materialmeasureunit "
+                + "        name, "
+                + "        short_name "
+                + " FROM   unitmeasure "
                 + " WHERE  id = :id ";
         return namedParameterJdbcTemplate.queryForObject(sql,
                 new MapSqlParameterSource("id", id),
                 (rs, rowNum) ->
-                        new Materialmeasureunit(
+                        new Unitmeasure(
                                 rs.getInt("id"),
-                                rs.getInt("material_id"),
-                                rs.getInt("measureunit_id")
+                                rs.getString("name"),
+                                rs.getString("short_name")
                         )
         );
     }

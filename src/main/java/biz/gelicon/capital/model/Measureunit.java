@@ -1,5 +1,7 @@
 package biz.gelicon.capital.model;
 
+import org.springframework.data.relational.core.sql.In;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -12,23 +14,20 @@ public class Measureunit {
 
     private Integer measureId;
 
-    @NotEmpty(message="Наименование не может быть пустым")
-    @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
-    private String name;
+    private Integer unitmeasureId;
 
-    @Size(max = 20, message = "Сокращение должно содержать не более {1} символов")
-    private String shortName;
+    private Integer priority;
 
     public Measureunit(
             Integer id,
             Integer measureId,
-            String name,
-            String shortName
+            Integer unitmeasureId,
+            Integer priority
     ) {
         this.id = id;
         this.measureId = measureId;
-        this.name = name;
-        this.shortName = shortName;
+        this.unitmeasureId = unitmeasureId;
+        this.priority = priority;
     }
 
     public Measureunit() {
@@ -53,21 +52,20 @@ public class Measureunit {
         this.measureId = measureId;
     }
 
-
-    public String getName() {
-        return name;
+    public Integer getUnitmeasureId() {
+        return unitmeasureId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUnitmeasureId(Integer unitmeasureId) {
+        this.unitmeasureId = unitmeasureId;
     }
 
-    public String getShortName() {
-        return name;
+    public Integer getPriority() {
+        return priority;
     }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     @Override
@@ -75,8 +73,8 @@ public class Measureunit {
         return "Measureunit{"
                 + "id=" + id + ", "
                 + "measureId=" + measureId + ", "
-                + "name=" + name + ", "
-                + "shortName=" + shortName
+                + "unitmeasureId=" + unitmeasureId + ", "
+                + "priority=" + priority
                 + "}";
     }
 

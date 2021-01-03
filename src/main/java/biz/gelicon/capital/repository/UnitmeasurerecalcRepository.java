@@ -1,6 +1,6 @@
 package biz.gelicon.capital.repository;
 
-import biz.gelicon.capital.model.Measureunit;
+import biz.gelicon.capital.model.Unitmeasurerecalc;
 import biz.gelicon.capital.utils.DatebaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class MeasureunitRepository implements TableRepository<Measureunit> {
+public class UnitmeasurerecalcRepository implements TableRepository<Unitmeasurerecalc> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MeasureunitRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(UnitmeasurerecalcRepository.class);
     private boolean logFlag = false;
 
     // Spring Boot создаст и отконфигурирует DataSource и JdbcTemplate
@@ -33,46 +33,46 @@ public class MeasureunitRepository implements TableRepository<Measureunit> {
         Integer i = jdbcTemplate
                 .queryForObject(""
                                 + " SELECT COUNT(*) "
-                                + " FROM   measureunit ",
+                                + " FROM   unitmeasurerecalc ",
                         Integer.class);
         return Objects.requireNonNullElse(i, 0);
     }
 
     @Override
-    public int insert(Measureunit measureunit) {
+    public int insert(Unitmeasurerecalc unitmeasurerecalc) {
         if (logFlag) {
-            logger.info("Saving...{}", measureunit.toString());
+            logger.info("Saving...{}", unitmeasurerecalc.toString());
         }
         // Установим следующее значение id
-        measureunit.setId(DatebaseUtils.getSequenceNextValue("measureunit_id_gen", jdbcTemplate));
+        unitmeasurerecalc.setId(DatebaseUtils.getSequenceNextValue("unitmeasurerecalc_id_gen", jdbcTemplate));
         Integer result = -1;
         result = jdbcTemplate.update(""
-                        + " INSERT INTO measureunit ("
+                        + " INSERT INTO unitmeasurerecalc ("
                         + "   id, "
-                        + "   measure_id, "
-                        + "   unitmeasure_id, "
-                        + "   priority "
+                        + "   unitmeasurefrom_id, "
+                        + "   unitmeasureto_id, "
+                        + "   factor "
                         + " ) VALUES(?,?,?,?)",
-                measureunit.getId(),
-                measureunit.getMeasureId(),
-                measureunit.getUnitmeasureId(),
-                measureunit.getPriority()
+                unitmeasurerecalc.getId(),
+                unitmeasurerecalc.getunitmeasurefromId(),
+                unitmeasurerecalc.getunitmeasuretoId(),
+                unitmeasurerecalc.getfactor()
         );
         return result;
     }
 
     @Override
-    public int update(Measureunit measureunit) {
+    public int update(Unitmeasurerecalc unitmeasurerecalc) {
         //Названия параметров должны совпадать с полями
         // и обязательно должны быть геттеры на все поля
         int result = -1;
         result = namedParameterJdbcTemplate.update(""
-                        + " UPDATE measureunit SET "
-                        + "   measure_id = :measureId, "
-                        + "   unitmeasure_id = :unitmeasureId, "
-                        + "   priority = :priority "
+                        + " UPDATE unitmeasurerecalc SET "
+                        + "   unitmeasurefrom_id = :unitmeasurefromId, "
+                        + "   unitmeasureto_id = :unitmeasuretoId, "
+                        + "   factor = :factor "
                         + " WHERE id = :id ",
-                new BeanPropertySqlParameterSource(measureunit));
+                new BeanPropertySqlParameterSource(unitmeasurerecalc));
         return result;
     }
 
@@ -80,7 +80,7 @@ public class MeasureunitRepository implements TableRepository<Measureunit> {
     public int delete(Integer id) {
         int result = -1;
         result = jdbcTemplate.update(""
-                        + " DELETE FROM measureunit "
+                        + " DELETE FROM unitmeasurerecalc "
                         + " WHERE id = ? ",
                 id
         );
@@ -88,52 +88,52 @@ public class MeasureunitRepository implements TableRepository<Measureunit> {
     }
 
     @Override
-    public int insupd(Measureunit measureunit) {
-        if (measureunit == null) {
+    public int insupd(Unitmeasurerecalc unitmeasurerecalc) {
+        if (unitmeasurerecalc == null) {
             return -1;
         }
-        if (measureunit.getId() == null) {
-            return insert(measureunit);
+        if (unitmeasurerecalc.getId() == null) {
+            return insert(unitmeasurerecalc);
         } else {
-            return update(measureunit);
+            return update(unitmeasurerecalc);
         }
     }
 
     @Override
-    public List<Measureunit> findAll() {
+    public List<Unitmeasurerecalc> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "
-                        + "        measure_id, "
-                        + "        unitmeasure_id, "
-                        + "        priority "
-                        + " FROM   measureunit ",
+                        + "        unitmeasurefrom_id, "
+                        + "        unitmeasureto_id, "
+                        + "        factor "
+                        + " FROM   unitmeasurerecalc ",
                 (rs, rowNum) ->
-                        new Measureunit(
+                        new Unitmeasurerecalc(
                                 rs.getInt("id"),
-                                rs.getInt("measure_id"),
-                                rs.getInt("unitmeasure_id"),
-                                rs.getInt("priority")
+                                rs.getInt("unitmeasurefrom_id"),
+                                rs.getInt("unitmeasureto_id"),
+                                rs.getFloat("factor")
                         )
         );
     }
 
     @Override
-    public Measureunit findById(Integer id) {
+    public Unitmeasurerecalc findById(Integer id) {
         String sql = ""
                 + " SELECT id, "
-                + "        measure_id, "
-                + "        unitmeasure_id, "
-                + "        priority "
-                + " FROM   measureunit "
+                + "        unitmeasurefrom_id, "
+                + "        unitmeasureto_id, "
+                + "        factor "
+                + " FROM   unitmeasurerecalc "
                 + " WHERE  id = :id ";
         return namedParameterJdbcTemplate.queryForObject(sql,
                 new MapSqlParameterSource("id", id),
                 (rs, rowNum) ->
-                        new Measureunit(
+                        new Unitmeasurerecalc(
                                 rs.getInt("id"),
-                                rs.getInt("measure_id"),
-                                rs.getInt("unitmeasure_id"),
-                                rs.getInt("priority")
+                                rs.getInt("unitmeasurefrom_id"),
+                                rs.getInt("unitmeasureto_id"),
+                                rs.getFloat("factor")
                         )
         );
     }

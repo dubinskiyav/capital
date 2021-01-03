@@ -3,25 +3,25 @@ package biz.gelicon.capital.model;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Materialmeasureunit {
+public class Materialunitmeasure {
 
     private Integer id;
 
     private Integer materialId;
 
-    private Integer measureunitId;
+    private Integer unitmeasureId;
 
-    public Materialmeasureunit(
+    public Materialunitmeasure(
             Integer id,
             Integer materialId,
-            Integer measureunitId
+            Integer unitmeasureId
     ) {
         this.id = id;
         this.materialId = materialId;
-        this.measureunitId = measureunitId;
+        this.unitmeasureId = unitmeasureId;
     }
 
-    public Materialmeasureunit() {
+    public Materialunitmeasure() {
     }
 
     // Обязательнго геттеры и сеттеры,
@@ -44,12 +44,12 @@ public class Materialmeasureunit {
     }
 
 
-    public Integer getMeasureunitId() {
-        return measureunitId;
+    public Integer getUnitmeasureId() {
+        return unitmeasureId;
     }
 
-    public void setMeasureunitId(Integer measureunitId) {
-        this.measureunitId = measureunitId;
+    public void setUnitmeasureId(Integer unitmeasureId) {
+        this.unitmeasureId = unitmeasureId;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class Materialmeasureunit {
         return "Materialmeasureunit{"
                 + "id=" + id + ", "
                 + "materialId=" + materialId + ", "
-                + "measureunitId=" + measureunitId
+                + "unitmeasureId=" + unitmeasureId
                 + "}";
     }
 
