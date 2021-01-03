@@ -1,6 +1,8 @@
 package biz.gelicon.capital;
 
 import biz.gelicon.capital.utils.DatebaseUtils;
+import biz.gelicon.capital.utils.Proba;
+import biz.gelicon.capital.utils.TestAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.lang.reflect.Method;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
                              содержащий аннотацию @SpringBootApplication и метод main.
@@ -37,8 +41,21 @@ public class CapitalApplication implements CommandLineRunner {
 
         // Установим тип СУБД
         DatebaseUtils.setDbType(jdbcTemplate);
+        // Тесты
+        TestAnnotation testAnnotation = new TestAnnotation();
+        testAnnotation.get();
+        Class<? extends Class> cls = TestAnnotation.class.getClass();
+        System.out.println(cls);
+        System.out.println((new TestAnnotation()).getClass());
+        System.out.println(testAnnotation.getClass());
+        Class<? extends TestAnnotation> cls1  = testAnnotation.getClass();
+        Method m = cls1.getMethod("get");
+        if(m.isAnnotationPresent(Proba.class)) {
+            Proba an = (Proba) m.getDeclaredAnnotations()[0];
+            System.out.println(an.id());
+            System.out.println(an.type());
+        }
     }
-
 
 }
 

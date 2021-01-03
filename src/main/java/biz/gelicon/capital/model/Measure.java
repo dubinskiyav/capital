@@ -1,7 +1,6 @@
 package biz.gelicon.capital.model;
 
 import biz.gelicon.capital.repository.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
