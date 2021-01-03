@@ -12,6 +12,11 @@ public interface TableRepository<T extends Id> {
 
     int delete(Integer id); // Удаление записи
 
+    default int del(Integer id) {
+
+        return 0;
+    }
+
     default int insertOrUpdate(T t) { // Добавление или изменение записи в зависимости от id
         if (t == null) {return -1;}
         if (t.getId() == null) {

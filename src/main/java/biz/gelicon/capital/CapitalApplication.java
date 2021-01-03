@@ -1,5 +1,6 @@
 package biz.gelicon.capital;
 
+import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.utils.DatebaseUtils;
 import biz.gelicon.capital.utils.Proba;
 import biz.gelicon.capital.utils.TestAnnotation;
@@ -11,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
@@ -42,6 +44,16 @@ public class CapitalApplication implements CommandLineRunner {
         // Установим тип СУБД
         DatebaseUtils.setDbType(jdbcTemplate);
         // Тесты
+        Unitmeasure unitmeasure = new Unitmeasure();
+        unitmeasure.setName("имя");
+        System.out.println(unitmeasure.getName());
+        Field field = unitmeasure.getClass().getDeclaredField("name");
+        field.setAccessible(true);
+        System.out.println((String) field.get(unitmeasure));
+        field.set(unitmeasure, "new value");
+        System.out.println((String) field.get(unitmeasure));
+
+
         TestAnnotation testAnnotation = new TestAnnotation();
         testAnnotation.get();
         Class<? extends Class> cls = TestAnnotation.class.getClass();
