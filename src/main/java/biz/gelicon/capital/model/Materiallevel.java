@@ -1,5 +1,6 @@
 package biz.gelicon.capital.model;
 
+import biz.gelicon.capital.repository.Id;
 import biz.gelicon.capital.utils.ConvertUnils;
 
 import javax.validation.constraints.NotEmpty;
@@ -9,7 +10,7 @@ import java.util.Date;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Materiallevel {
+public class Materiallevel implements Id {
 
     private Integer id;
 

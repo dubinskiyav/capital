@@ -78,18 +78,6 @@ public class ServiceRepository implements TableRepository<Service>{
     }
 
     @Override
-    public int insupd(Service service) {
-        if (service == null) {
-            return -1;
-        }
-        if (service.getServiceId() == null) {
-            return insert(service);
-        } else {
-            return update(service);
-        }
-    }
-
-    @Override
     public List<Service> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT service_id "

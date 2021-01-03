@@ -1,5 +1,6 @@
 package biz.gelicon.capital.model;
 
+import biz.gelicon.capital.repository.Id;
 import org.springframework.data.relational.core.sql.In;
 
 import javax.validation.constraints.NotEmpty;
@@ -8,7 +9,7 @@ import javax.validation.constraints.Size;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Measureunit {
+public class Measureunit implements Id {
 
     private Integer id;
 

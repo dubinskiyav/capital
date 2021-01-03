@@ -85,18 +85,6 @@ public class UnitmeasureRepository implements TableRepository<Unitmeasure>{
     }
 
     @Override
-    public int insupd(Unitmeasure measure) {
-        if (measure == null) {
-            return -1;
-        }
-        if (measure.getId() == null) {
-            return insert(measure);
-        } else {
-            return update(measure);
-        }
-    }
-
-    @Override
     public List<Unitmeasure> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "

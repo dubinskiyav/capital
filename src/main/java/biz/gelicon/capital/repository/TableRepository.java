@@ -2,7 +2,7 @@ package biz.gelicon.capital.repository;
 
 import java.util.List;
 
-public interface TableRepository<T> {
+public interface TableRepository<T extends Id> {
 
     int count(); // Количество записей в таблице
 
@@ -12,7 +12,23 @@ public interface TableRepository<T> {
 
     int delete(Integer id); // Удаление записи
 
-    int insupd(T t); // Добавление или изменение записи
+    default int insertOrUpdate(T t) { // Добавление или изменение записи в зависимости от id
+        if (t == null) {return -1;}
+        if (t.getId() == null) {
+            return insert(t);
+        } else {
+            return update(t);
+        }
+    }
+
+    default int set(T t) { // Добавление или изменение записи в зависимости от наличия в базе
+        if (t == null) {return -1;}
+        if (findById(t.getId()) == null) {
+            return insert(t);
+        } else {
+            return update(t);
+        }
+    }
 
     List<T> findAll(); // Все записи
 

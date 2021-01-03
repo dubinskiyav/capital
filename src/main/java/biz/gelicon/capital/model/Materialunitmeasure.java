@@ -1,9 +1,11 @@
 package biz.gelicon.capital.model;
 
+import biz.gelicon.capital.repository.Id;
+
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Materialunitmeasure {
+public class Materialunitmeasure implements Id {
 
     private Integer id;
 

@@ -89,18 +89,6 @@ public class MaterialRepository implements TableRepository<Material>{
     }
 
     @Override
-    public int insupd(Material material) {
-        if (material == null) {
-            return -1;
-        }
-        if (material.getId() == null) {
-            return insert(material);
-        } else {
-            return update(material);
-        }
-    }
-
-    @Override
     public List<Material> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "
