@@ -61,6 +61,7 @@ public class CapitalApplication implements CommandLineRunner {
         System.out.println((new TestAnnotation()).getClass());
         System.out.println(testAnnotation.getClass());
         Class<? extends TestAnnotation> cls1  = testAnnotation.getClass();
+        Class cls2  = testAnnotation.getClass();
         Method m = cls1.getMethod("get");
         if(m.isAnnotationPresent(Proba.class)) {
             Proba an = (Proba) m.getDeclaredAnnotations()[0];
