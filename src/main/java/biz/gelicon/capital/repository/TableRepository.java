@@ -56,14 +56,31 @@ public interface TableRepository<T extends IdField> {
             String idName = Arrays.stream(cls.getDeclaredFields())
                     .filter(c -> c.isAnnotationPresent(Id.class)) // Проверим аннотацию Id
                     .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
-                    .map(c -> {
-                        System.out.println(c);
-                        Column column = (Column) c.getClass().getAnnotation(Column.class);
-                        return column.name();
-                    })
+                    .map(c -> ((Column) c.getAnnotation(Column.class)).name())
                     .findFirst()
-                    .orElse("id");
-            System.out.println(idName);
+                    .orElse(null);
+            if (idName != null) {
+                String sqlText = ""
+                        + " DELETE FROM " + tableName
+                        + " WHERE " + idName + " = " + t.getId();
+                // Полдучим поле у класса
+                Field field = null;
+                try {
+                    field = this.getClass().getDeclaredField("jdbcTemplate");
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+                field.setAccessible(true);
+                JdbcTemplate jdbcTemplate = null;
+                try {
+                    jdbcTemplate = (JdbcTemplate) field.get(this);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                int result = -1;
+                result = jdbcTemplate.update(sqlText);
+                return result;
+            }
         } else {
             System.out.println("нет");
         }
