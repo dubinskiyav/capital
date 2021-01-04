@@ -71,17 +71,6 @@ public class MeasureRepository implements TableRepository<Measure>{
     }
 
     @Override
-    public int delete(Integer id) {
-        int result = -1;
-        result = jdbcTemplate.update(""
-                        + " DELETE FROM measure "
-                        + " WHERE id = ? ",
-                id
-        );
-        return result;
-    }
-
-    @Override
     public List<Measure> findAll() {
         return jdbcTemplate.query(""
                         + " SELECT id, "

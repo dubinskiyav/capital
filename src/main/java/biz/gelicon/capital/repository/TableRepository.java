@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +21,20 @@ public interface TableRepository<T> {
 
     int update(T t); // Изменение записи
 
-    int delete(Integer id); // Удаление записи
+    default int delete(Integer id) {// Удаление записи
+        Type[] genericInterfaces = getClass().getGenericInterfaces();
+        for (Type genericInterface : genericInterfaces) {
+            System.out.println(genericInterface);
+            if (genericInterface instanceof ParameterizedType) {
+                Type[] genericTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
+                System.out.println(genericTypes);
+                for (Type genericType : genericTypes) {
+                    System.out.println("Generic type: " + genericType);
+                }
+            }
+        }
+        return 0;
+    }
 
     default int delete(T t) { // Удаление записи общее
         Class<? extends TableRepository> cls = (Class<? extends TableRepository>) t.getClass();
