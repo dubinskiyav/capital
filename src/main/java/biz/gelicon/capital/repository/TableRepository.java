@@ -24,12 +24,36 @@ public interface TableRepository<T> {
     default int delete(Integer id) {// Удаление записи
         Type[] genericInterfaces = getClass().getGenericInterfaces();
         for (Type genericInterface : genericInterfaces) {
-            System.out.println(genericInterface);
             if (genericInterface instanceof ParameterizedType) {
                 Type[] genericTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
-                System.out.println(genericTypes);
                 for (Type genericType : genericTypes) {
-                    System.out.println("Generic type: " + genericType);
+                    if (genericType instanceof Class) {
+                        Class cls = (Class) genericType;
+                        if (cls.isAnnotationPresent(Table.class)) { // Проверим аннотацию Table
+                            // Если есть - получим имя таблицы
+                            Table tableAnnotation = (Table) cls.getAnnotation(Table.class);
+                            String tableName = tableAnnotation.name();
+                            // Найдем поле - первичный ключ
+                            Field idField = Arrays.stream(cls.getDeclaredFields())
+                                    .filter(c -> c.isAnnotationPresent(Id.class)) // Проверим аннотацию Id
+                                    .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
+                                    .findFirst()
+                                    .orElse(null);
+                            if (idField == null) {
+                                throw new RuntimeException(
+                                        "У таблицы " + tableName + " не аннотирован первичный ключ.");
+                            }
+                            // Найдем первичный ключ - имя поля
+                            String idName = ((Column) idField.getAnnotation(Column.class)).name();
+                            String sqlText = ""
+                                    + " DELETE FROM " + tableName
+                                    + " WHERE " + idName + " = " + id;
+                            DataSource dataSource = CapitalApplication.getApplicationContext()
+                                    .getBean(DataSource.class);
+                            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                            return jdbcTemplate.update(sqlText);
+                        }
+                    }
                 }
             }
         }
