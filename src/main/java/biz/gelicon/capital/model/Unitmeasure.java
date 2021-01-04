@@ -1,17 +1,19 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.IdField;
-import biz.gelicon.capital.utils.Captable;
-
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-@Captable(tableName = "unitmeasure", tableDescription = "Единица измерения")
-public class Unitmeasure implements IdField {
+@Table(name = "unitmeasure")
+public class Unitmeasure {
 
+    @Id
+    @Column(name = "id")
     private Integer id;
 
     @NotEmpty(message="Наименование не может быть пустым")

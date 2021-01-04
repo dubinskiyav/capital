@@ -5,6 +5,7 @@ import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.repository.MeasureRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
 import biz.gelicon.capital.utils.DatebaseUtils;
+import biz.gelicon.capital.utils.Test01;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
@@ -33,34 +32,24 @@ public class CapitalApplication implements CommandLineRunner {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    MeasureRepository measureRepository;
+    private static ApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        SpringApplication.run(CapitalApplication.class, args);
+        applicationContext = SpringApplication.run(CapitalApplication.class, args);
+        // Тесты
+        Test01 test01 = CapitalApplication.getApplicationContext().getBean(Test01.class);
+        test01.test1();
     }
 
     @Override
     public void run(String... args) throws Exception {
         logger.info("StartApplication...");
-
         // Установим тип СУБД
         DatebaseUtils.setDbType(jdbcTemplate);
+    }
 
-        // Тесты
-        Measure measure = new Measure();
-        measure.setId(1);
-        measureRepository.delete(measure);
-
-
-        UnitmeasureRepository unitmeasureRepository = applicationContext.getBean(UnitmeasureRepository.class);
-        Unitmeasure unitmeasure = new Unitmeasure();
-        unitmeasure.setId(-1);
-        unitmeasureRepository.delete(unitmeasure);
-
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
 }

@@ -1,12 +1,17 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.IdField;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Service implements IdField {
+@Table(name = "service")
+public class Service {
 
+    @Id
+    @Column(name = "service_id")
     private Integer serviceId;
 
     public Service(
@@ -35,8 +40,4 @@ public class Service implements IdField {
                 + "}";
     }
 
-    @Override
-    public Integer getId() {
-        return getServiceId();
-    }
 }

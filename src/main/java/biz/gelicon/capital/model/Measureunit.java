@@ -1,12 +1,17 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.IdField;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Measureunit implements IdField {
+@Table(name = "measureunit")
+public class Measureunit {
 
+    @Id
+    @Column(name = "id")
     private Integer id;
 
     private Integer measureId;

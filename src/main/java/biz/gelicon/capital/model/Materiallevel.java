@@ -1,8 +1,10 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.IdField;
 import biz.gelicon.capital.utils.ConvertUnils;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -10,8 +12,11 @@ import java.util.Date;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Materiallevel implements IdField {
+@Table(name = "materiallevel")
+public class Materiallevel {
 
+    @Id
+    @Column(name = "id")
     private Integer id;
 
     private Integer masterId;
