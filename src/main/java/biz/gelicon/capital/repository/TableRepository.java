@@ -1,13 +1,18 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.utils.Captable;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.thymeleaf.expression.Lists;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-public interface TableRepository<T extends Id> {
+public interface TableRepository<T extends IdField> {
 
     int count(); // Количество записей в таблице
 
@@ -17,39 +22,53 @@ public interface TableRepository<T extends Id> {
 
     int delete(Integer id); // Удаление записи
 
-    default int delete(T t) {
+    default int delete(T t) { // Удаление записи общее
         Class<? extends TableRepository> cls = (Class<? extends TableRepository>) t.getClass();
-        if (cls.isAnnotationPresent(Captable.class)) {
-            System.out.println("да");
-            Captable an = (Captable)t.getClass().getAnnotation(Captable.class);
+        if (cls.isAnnotationPresent(Captable.class)) { // Проверим существование аннотации Captable
+            // Получим ее
+            Captable an = (Captable) t.getClass().getAnnotation(Captable.class);
+            // Из аннотации вытащим название таблицы и имя первичного ключа и слепим текст удаления
             String sqlText = ""
                     + " DELETE FROM " + an.tableName()
                     + " WHERE " + an.pkName() + " = " + t.getId();
-            if (false) {
-                Field field = null;
-                try {
-                    field = this.getClass().getDeclaredField("jdbcTemplate");
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-                field.setAccessible(true);
-                JdbcTemplate jdbcTemplate = null;
-                try {
-                    jdbcTemplate = (JdbcTemplate) field.get(this);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                int result = -1;
-                result = jdbcTemplate.update(sqlText);
-                return result;
-            } else {
-
+            // Полдучим поле у класса
+            Field field = null;
+            try {
+                field = this.getClass().getDeclaredField("jdbcTemplate");
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
             }
+            field.setAccessible(true);
+            JdbcTemplate jdbcTemplate = null;
+            try {
+                jdbcTemplate = (JdbcTemplate) field.get(this);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            int result = -1;
+            result = jdbcTemplate.update(sqlText);
+            return result;
+        } else if (cls.isAnnotationPresent(Table.class)) { // Проверим аннотацию Table
+            // Если есть - получим имя таблицы
+            Table tableAnnotation = (Table) t.getClass().getAnnotation(Table.class);
+            String tableName = tableAnnotation.name();
+            // Найдем первичный ключ - имя поля
+            String idName = Arrays.stream(cls.getDeclaredFields())
+                    .filter(c -> c.isAnnotationPresent(Id.class)) // Проверим аннотацию Id
+                    .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
+                    .map(c -> {
+                        System.out.println(c);
+                        Column column = (Column) c.getClass().getAnnotation(Column.class);
+                        return column.name();
+                    })
+                    .findFirst()
+                    .orElse("id");
+            System.out.println(idName);
         } else {
             System.out.println("нет");
         }
 
-        return 0;
+        return -100; // Не найдено удаление
     }
 
     default int insertOrUpdate(T t) { // Добавление или изменение записи в зависимости от id

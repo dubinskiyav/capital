@@ -1,6 +1,6 @@
 package biz.gelicon.capital.repository;
 
-public interface Id {
+public interface IdField {
 
     Integer getId();
 

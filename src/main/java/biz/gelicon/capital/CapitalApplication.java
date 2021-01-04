@@ -1,20 +1,20 @@
 package biz.gelicon.capital;
 
+import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.model.Unitmeasure;
+import biz.gelicon.capital.repository.MeasureRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
 import biz.gelicon.capital.utils.DatebaseUtils;
-import biz.gelicon.capital.utils.Proba;
-import biz.gelicon.capital.utils.TestAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
                              содержащий аннотацию @SpringBootApplication и метод main.
@@ -33,6 +33,11 @@ public class CapitalApplication implements CommandLineRunner {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    MeasureRepository measureRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(CapitalApplication.class, args);
@@ -44,35 +49,18 @@ public class CapitalApplication implements CommandLineRunner {
 
         // Установим тип СУБД
         DatebaseUtils.setDbType(jdbcTemplate);
+
         // Тесты
-        UnitmeasureRepository unitmeasureRepository = new UnitmeasureRepository();
+        Measure measure = new Measure();
+        measure.setId(1);
+        measureRepository.delete(measure);
+
+
+        UnitmeasureRepository unitmeasureRepository = applicationContext.getBean(UnitmeasureRepository.class);
         Unitmeasure unitmeasure = new Unitmeasure();
-        unitmeasure.setId(1);
+        unitmeasure.setId(-1);
         unitmeasureRepository.delete(unitmeasure);
 
-        unitmeasure.setName("имя");
-        System.out.println(unitmeasure.getName());
-        Field field = unitmeasure.getClass().getDeclaredField("name");
-        field.setAccessible(true);
-        System.out.println((String) field.get(unitmeasure));
-        field.set(unitmeasure, "new value");
-        System.out.println((String) field.get(unitmeasure));
-
-
-        TestAnnotation testAnnotation = new TestAnnotation();
-        testAnnotation.get();
-        Class<? extends Class> cls = TestAnnotation.class.getClass();
-        System.out.println(cls);
-        System.out.println((new TestAnnotation()).getClass());
-        System.out.println(testAnnotation.getClass());
-        Class<? extends TestAnnotation> cls1  = testAnnotation.getClass();
-        Class cls2  = testAnnotation.getClass();
-        Method m = cls1.getMethod("get");
-        if(m.isAnnotationPresent(Proba.class)) {
-            Proba an = (Proba) m.getDeclaredAnnotations()[0];
-            System.out.println(an.id());
-            System.out.println(an.type());
-        }
     }
 
 }

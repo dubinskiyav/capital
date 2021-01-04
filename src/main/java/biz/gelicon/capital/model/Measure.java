@@ -1,15 +1,23 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.Id;
+import biz.gelicon.capital.repository.IdField;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Measure implements Id {
+@Table(
+        name = "measure"
+)
+public class Measure implements IdField {
 
+    @Id
+    @Column(name = "id")
     private Integer id;
 
     @NotEmpty(message="Наименование не может быть пустым")

@@ -1,11 +1,11 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.Id;
+import biz.gelicon.capital.repository.IdField;
 
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Measureunit implements Id {
+public class Measureunit implements IdField {
 
     private Integer id;
 

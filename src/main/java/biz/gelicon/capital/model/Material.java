@@ -1,6 +1,6 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.Id;
+import biz.gelicon.capital.repository.IdField;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
-public class Material implements Id {
+public class Material implements IdField {
 
     private Integer id;
 

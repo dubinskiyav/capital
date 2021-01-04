@@ -1,6 +1,6 @@
 package biz.gelicon.capital.model;
 
-import biz.gelicon.capital.repository.Id;
+import biz.gelicon.capital.repository.IdField;
 import biz.gelicon.capital.utils.Captable;
 
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
 @Captable(tableName = "unitmeasure", tableDescription = "Единица измерения")
-public class Unitmeasure implements Id {
+public class Unitmeasure implements IdField {
 
     private Integer id;
 
