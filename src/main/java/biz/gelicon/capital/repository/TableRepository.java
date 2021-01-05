@@ -1,6 +1,7 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.CapitalApplication;
+import biz.gelicon.capital.utils.JpaUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.persistence.Column;
@@ -25,7 +26,8 @@ public interface TableRepository<T> {
         Type[] genericInterfaces = getClass().getGenericInterfaces();
         for (Type genericInterface : genericInterfaces) {
             if (genericInterface instanceof ParameterizedType) {
-                Type[] genericTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
+                Type[] genericTypes = ((ParameterizedType) genericInterface)
+                        .getActualTypeArguments();
                 for (Type genericType : genericTypes) {
                     if (genericType instanceof Class) {
                         Class cls = (Class) genericType;
@@ -35,13 +37,16 @@ public interface TableRepository<T> {
                             String tableName = tableAnnotation.name();
                             // Найдем поле - первичный ключ
                             Field idField = Arrays.stream(cls.getDeclaredFields())
-                                    .filter(c -> c.isAnnotationPresent(Id.class)) // Проверим аннотацию Id
-                                    .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
+                                    .filter(c -> c
+                                            .isAnnotationPresent(Id.class)) // Проверим аннотацию Id
+                                    .filter(c -> c.isAnnotationPresent(
+                                            Column.class)) // Проверим аннотацию Column
                                     .findFirst()
                                     .orElse(null);
                             if (idField == null) {
                                 throw new RuntimeException(
-                                        "У таблицы " + tableName + " не аннотирован первичный ключ.");
+                                        "У таблицы " + tableName
+                                                + " не аннотирован первичный ключ.");
                             }
                             // Найдем первичный ключ - имя поля
                             String idName = ((Column) idField.getAnnotation(Column.class)).name();
@@ -61,62 +66,27 @@ public interface TableRepository<T> {
     }
 
     default int delete(T t) { // Удаление записи общее
-        Class<? extends TableRepository> cls = (Class<? extends TableRepository>) t.getClass();
-        String sqlText = null;
-        if (cls.isAnnotationPresent(Table.class)) { // Проверим аннотацию Table
-            // Если есть - получим имя таблицы
-            Table tableAnnotation = (Table) t.getClass().getAnnotation(Table.class);
-            String tableName = tableAnnotation.name();
-            // Найдем поле - первичный ключ
-            Field idField = Arrays.stream(cls.getDeclaredFields())
-                    .filter(c -> c.isAnnotationPresent(Id.class)) // Проверим аннотацию Id
-                    .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
-                    .findFirst()
-                    .orElse(null);
-            if (idField == null) {
-                throw new RuntimeException(
-                        "У таблицы " + tableName + " не аннотирован первичный ключ.");
-            }
-            // Найдем первичный ключ - имя поля
-            String idName = ((Column) idField.getAnnotation(Column.class)).name();
-            // Получим значение
-            Integer id = -1;
-            idField.setAccessible(true);
-            try {
-                id = (Integer) idField.get(t);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            sqlText = ""
-                    + " DELETE FROM " + tableName
-                    + " WHERE " + idName + " = " + id;
-        } else {
-            throw new RuntimeException("У таблицы не аннотирован первичный ключ.");
+        // Получим имя таблицы в базе данных из аннотации @Table
+        String tableName = JpaUtils.getTableNameOfClass(t);
+        if (tableName == null) {
+            throw new RuntimeException("У объекта нет аннотации @Table");
         }
-        if (true) {
-            DataSource dataSource = CapitalApplication.getApplicationContext()
-                    .getBean(DataSource.class);
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            return jdbcTemplate.update(sqlText);
-        } else {
-            // Полдучим поле у класса
-            Field field = null;
-            try {
-                field = this.getClass().getDeclaredField("jdbcTemplate");
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-            field.setAccessible(true);
-            JdbcTemplate jdbcTemplate = null;
-            try {
-                jdbcTemplate = (JdbcTemplate) field.get(this);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            int result = -1;
-            result = jdbcTemplate.update(sqlText);
-            return result;
+        // Найдем поле - первичный ключ
+        Field idField = JpaUtils.getIdFieldOfClass(t);
+        if (idField == null) {
+            throw new RuntimeException(
+                    "У таблицы " + tableName + " не аннотирован первичный ключ.");
         }
+        // Найдем первичный ключ - имя поля в таблице базы данных
+        String idName = JpaUtils.getColumnName(idField);
+        // Получим значение
+        Integer id = JpaUtils.getIdValueIntegerOfField(idField, t);
+        // Составим текст удаления
+        String sqlText = ""
+                + " DELETE FROM " + tableName
+                + " WHERE " + idName + " = " + id;
+        // Выполним удаление
+        return JpaUtils.getJdbcTemplate().update(sqlText);
     }
 
     default int insertOrUpdate(T t) { // Добавление или изменение записи в зависимости от id
@@ -142,3 +112,5 @@ public interface TableRepository<T> {
     T findById(Integer id); // Запись по id
 
 }
+
+

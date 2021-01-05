@@ -16,11 +16,12 @@ public class Test01 {
 
     public void test1() {
         // Тесты
-        measureRepository.delete(1);
-
         Measure measure = new Measure();
         measure.setId(1);
         measureRepository.delete(measure);
+
+        measureRepository.delete(1);
+
 
         UnitmeasureRepository unitmeasureRepository =
                 CapitalApplication.getApplicationContext().getBean(UnitmeasureRepository.class);
