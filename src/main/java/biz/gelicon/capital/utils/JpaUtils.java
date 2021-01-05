@@ -9,14 +9,21 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
 public class JpaUtils {
 
     // Возвращает имя таблицы у объекта аннотированного как @Table
-    public static String getTableNameOfClass(Object o) {
+    public static String getTableName(Object o) {
         Class cls = o.getClass();
+        return getTableName(cls);
+    }
+
+    // Возвращает имя таблицы у Класса аннотированного как @Table
+    public static String getTableName(Class cls) {
         if (cls.isAnnotationPresent(Table.class)) { // Проверим аннотацию Table
             // Если есть - получим имя таблицы
             Table tableAnnotation = (Table) cls.getAnnotation(Table.class);
@@ -25,9 +32,14 @@ public class JpaUtils {
         return null;
     }
 
-    // Возвращает Поле аннотированного как @Id и @Column
-    public static Field getIdFieldOfClass(Object o) {
+    // Возвращает Поле аннотированного как @Id и @Column объекта
+    public static Field getIdField(Object o) {
         Class cls = o.getClass();
+        return getIdField(cls);
+    }
+
+    // Возвращает Поле аннотированного как @Id и @Column класса
+    public static Field getIdField(Class cls) {
         return Arrays.stream(cls.getDeclaredFields())
                 .filter(c -> c.isAnnotationPresent(Id.class)) // Проверим аннотацию Id
                 .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
@@ -59,6 +71,28 @@ public class JpaUtils {
         DataSource dataSource = CapitalApplication.getApplicationContext()
                 .getBean(DataSource.class);
         return new JdbcTemplate(dataSource);
+    }
+
+    // Возвращает класс дженерика интерфейса аннотированного как @Table
+    public static Class getClassGenericInterfaceAnnotationTable(Object o) {
+        Type[] genericInterfaces = o.getClass()
+                .getGenericInterfaces(); // Все реализованные интерфейсы объекта
+        for (Type genericInterface : genericInterfaces) {
+            if (genericInterface instanceof ParameterizedType) { // Проверим не из ParameterizedType ли он создан ???
+                Type[] genericTypes = ((ParameterizedType) genericInterface) // Его аргументы
+                        .getActualTypeArguments();
+                for (Type genericType : genericTypes) {
+                    if (genericType instanceof Class) { // Если это класс - возвращаем
+                        Class cls = (Class) genericType;
+                        if (cls.isAnnotationPresent(Table.class)) { // Проверим аннотацию Table
+                            return (Class) genericType;
+                        }
+                    }
+                }
+            }
+        }
+        // Не нашли
+        return null;
     }
 
 }

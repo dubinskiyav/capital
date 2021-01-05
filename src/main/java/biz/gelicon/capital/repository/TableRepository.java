@@ -22,57 +22,42 @@ public interface TableRepository<T> {
 
     int update(T t); // Изменение записи
 
-    default int delete(Integer id) {// Удаление записи
-        Type[] genericInterfaces = getClass().getGenericInterfaces();
-        for (Type genericInterface : genericInterfaces) {
-            if (genericInterface instanceof ParameterizedType) {
-                Type[] genericTypes = ((ParameterizedType) genericInterface)
-                        .getActualTypeArguments();
-                for (Type genericType : genericTypes) {
-                    if (genericType instanceof Class) {
-                        Class cls = (Class) genericType;
-                        if (cls.isAnnotationPresent(Table.class)) { // Проверим аннотацию Table
-                            // Если есть - получим имя таблицы
-                            Table tableAnnotation = (Table) cls.getAnnotation(Table.class);
-                            String tableName = tableAnnotation.name();
-                            // Найдем поле - первичный ключ
-                            Field idField = Arrays.stream(cls.getDeclaredFields())
-                                    .filter(c -> c
-                                            .isAnnotationPresent(Id.class)) // Проверим аннотацию Id
-                                    .filter(c -> c.isAnnotationPresent(
-                                            Column.class)) // Проверим аннотацию Column
-                                    .findFirst()
-                                    .orElse(null);
-                            if (idField == null) {
-                                throw new RuntimeException(
-                                        "У таблицы " + tableName
-                                                + " не аннотирован первичный ключ.");
-                            }
-                            // Найдем первичный ключ - имя поля
-                            String idName = ((Column) idField.getAnnotation(Column.class)).name();
-                            String sqlText = ""
-                                    + " DELETE FROM " + tableName
-                                    + " WHERE " + idName + " = " + id;
-                            DataSource dataSource = CapitalApplication.getApplicationContext()
-                                    .getBean(DataSource.class);
-                            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-                            return jdbcTemplate.update(sqlText);
-                        }
-                    }
-                }
-            }
+    // Удаление записи по умолчанию
+    // Необходимы аннотации @Table(name), @Id, @Column(name)
+    default int delete(Integer id) {
+        // Получим класс дженерика интерфейса аннотированного как @Table
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        if (cls == null) {
+            throw new RuntimeException("Объект не аннотирован как @Table.");
         }
-        return 0;
+        // Получим имя таблицы
+        String tableName = ((Table) cls.getAnnotation(Table.class)).name();
+        tableName = JpaUtils.getTableName(cls);
+        // Найдем поле - первичный ключ
+        Field idField = JpaUtils.getIdField(cls);
+        if (idField == null) {
+            throw new RuntimeException(
+                    "Таблица " + tableName + " не имеет поля, аннотированного как @Id.");
+        }
+        // Имя поля первичного ключа
+        String idName = JpaUtils.getColumnName(idField);
+        String sqlText = ""
+                + " DELETE FROM " + tableName
+                + " WHERE " + idName + " = " + id;
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        return jdbcTemplate.update(sqlText);
     }
 
-    default int delete(T t) { // Удаление записи общее
+    // Удаление записи по умолчанию
+    // Необходимы аннотации @Table(name), @Id, @Column(name)
+    default int delete(T t) {
         // Получим имя таблицы в базе данных из аннотации @Table
-        String tableName = JpaUtils.getTableNameOfClass(t);
+        String tableName = JpaUtils.getTableName(t);
         if (tableName == null) {
             throw new RuntimeException("У объекта нет аннотации @Table");
         }
         // Найдем поле - первичный ключ
-        Field idField = JpaUtils.getIdFieldOfClass(t);
+        Field idField = JpaUtils.getIdField(t);
         if (idField == null) {
             throw new RuntimeException(
                     "У таблицы " + tableName + " не аннотирован первичный ключ.");
