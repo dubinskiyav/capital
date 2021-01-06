@@ -10,14 +10,24 @@ import java.util.Map;
 
 public interface TableRepository<T> {
 
-    Map<String, TableMetadata>  tableMetadataMap = new HashMap<>();// Коллекция из метаданных для таблиц
+    Map<String, TableMetadata> tableMetadataMap = new HashMap<>();// Коллекция из метаданных для таблиц
 
     int count(); // Количество записей в таблице
 
-    int insert(T t); // Добавление записи
+    default int insert(T t) { // Добавление записи
+        String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        if (tableMetadata == null) { // В коллекции не было
+            tableMetadata = new TableMetadata(); // Создаем
+            tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
+            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
+        }
+        return 0;
+    }
 
-    int update(T t); // Изменение записи
-
+    default int update(T t) { // Изменение записи
+        return 0;
+    }
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(Integer id) {
@@ -27,7 +37,7 @@ public interface TableRepository<T> {
         if (tableMetadata == null) { // В коллекции не было
             tableMetadata = new TableMetadata(); // Создаем
             tableMetadata.loadTableMetadata(cls); // Получим все метаданные
-            tableMetadataMap.put(tableName,tableMetadata); // Загрузим в воллекцию
+            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
         }
         String sqlText = ""
                 + " DELETE FROM " + tableMetadata.getTableName()
@@ -44,7 +54,7 @@ public interface TableRepository<T> {
         if (tableMetadata == null) { // В коллекции не было
             tableMetadata = new TableMetadata(); // Создаем
             tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
-            tableMetadataMap.put(tableName,tableMetadata); // Загрузим в воллекцию
+            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
         }
         // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);

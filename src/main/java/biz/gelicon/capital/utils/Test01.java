@@ -16,11 +16,13 @@ public class Test01 {
 
     public void test1() {
         // Тесты
-        Measure measure = new Measure();
-        measure.setId(1);
-        measureRepository.delete(measure);
+        Measure measure = new Measure(1,"Длина");
+        measureRepository.insert(measure);
+
+        //measureRepository.delete(measure);
 
         measureRepository.delete(1);
+
 
 
         UnitmeasureRepository unitmeasureRepository =

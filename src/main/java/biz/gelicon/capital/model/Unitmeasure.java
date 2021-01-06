@@ -18,9 +18,11 @@ public class Unitmeasure {
 
     @NotEmpty(message="Наименование не может быть пустым")
     @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
+    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
     private String name;
 
     @Size(max = 20, message = "Обозначение должно содержать не более {1} символов")
+    @Column(name = "short_name", nullable = true, columnDefinition = "Обозначение")
     private String shortName;
 
     public Unitmeasure(

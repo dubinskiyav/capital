@@ -18,6 +18,7 @@ public class Measure {
 
     @NotEmpty(message="Наименование не может быть пустым")
     @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
+    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
     private String name;
 
     public Measure(

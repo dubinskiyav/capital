@@ -38,6 +38,7 @@ public class MeasureRepository implements TableRepository<Measure>{
         return Objects.requireNonNullElse(i, 0);
     }
 
+    /*
     @Override
     public int insert(Measure measure) {
         if (logFlag) {
@@ -69,6 +70,8 @@ public class MeasureRepository implements TableRepository<Measure>{
                 new BeanPropertySqlParameterSource(measure));
         return result;
     }
+
+     */
 
     @Override
     public List<Measure> findAll() {
