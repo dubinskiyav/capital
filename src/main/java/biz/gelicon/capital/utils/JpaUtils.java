@@ -2,6 +2,7 @@ package biz.gelicon.capital.utils;
 
 import biz.gelicon.capital.CapitalApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -69,6 +70,13 @@ public class JpaUtils {
         DataSource dataSource = CapitalApplication.getApplicationContext()
                 .getBean(DataSource.class);
         return new JdbcTemplate(dataSource);
+    }
+
+    // Возвращает созданную из контекста JdbcTemplate
+    public static NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        DataSource dataSource = CapitalApplication.getApplicationContext()
+                .getBean(DataSource.class);
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
     // Возвращает класс дженерика интерфейса аннотированного как @Table

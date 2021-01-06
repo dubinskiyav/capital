@@ -1,8 +1,11 @@
 package biz.gelicon.capital.repository;
 
+import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,12 +25,27 @@ public interface TableRepository<T> {
             tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
             tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
         }
-        return 0;
+        String sqlTextTop = "INSERT INTO " + tableMetadata.getTableName() + " (";
+        String sqlTextBotom = ") VALUES (";
+        String comma = "";
+        for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
+            sqlTextTop = sqlTextTop + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
+            sqlTextBotom = sqlTextBotom + comma + ":" + tableMetadata.getColumnMetadataList().get(i).getField().getName();
+            if (comma.equals("")) { comma = ", "; }
+        }
+        String sqlText = sqlTextTop + sqlTextBotom + ")";
+        System.out.println(sqlText);
+        int result = -1;
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils.getNamedParameterJdbcTemplate();
+        result = namedParameterJdbcTemplate.update(sqlText,
+                new BeanPropertySqlParameterSource(t));
+        return result;
     }
 
     default int update(T t) { // Изменение записи
         return 0;
     }
+
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(Integer id) {

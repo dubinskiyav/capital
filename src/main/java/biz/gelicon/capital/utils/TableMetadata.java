@@ -13,7 +13,7 @@ public class TableMetadata {
     String tableName; // Имя таблицы в базе данных
     Field idField; // Первичный ключ
     String idFieldName; // Имя поля первичного ключа
-    List<ColumnMetadata> fieldMetadataList; // Коллекция полей таблицы
+    List<ColumnMetadata> columnMetadataList; // Коллекция полей таблицы
 
     public String getTableName() {
         return this.tableName;
@@ -45,6 +45,10 @@ public class TableMetadata {
         loadTableMetadata(cls);
     }
 
+    public List<ColumnMetadata> getColumnMetadataList() {
+        return this.columnMetadataList;
+    }
+
     public void loadTableMetadata(Class cls) {
         // Получим и запишем имя таблицы
         setTableName(JpaUtils.getTableName(cls));
@@ -57,21 +61,21 @@ public class TableMetadata {
         // Запишем имя поля первичного ключа
         setIdFieldName(JpaUtils.getColumnName(idField));
         // Ищем все поля помеченные аннотацией @Column
-        fieldMetadataList = new ArrayList<>();
+        columnMetadataList = new ArrayList<>();
         List<Field> fieldList = Arrays.stream(cls.getDeclaredFields())
                 .filter(c -> c.isAnnotationPresent(Column.class)) // Проверим аннотацию Column
                 .collect(Collectors.toList());
         // Записываем их все в коллекцию
         for (Field field : fieldList) {
-            ColumnMetadata fieldMetadata = new ColumnMetadata();
-            fieldMetadata.setColumnName(field.getAnnotation(Column.class).name());
-            fieldMetadata.setNullable(field.getAnnotation(Column.class).nullable());
-            fieldMetadata.setField(field);
-            fieldMetadata.setColumnDefinition(field.getAnnotation(Column.class).columnDefinition());
-            fieldMetadata.setColumn(field.getAnnotation(Column.class));
-            fieldMetadata.setIdFlag(field.isAnnotationPresent(Id.class));
-            fieldMetadataList.add(fieldMetadata);
-            System.out.println(field.getType());
+            ColumnMetadata columnMetadata = new ColumnMetadata();
+            columnMetadata.setColumnName(field.getAnnotation(Column.class).name());
+            columnMetadata.setNullable(field.getAnnotation(Column.class).nullable());
+            columnMetadata.setField(field);
+            columnMetadata.setColumnDefinition(field.getAnnotation(Column.class).columnDefinition());
+            columnMetadata.setColumn(field.getAnnotation(Column.class));
+            columnMetadata.setIdFlag(field.isAnnotationPresent(Id.class));
+            columnMetadataList.add(columnMetadata);
+            //System.out.println(field.getType());
         }
     }
 
