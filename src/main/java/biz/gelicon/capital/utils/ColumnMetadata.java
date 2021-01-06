@@ -6,15 +6,10 @@ import java.lang.reflect.Field;
 public class ColumnMetadata {
 
     String columnName; // Имя поля в базе данных
-
     String columnDefinition; // Русское описание таблицы
-
     Boolean nullable; // Возможность хранить NULL
-
     Boolean idFlag; // флаг ИД
-
     Field field; // Java поле объекта
-
     Column column; // Аннотация @Column
 
     public String getColumnName() {
@@ -57,7 +52,7 @@ public class ColumnMetadata {
         this.column = column;
     }
 
-    public Boolean getIdFlag(){
+    public Boolean getIdFlag() {
         return this.idFlag;
     }
 
