@@ -4,13 +4,13 @@ import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.persistence.Table;
-import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface TableRepository<T> {
 
-    TableMetadata tableMetadata = new TableMetadata();
+    Map<String, TableMetadata>  tableMetadataMap = new HashMap<>();// Коллекция из метаданных для таблиц
 
     int count(); // Количество записей в таблице
 
@@ -21,9 +21,13 @@ public interface TableRepository<T> {
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(Integer id) {
-        if (tableMetadata.getTableName() == null) { // Еще не получали метаданные
-            // Получим все метеданные
-            tableMetadata.loadTableMetadata(this);
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        if (tableMetadata == null) { // В коллекции не было
+            tableMetadata = new TableMetadata(); // Создаем
+            tableMetadata.loadTableMetadata(cls); // Получим все метаданные
+            tableMetadataMap.put(tableName,tableMetadata); // Загрузим в воллекцию
         }
         String sqlText = ""
                 + " DELETE FROM " + tableMetadata.getTableName()
@@ -35,13 +39,14 @@ public interface TableRepository<T> {
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(T t) {
-        if (tableMetadata.getTableName() == null) { // Еще не получали метаданные
-            // Получим все метеданные
-            tableMetadata.loadTableMetadata(t.getClass());
+        String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        if (tableMetadata == null) { // В коллекции не было
+            tableMetadata = new TableMetadata(); // Создаем
+            tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
+            tableMetadataMap.put(tableName,tableMetadata); // Загрузим в воллекцию
         }
-        String s = tableMetadata.getTableName();
-        System.out.println(s);
-        // Получим значение
+        // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         // Составим текст удаления
         String sqlText = ""
