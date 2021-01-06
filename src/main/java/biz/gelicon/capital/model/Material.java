@@ -16,13 +16,16 @@ public class Material {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "materiallevel_id", nullable = false, columnDefinition = "Уровень")
     private Integer materiallevelId;
 
     @NotEmpty(message="Наименование не может быть пустым")
     @Size(max = 255, message = "Наименование должно содержать не более {1} символов")
+    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
     private String name;
 
     @Size(max = 100, message = "Сокращение должно содержать не более {1} символов")
+    @Column(name = "code", nullable = true, columnDefinition = "Наименование")
     private String code;
 
     public Material(

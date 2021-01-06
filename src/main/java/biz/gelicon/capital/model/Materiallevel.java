@@ -19,17 +19,22 @@ public class Materiallevel {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "master_id", nullable = false, columnDefinition = "Вышестоящий уровень")
     private Integer masterId;
 
     @Size(max = 255, message = "Наименование должно содержать не более {1} символов")
+    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
     private String name;
 
     @NotEmpty(message = "Код не может быть пустым")
     @Size(max = 100, message = "Код должно содержать не более {1} символов")
+    @Column(name = "code", nullable = true, columnDefinition = "Код")
     private String code;
 
+    @Column(name = "date_beg", nullable = false, columnDefinition = "Дата начала действия")
     private Date dateBeg;
 
+    @Column(name = "date_end", nullable = false, columnDefinition = "Дата окончания действия")
     private Date dateEnd;
 
 

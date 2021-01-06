@@ -14,10 +14,13 @@ public class Measureunit {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "measure_id", nullable = false, columnDefinition = "Мера измерения")
     private Integer measureId;
 
+    @Column(name = "unitmeasure_id", nullable = false, columnDefinition = "Единица измерения")
     private Integer unitmeasureId;
 
+    @Column(name = "priority", nullable = false, columnDefinition = "Приоритет (0-высший, 9-низщий, 99..99-наинижайший)")
     private Integer priority;
 
     public Measureunit(

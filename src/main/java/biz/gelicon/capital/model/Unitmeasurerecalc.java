@@ -14,10 +14,13 @@ public class Unitmeasurerecalc {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "unitmeasurefrom_id", nullable = false, columnDefinition = "Исходная единица измерения")
     private Integer unitmeasurefromId;
 
+    @Column(name = "unitmeasureto_id", nullable = false, columnDefinition = "Целевая единица измерения")
     private Integer unitmeasuretoId;
 
+    @Column(name = "factor", nullable = false, columnDefinition = "Коэффициент пересчета")
     private Float factor;
 
     public Unitmeasurerecalc(

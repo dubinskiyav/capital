@@ -14,8 +14,10 @@ public class Materialunitmeasure  {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "material_id", nullable = false, columnDefinition = "Материал")
     private Integer materialId;
 
+    @Column(name = "unitmeasure_id", nullable = false, columnDefinition = "Единица измерения")
     private Integer unitmeasureId;
 
     public Materialunitmeasure(
