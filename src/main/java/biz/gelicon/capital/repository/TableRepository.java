@@ -1,20 +1,16 @@
 package biz.gelicon.capital.repository;
 
-import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.utils.JpaUtils;
+import biz.gelicon.capital.utils.TableMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.sql.DataSource;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 
 public interface TableRepository<T> {
+
+    TableMetadata tableMetadata = new TableMetadata();
 
     int count(); // Количество записей в таблице
 
@@ -25,25 +21,13 @@ public interface TableRepository<T> {
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(Integer id) {
-        // Получим класс дженерика интерфейса аннотированного как @Table
-        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
-        if (cls == null) {
-            throw new RuntimeException("Объект не аннотирован как @Table.");
+        if (tableMetadata.getTableName() == null) { // Еще не получали метаданные
+            // Получим все метеданные
+            tableMetadata.loadTableMetadata(this);
         }
-        // Получим имя таблицы
-        String tableName = ((Table) cls.getAnnotation(Table.class)).name();
-        tableName = JpaUtils.getTableName(cls);
-        // Найдем поле - первичный ключ
-        Field idField = JpaUtils.getIdField(cls);
-        if (idField == null) {
-            throw new RuntimeException(
-                    "Таблица " + tableName + " не имеет поля, аннотированного как @Id.");
-        }
-        // Имя поля первичного ключа
-        String idName = JpaUtils.getColumnName(idField);
         String sqlText = ""
-                + " DELETE FROM " + tableName
-                + " WHERE " + idName + " = " + id;
+                + " DELETE FROM " + tableMetadata.getTableName()
+                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         return jdbcTemplate.update(sqlText);
     }
@@ -51,25 +35,18 @@ public interface TableRepository<T> {
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(T t) {
-        // Получим имя таблицы в базе данных из аннотации @Table
-        String tableName = JpaUtils.getTableName(t);
-        if (tableName == null) {
-            throw new RuntimeException("У объекта нет аннотации @Table");
+        if (tableMetadata.getTableName() == null) { // Еще не получали метаданные
+            // Получим все метеданные
+            tableMetadata.loadTableMetadata(t.getClass());
         }
-        // Найдем поле - первичный ключ
-        Field idField = JpaUtils.getIdField(t);
-        if (idField == null) {
-            throw new RuntimeException(
-                    "У таблицы " + tableName + " не аннотирован первичный ключ.");
-        }
-        // Найдем первичный ключ - имя поля в таблице базы данных
-        String idName = JpaUtils.getColumnName(idField);
+        String s = tableMetadata.getTableName();
+        System.out.println(s);
         // Получим значение
-        Integer id = JpaUtils.getIdValueIntegerOfField(idField, t);
+        Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         // Составим текст удаления
         String sqlText = ""
-                + " DELETE FROM " + tableName
-                + " WHERE " + idName + " = " + id;
+                + " DELETE FROM " + tableMetadata.getTableName()
+                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
         // Выполним удаление
         return JpaUtils.getJdbcTemplate().update(sqlText);
     }
