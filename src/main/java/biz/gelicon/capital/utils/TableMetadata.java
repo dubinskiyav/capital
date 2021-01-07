@@ -3,8 +3,10 @@ package biz.gelicon.capital.utils;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,6 +17,7 @@ public class TableMetadata {
     Field idField; // Первичный ключ
     String idFieldName; // Имя поля первичного ключа
     List<ColumnMetadata> columnMetadataList; // Коллекция полей таблицы
+
 
     public String getTableName() {
         return this.tableName;
@@ -61,6 +64,14 @@ public class TableMetadata {
         }
         // Запишем имя поля первичного ключа
         setIdFieldName(JpaUtils.getColumnName(idField));
+        // Ищем все методы класса
+        Map<String, Method> methodMap = new HashMap<>();
+        List<Method> methods = new ArrayList<>();
+        methods = Arrays.asList(cls.getMethods());
+        for (int i = 0; i < methods.size(); i++) {
+            methodMap.put(methods.get(i).getName(),methods.get(i));
+        }
+
         // Ищем все поля помеченные аннотацией @Column
         columnMetadataList = new ArrayList<>();
         List<Field> fieldList = Arrays.stream(cls.getDeclaredFields())
@@ -75,8 +86,28 @@ public class TableMetadata {
             columnMetadata.setColumnDefinition(field.getAnnotation(Column.class).columnDefinition());
             columnMetadata.setColumn(field.getAnnotation(Column.class));
             columnMetadata.setIdFlag(field.isAnnotationPresent(Id.class));
+            // Найдем геттер
+            String methodName = "get"
+                    + columnMetadata.getField().getName().substring(0,1).toUpperCase()
+                    + columnMetadata.getField().getName().substring(1); ;
+            if (methodMap.get(methodName) != null) {
+                columnMetadata.setMethodGet(methodMap.get(methodName));
+            } else { // попробуем найти is
+                methodName = "is"
+                        + columnMetadata.getField().getName().substring(0,1).toUpperCase()
+                        + columnMetadata.getField().getName().substring(1); ;
+                if (methodMap.get(methodName) != null) {
+                    columnMetadata.setMethodGet(methodMap.get(methodName));
+                }
+            }
+            // Найдем сеттер
+            methodName = "set"
+                    + columnMetadata.getField().getName().substring(0,1).toUpperCase()
+                    + columnMetadata.getField().getName().substring(1); ;
+            if (methodMap.get(methodName) != null) {
+                columnMetadata.setMethodSet(methodMap.get(methodName));
+            }
             columnMetadataList.add(columnMetadata);
-            //System.out.println(field.getType());
         }
     }
 

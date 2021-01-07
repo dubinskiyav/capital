@@ -3,6 +3,8 @@ package biz.gelicon.capital.repository;
 import biz.gelicon.capital.model.Measureunit;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -48,14 +50,17 @@ public interface TableRepository<T> {
         String sqlTextBotom = ") VALUES (";
         String comma = "";
         for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-            sqlTextTop = sqlTextTop + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
-            sqlTextBotom = sqlTextBotom + comma + ":" + tableMetadata.getColumnMetadataList().get(i).getField().getName();
+            sqlTextTop = sqlTextTop + comma + tableMetadata.getColumnMetadataList().get(i)
+                    .getColumnName();
+            sqlTextBotom = sqlTextBotom + comma + ":" + tableMetadata.getColumnMetadataList().get(i)
+                    .getField().getName();
             if (comma.equals("")) { comma = ", "; }
         }
         String sqlText = sqlTextTop + sqlTextBotom + ")";
-        System.out.println(sqlText);
+        //System.out.println(sqlText);
         int result = -1;
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils.getNamedParameterJdbcTemplate();
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils
+                .getNamedParameterJdbcTemplate();
         result = namedParameterJdbcTemplate.update(sqlText,
                 new BeanPropertySqlParameterSource(t));
         return result;
@@ -85,7 +90,8 @@ public interface TableRepository<T> {
         }
         sqlText = sqlText + " WHERE " + tableMetadata.getIdFieldName() + " = :" + idName;
         int result = -1;
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils.getNamedParameterJdbcTemplate();
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils
+                .getNamedParameterJdbcTemplate();
         result = namedParameterJdbcTemplate.update(sqlText,
                 new BeanPropertySqlParameterSource(t));
         return result;
@@ -175,30 +181,29 @@ public interface TableRepository<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(t.toString());
-        // Список методов класса
-        List<Method> methods = new ArrayList<>();
-        methods = Arrays.asList(cls.getMethods());
-        for (int i = 0; i < methods.size(); i++) {
-            System.out.println(methods.get(i).getName());
-        }
+        //System.out.println(t.toString());
         // Сформируем текст запроса
         String sqlText = "SELECT ";
         String comma = "";
-        String idName = "";
         for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-            if (!tableMetadata.getColumnMetadataList().get(i).getIdFlag()) {
-                sqlText = sqlText
-                        + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
-                if (comma.equals("")) { comma = ", "; }
-            } else {
-                idName = tableMetadata.getColumnMetadataList().get(i).getField().getName();
-            }
+            sqlText = sqlText
+                    + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
+            if (comma.equals("")) { comma = ", "; }
         }
         sqlText = sqlText + " FROM " + tableName
                 + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
-
-        return null;
+        sqlText = " SELECT * FROM " + tableName
+                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        BeanPropertyRowMapper beanPropertyRowMapper = new BeanPropertyRowMapper<>(t.getClass());
+        try {
+            t = jdbcTemplate.queryForObject(sqlText,
+                    beanPropertyRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        return (T) t;
+        // https://www.codeflow.site/ru/article/spring__spring-jdbctemplate-querying-examples
     }
 }
 

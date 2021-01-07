@@ -2,6 +2,7 @@ package biz.gelicon.capital.utils;
 
 import javax.persistence.Column;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class ColumnMetadata {
 
@@ -11,6 +12,8 @@ public class ColumnMetadata {
     Boolean idFlag; // флаг ИД
     Field field; // Java поле объекта
     Column column; // Аннотация @Column
+    Method methodSet; // Метод put для поля
+    Method methodGet; // Метод get для поля
 
     public String getColumnName() {
         return this.columnName;
@@ -58,6 +61,22 @@ public class ColumnMetadata {
 
     public void setIdFlag(Boolean idFlag) {
         this.idFlag = idFlag;
+    }
+
+    public Method getMethodGet() {
+        return methodGet;
+    }
+
+    public void setMethodGet(Method methodGet) {
+        this.methodGet = methodGet;
+    }
+
+    public Method getMethodSet() {
+        return methodSet;
+    }
+
+    public void setMethodSet(Method methodSet) {
+        this.methodSet = methodSet;
     }
 
 }
