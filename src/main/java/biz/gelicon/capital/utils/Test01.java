@@ -32,6 +32,7 @@ public class Test01 {
     TransactionStatus transactionStatus;
 
     public void test1() {
+        System.out.println(measureRepository.findById(1));
         System.out.println(measureRepository.count());
         // Каждая операция - в своей транзакции, так как TableRepository аннотирован как
         // @Transactional(propagation = Propagation.REQUIRED)

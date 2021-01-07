@@ -25,39 +25,4 @@ public class MaterialunitmeasureRepository implements TableRepository<Materialun
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Materialunitmeasure> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT id, "
-                        + "        material_id,"
-                        + "        unitmeasure_id "
-                        + " FROM   materialunitmeasure "
-                        + " ORDER BY 1 ",
-                (rs, rowNum) ->
-                        new Materialunitmeasure(
-                                rs.getInt("id"),
-                                rs.getInt("material_id"),
-                                rs.getInt("unitmeasure_id")
-                        )
-        );
-    }
-
-    @Override
-    public Materialunitmeasure findById(Integer id) {
-        String sql = ""
-                + " SELECT id, "
-                + "        material_id,"
-                + "        unitmeasure_id "
-                + " FROM   materialunitmeasure "
-                + " WHERE  id = :id ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Materialunitmeasure(
-                                rs.getInt("id"),
-                                rs.getInt("material_id"),
-                                rs.getInt("unitmeasure_id")
-                        )
-        );
-    }
 }

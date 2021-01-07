@@ -25,31 +25,4 @@ public class ServiceRepository implements TableRepository<Service>{
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Service> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT service_id "
-                        + " FROM   service "
-                        + " ORDER BY 1 ",
-                (rs, rowNum) ->
-                        new Service(
-                                rs.getInt("service_id")
-                        )
-        );
-    }
-
-    @Override
-    public Service findById(Integer id) {
-        String sql = ""
-                + " SELECT service_id "
-                + " FROM   service "
-                + " WHERE  service_id = :serviceId ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Service(
-                                rs.getInt("service_id")
-                        )
-        );
-    }
 }

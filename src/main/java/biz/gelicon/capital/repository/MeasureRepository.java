@@ -25,35 +25,4 @@ public class MeasureRepository implements TableRepository<Measure>{
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Measure> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT id, "
-                        + "        name "
-                        + " FROM   measure "
-                        + " ORDER BY name ",
-                (rs, rowNum) ->
-                        new Measure(
-                                rs.getInt("id"),
-                                rs.getString("name")
-                        )
-        );
-    }
-
-    @Override
-    public Measure findById(Integer id) {
-        String sql = ""
-                + " SELECT id, "
-                + "        name "
-                + " FROM   measure "
-                + " WHERE  id = :id ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Measure(
-                                rs.getInt("id"),
-                                rs.getString("name")
-                        )
-        );
-    }
 }

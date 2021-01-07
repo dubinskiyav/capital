@@ -25,42 +25,4 @@ public class MeasureunitRepository implements TableRepository<Measureunit> {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Measureunit> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT id, "
-                        + "        measure_id, "
-                        + "        unitmeasure_id, "
-                        + "        priority "
-                        + " FROM   measureunit ",
-                (rs, rowNum) ->
-                        new Measureunit(
-                                rs.getInt("id"),
-                                rs.getInt("measure_id"),
-                                rs.getInt("unitmeasure_id"),
-                                rs.getInt("priority")
-                        )
-        );
-    }
-
-    @Override
-    public Measureunit findById(Integer id) {
-        String sql = ""
-                + " SELECT id, "
-                + "        measure_id, "
-                + "        unitmeasure_id, "
-                + "        priority "
-                + " FROM   measureunit "
-                + " WHERE  id = :id ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Measureunit(
-                                rs.getInt("id"),
-                                rs.getInt("measure_id"),
-                                rs.getInt("unitmeasure_id"),
-                                rs.getInt("priority")
-                        )
-        );
-    }
 }

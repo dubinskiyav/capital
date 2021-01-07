@@ -25,42 +25,4 @@ public class UnitmeasurerecalcRepository implements TableRepository<Unitmeasurer
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Unitmeasurerecalc> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT id, "
-                        + "        unitmeasurefrom_id, "
-                        + "        unitmeasureto_id, "
-                        + "        factor "
-                        + " FROM   unitmeasurerecalc ",
-                (rs, rowNum) ->
-                        new Unitmeasurerecalc(
-                                rs.getInt("id"),
-                                rs.getInt("unitmeasurefrom_id"),
-                                rs.getInt("unitmeasureto_id"),
-                                rs.getFloat("factor")
-                        )
-        );
-    }
-
-    @Override
-    public Unitmeasurerecalc findById(Integer id) {
-        String sql = ""
-                + " SELECT id, "
-                + "        unitmeasurefrom_id, "
-                + "        unitmeasureto_id, "
-                + "        factor "
-                + " FROM   unitmeasurerecalc "
-                + " WHERE  id = :id ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Unitmeasurerecalc(
-                                rs.getInt("id"),
-                                rs.getInt("unitmeasurefrom_id"),
-                                rs.getInt("unitmeasureto_id"),
-                                rs.getFloat("factor")
-                        )
-        );
-    }
 }

@@ -24,39 +24,4 @@ public class UnitmeasureRepository implements TableRepository<Unitmeasure>{
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Unitmeasure> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT id, "
-                        + "        name, "
-                        + "        short_name "
-                        + " FROM   unitmeasure "
-                        + " ORDER BY name ",
-                (rs, rowNum) ->
-                        new Unitmeasure(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("short_name")
-                        )
-        );
-    }
-
-    @Override
-    public Unitmeasure findById(Integer id) {
-        String sql = ""
-                + " SELECT id, "
-                + "        name, "
-                + "        short_name "
-                + " FROM   unitmeasure "
-                + " WHERE  id = :id ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Unitmeasure(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("short_name")
-                        )
-        );
-    }
 }

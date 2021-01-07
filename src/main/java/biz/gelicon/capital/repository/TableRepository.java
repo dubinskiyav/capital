@@ -148,10 +148,21 @@ public interface TableRepository<T> {
         }
     }
 
-    List<T> findAll(); // Все записи
+    default List<T> findAll() { // Все записи
+        return null;
+    }
 
-    T findById(Integer id); // Запись по id
-
+    default T findById(Integer id) { // Запись по id
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                cls
+        );
+        return null;
+    }
 }
 
 

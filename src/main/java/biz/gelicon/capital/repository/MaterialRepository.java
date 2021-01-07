@@ -25,43 +25,4 @@ public class MaterialRepository implements TableRepository<Material>{
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @Override
-    public List<Material> findAll() {
-        return jdbcTemplate.query(""
-                        + " SELECT id, "
-                        + "        materiallevel_id, "
-                        + "        name, "
-                        + "        code "
-                        + " FROM   material "
-                        + " ORDER BY 1 ",
-                (rs, rowNum) ->
-                        new Material(
-                                rs.getInt("id"),
-                                rs.getInt("materiallevel_id"),
-                                rs.getString("name"),
-                                rs.getString("code")
-                        )
-        );
-    }
-
-    @Override
-    public Material findById(Integer id) {
-        String sql = ""
-                + " SELECT id, "
-                + "        materiallevel_id, "
-                + "        name, "
-                + "        code "
-                + " FROM   material "
-                + " WHERE  id = :id ";
-        return namedParameterJdbcTemplate.queryForObject(sql,
-                new MapSqlParameterSource("id", id),
-                (rs, rowNum) ->
-                        new Material(
-                                rs.getInt("id"),
-                                rs.getInt("materiallevel_id"),
-                                rs.getString("name"),
-                                rs.getString("code")
-                        )
-        );
-    }
 }
