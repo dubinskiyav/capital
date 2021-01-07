@@ -7,27 +7,53 @@ import biz.gelicon.capital.repository.MeasureRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Repository
-@EnableTransactionManagement
 public class Test01 {
 
     @Autowired
     MeasureRepository measureRepository;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    private TransactionTemplate transactionTemplate;
+
+
     public void test1() {
         // Тесты
-        // Старт транзакции
-        Measure measure = new Measure(1,"Длина");
-        measureRepository.insert(measure);
-        // Коммит транзакции
+        transactionTemplate = new TransactionTemplate(transactionManager);
+        Integer id = transactionTemplate.execute(status -> {
+            measureRepository.delete(1);
+            Measure measure = new Measure(1,"Длина");
+            measureRepository.insert(measure);
+            return measure.getId();
+        });
 
-        //measureRepository.delete(measure);
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try {
+            Measure measure = new Measure(1,"Ширина");
+            measureRepository.insert(measure);
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+        }
 
-        measureRepository.delete(1);
-
-
+        status = transactionManager.getTransaction(definition);
+        try {
+            measureRepository.delete(1);
+            Measure measure = new Measure(1,"Высота");
+            measureRepository.insert(measure);
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            transactionManager.rollback(status);
+        }
 
         UnitmeasureRepository unitmeasureRepository =
                 CapitalApplication.getApplicationContext().getBean(UnitmeasureRepository.class);
