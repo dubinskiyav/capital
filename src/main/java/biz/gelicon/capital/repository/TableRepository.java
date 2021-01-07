@@ -1,5 +1,6 @@
 package biz.gelicon.capital.repository;
 
+import biz.gelicon.capital.model.Measureunit;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,6 +9,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,6 +167,37 @@ public interface TableRepository<T> {
                 tableMetadataMap,
                 cls
         );
+        // Создадим объект - модель
+        Object t = null;
+        try {
+            Constructor<?> ctor = cls.getConstructor();
+            t = ctor.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(t.toString());
+        // Список методов класса
+        List<Method> methods = new ArrayList<>();
+        methods = Arrays.asList(cls.getMethods());
+        for (int i = 0; i < methods.size(); i++) {
+            System.out.println(methods.get(i).getName());
+        }
+        // Сформируем текст запроса
+        String sqlText = "SELECT ";
+        String comma = "";
+        String idName = "";
+        for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
+            if (!tableMetadata.getColumnMetadataList().get(i).getIdFlag()) {
+                sqlText = sqlText
+                        + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
+                if (comma.equals("")) { comma = ", "; }
+            } else {
+                idName = tableMetadata.getColumnMetadataList().get(i).getField().getName();
+            }
+        }
+        sqlText = sqlText + " FROM " + tableName
+                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+
         return null;
     }
 }

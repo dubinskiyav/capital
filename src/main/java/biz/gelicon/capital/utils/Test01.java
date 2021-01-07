@@ -2,6 +2,7 @@ package biz.gelicon.capital.utils;
 
 import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.model.Measure;
+import biz.gelicon.capital.model.Measureunit;
 import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.repository.MeasureRepository;
 import biz.gelicon.capital.repository.MeasureunitRepository;
@@ -32,7 +33,7 @@ public class Test01 {
     TransactionStatus transactionStatus;
 
     public void test1() {
-        System.out.println(measureRepository.findById(1));
+        System.out.println(measureunitRepository.findById(2));
         System.out.println(measureRepository.count());
         // Каждая операция - в своей транзакции, так как TableRepository аннотирован как
         // @Transactional(propagation = Propagation.REQUIRED)
@@ -62,16 +63,28 @@ public class Test01 {
             measureRepository.insert(measure);
             measure.setName("Глубина");
             measureRepository.update(measure);
+            measure = new Measure(2,"Высота");
+            measureRepository.insert(measure);
             transactionManager.commit(transactionStatus);
         } catch (Exception e) {
             transactionManager.rollback(transactionStatus);
         }
 
-        UnitmeasureRepository unitmeasureRepository =
-                CapitalApplication.getApplicationContext().getBean(UnitmeasureRepository.class);
+        //UnitmeasureRepository unitmeasureRepository =
+        //        CapitalApplication.getApplicationContext().getBean(UnitmeasureRepository.class);
         Unitmeasure unitmeasure = new Unitmeasure();
-        unitmeasure.setId(-1);
-        unitmeasureRepository.delete(unitmeasure);
+        unitmeasure.setId(1);
+        unitmeasure.setName("Метр");
+        unitmeasure.setShortName("м.");
+        unitmeasureRepository.insert(unitmeasure);
+        Measureunit measureunit = new Measureunit();
+        measureunit.setId(1);
+        measureunit.setMeasureId(1);
+        measureunit.setUnitmeasureId(1);
+        measureunit.setPriority(0);
+        measureunitRepository.insert(measureunit);
+        measureunit = new Measureunit(2,2,1,0);
+        measureunitRepository.insert(measureunit);
 
     }
 
