@@ -1,30 +1,43 @@
 package biz.gelicon.capital.repository;
 
-import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+@Transactional(propagation = Propagation.REQUIRED)
 public interface TableRepository<T> {
 
     Map<String, TableMetadata> tableMetadataMap = new HashMap<>();// Коллекция из метаданных для таблиц
 
-    int count(); // Количество записей в таблице
+    default int count() { // Количество записей в таблице
+        // Имя класса - из дженерика
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls);
+        // todo подставить имя таблицы
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        Integer i = jdbcTemplate
+                .queryForObject(" SELECT COUNT(*) FROM " + tableName,
+                        Integer.class);
+        return Objects.requireNonNullElse(i, 0);
+    }
 
     default int insert(T t) { // Добавление записи
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
-        if (tableMetadata == null) { // В коллекции не было
-            tableMetadata = new TableMetadata(); // Создаем
-            tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
-            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
-        }
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                t.getClass()
+        );
         String sqlTextTop = "INSERT INTO " + tableMetadata.getTableName() + " (";
         String sqlTextBotom = ") VALUES (";
         String comma = "";
@@ -44,12 +57,12 @@ public interface TableRepository<T> {
 
     default int update(T t) { // Изменение записи
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
-        if (tableMetadata == null) { // В коллекции не было
-            tableMetadata = new TableMetadata(); // Создаем
-            tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
-            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
-        }
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                t.getClass()
+        );
         String sqlText = "UPDATE " + tableMetadata.getTableName() + " SET ";
         String comma = "";
         String idName = "";
@@ -65,7 +78,6 @@ public interface TableRepository<T> {
             }
         }
         sqlText = sqlText + " WHERE " + tableMetadata.getIdFieldName() + " = :" + idName;
-        System.out.println(sqlText);
         int result = -1;
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils.getNamedParameterJdbcTemplate();
         result = namedParameterJdbcTemplate.update(sqlText,
@@ -78,29 +90,36 @@ public interface TableRepository<T> {
     default int delete(Integer id) {
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
-        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
-        if (tableMetadata == null) { // В коллекции не было
-            tableMetadata = new TableMetadata(); // Создаем
-            tableMetadata.loadTableMetadata(cls); // Получим все метаданные
-            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
-        }
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                cls
+        );
         String sqlText = ""
-                + " DELETE FROM " + tableMetadata.getTableName()
-                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+                + " DELETE FROM " + tableMetadata.getTableName();
+        if (id != -123) {
+            sqlText = sqlText + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+        }
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         return jdbcTemplate.update(sqlText);
+    }
+
+    // Удаление всех записей из таблицы
+    default int deleteAll() {
+        return delete(-123);
     }
 
     // Удаление записи по умолчанию
     // Необходимы аннотации @Table(name), @Id, @Column(name)
     default int delete(T t) {
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
-        if (tableMetadata == null) { // В коллекции не было
-            tableMetadata = new TableMetadata(); // Создаем
-            tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
-            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
-        }
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                t.getClass()
+        );
         // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         // Составим текст удаления

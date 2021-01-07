@@ -1,19 +1,15 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.model.Unitmeasure;
-import biz.gelicon.capital.utils.DatebaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class UnitmeasureRepository implements TableRepository<Unitmeasure>{
@@ -27,62 +23,6 @@ public class UnitmeasureRepository implements TableRepository<Unitmeasure>{
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    @Override
-    public int count() {
-        Integer i = jdbcTemplate
-                .queryForObject(""
-                                + " SELECT COUNT(*) "
-                                + " FROM   unitmeasure ",
-                        Integer.class);
-        return Objects.requireNonNullElse(i, 0);
-    }
-
-    @Override
-    public int insert(Unitmeasure measure) {
-        if (logFlag) {
-            logger.info("Saving...{}", measure.toString());
-        }
-        // Установим следующее значение id
-        measure.setId(DatebaseUtils.getSequenceNextValue("measure_id_gen",jdbcTemplate));
-        Integer result = -1;
-        result = jdbcTemplate.update(""
-                        + " INSERT INTO unitmeasure ("
-                        + "   id, "
-                        + "   name, "
-                        + "   short_name "
-                        + " ) VALUES(?,?)",
-                measure.getId(),
-                measure.getName(),
-                measure.getShortName()
-        );
-        return result;
-    }
-
-    @Override
-    public int update(Unitmeasure measure) {
-        //Названия параметров должны совпадать с полями
-        // и обязательно должны быть геттеры на все поля
-        int result = -1;
-        result = namedParameterJdbcTemplate.update(""
-                        + " UPDATE unitmeasure SET "
-                        + "   name = :name, "
-                        + "   short_name = :shortName "
-                        + " WHERE id = :id ",
-                new BeanPropertySqlParameterSource(measure));
-        return result;
-    }
-
-    @Override
-    public int delete(Integer id) {
-        int result = -1;
-        result = jdbcTemplate.update(""
-                        + " DELETE FROM unitmeasure "
-                        + " WHERE id = ? ",
-                id
-        );
-        return result;
-    }
 
     @Override
     public List<Unitmeasure> findAll() {

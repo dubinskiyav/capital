@@ -1,18 +1,15 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.model.Material;
-import biz.gelicon.capital.utils.DatebaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class MaterialRepository implements TableRepository<Material>{
@@ -27,66 +24,6 @@ public class MaterialRepository implements TableRepository<Material>{
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    @Override
-    public int count() {
-        Integer i = jdbcTemplate
-                .queryForObject(""
-                                + " SELECT COUNT(*) "
-                                + " FROM   material ",
-                        Integer.class);
-        return Objects.requireNonNullElse(i, 0);
-    }
-
-    @Override
-    public int insert(Material material) {
-        if (logFlag) {
-            logger.info("Saving...{}", material.toString());
-        }
-        // Установим следующее значение id
-        material.setId(DatebaseUtils.getSequenceNextValue("material_id_gen",jdbcTemplate));
-        Integer result = -1;
-        result = jdbcTemplate.update(""
-                        + " INSERT INTO material ("
-                        + "   id, "
-                        + "   materiallevel_id, "
-                        + "   name, "
-                        + "   code "
-                        + " ) VALUES(?,?)",
-                material.getId(),
-                material.getMateriallevelId(),
-                material.getName(),
-                material.getCode()
-        );
-        return result;
-    }
-
-    @Override
-    public int update(Material material) {
-        //Названия параметров должны совпадать с полями
-        // и обязательно должны быть геттеры на все поля
-        int result = -1;
-        result = namedParameterJdbcTemplate.update(""
-                        + " UPDATE material SET "
-                        + "   materiallevel_id = :materiallevelId, "
-                        + "   name = :name, "
-                        + "   code = :code "
-                        + " WHERE id = :id ",
-                new BeanPropertySqlParameterSource(material));
-        return result;
-    }
-
-    @Override
-    public int delete(Integer id) {
-        int result = -1;
-        result = jdbcTemplate.update(""
-                        + " DELETE FROM material "
-                        + " WHERE id = ? ",
-                id
-        );
-
-        return result;
-    }
 
     @Override
     public List<Material> findAll() {

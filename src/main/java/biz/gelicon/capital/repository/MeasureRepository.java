@@ -1,18 +1,15 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.model.Measure;
-import biz.gelicon.capital.utils.DatebaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class MeasureRepository implements TableRepository<Measure>{
@@ -27,16 +24,6 @@ public class MeasureRepository implements TableRepository<Measure>{
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    @Override
-    public int count() {
-        Integer i = jdbcTemplate
-                .queryForObject(""
-                                + " SELECT COUNT(*) "
-                                + " FROM   measure ",
-                        Integer.class);
-        return Objects.requireNonNullElse(i, 0);
-    }
 
     @Override
     public List<Measure> findAll() {

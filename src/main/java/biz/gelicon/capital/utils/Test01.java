@@ -4,20 +4,27 @@ import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.repository.MeasureRepository;
+import biz.gelicon.capital.repository.MeasureunitRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
+import biz.gelicon.capital.repository.UnitmeasurerecalcRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Repository
 public class Test01 {
 
     @Autowired
     MeasureRepository measureRepository;
+    @Autowired
+    MeasureunitRepository measureunitRepository;
+    @Autowired
+    UnitmeasurerecalcRepository unitmeasurerecalcRepository;
+    @Autowired
+    UnitmeasureRepository unitmeasureRepository;
+
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -25,6 +32,13 @@ public class Test01 {
     TransactionStatus transactionStatus;
 
     public void test1() {
+        System.out.println(measureRepository.count());
+        // Каждая операция - в своей транзакции, так как TableRepository аннотирован как
+        // @Transactional(propagation = Propagation.REQUIRED)
+        measureunitRepository.deleteAll();
+        measureRepository.deleteAll();
+        unitmeasurerecalcRepository.deleteAll();
+        unitmeasureRepository.deleteAll();
         // Тесты
         defaultTransactionDefinition = new DefaultTransactionDefinition();
         transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);

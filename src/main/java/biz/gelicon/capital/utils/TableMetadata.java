@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TableMetadata {
@@ -77,6 +78,22 @@ public class TableMetadata {
             columnMetadataList.add(columnMetadata);
             //System.out.println(field.getType());
         }
+    }
+
+    // Возвращает описание таблицы из коллекции.
+    // Если описания в коллекции отсутствует - предварительно добавляет его туда
+    public static TableMetadata getTableMetadataFromMap(
+            String tableName,
+            Map<String, TableMetadata> tableMetadataMap,
+            Class cls
+    ){
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        if (tableMetadata == null) { // В коллекции не было
+            tableMetadata = new TableMetadata(); // Создаем
+            tableMetadata.loadTableMetadata(cls); // Получим все метаданные
+            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
+        }
+        return tableMetadata;
     }
 
 }
