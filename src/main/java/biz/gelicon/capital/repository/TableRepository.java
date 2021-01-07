@@ -43,7 +43,34 @@ public interface TableRepository<T> {
     }
 
     default int update(T t) { // Изменение записи
-        return 0;
+        String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        if (tableMetadata == null) { // В коллекции не было
+            tableMetadata = new TableMetadata(); // Создаем
+            tableMetadata.loadTableMetadata(t.getClass()); // Получим все метаданные
+            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
+        }
+        String sqlText = "UPDATE " + tableMetadata.getTableName() + " SET ";
+        String comma = "";
+        String idName = "";
+        for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
+            if (!tableMetadata.getColumnMetadataList().get(i).getIdFlag()) {
+                sqlText = sqlText + comma + tableMetadata.getColumnMetadataList().get(i)
+                        .getColumnName();
+                sqlText = sqlText + " = :" + tableMetadata.getColumnMetadataList().get(i).getField()
+                        .getName();
+                if (comma.equals("")) { comma = ", "; }
+            } else {
+                idName = tableMetadata.getColumnMetadataList().get(i).getField().getName();
+            }
+        }
+        sqlText = sqlText + " WHERE " + tableMetadata.getIdFieldName() + " = :" + idName;
+        System.out.println(sqlText);
+        int result = -1;
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils.getNamedParameterJdbcTemplate();
+        result = namedParameterJdbcTemplate.update(sqlText,
+                new BeanPropertySqlParameterSource(t));
+        return result;
     }
 
     // Удаление записи по умолчанию

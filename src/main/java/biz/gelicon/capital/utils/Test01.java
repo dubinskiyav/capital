@@ -21,38 +21,35 @@ public class Test01 {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
-
-    private TransactionTemplate transactionTemplate;
-
+    DefaultTransactionDefinition defaultTransactionDefinition;
+    TransactionStatus transactionStatus;
 
     public void test1() {
         // Тесты
-        transactionTemplate = new TransactionTemplate(transactionManager);
-        Integer id = transactionTemplate.execute(status -> {
+        defaultTransactionDefinition = new DefaultTransactionDefinition();
+        transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);
+        try {
             measureRepository.delete(1);
             Measure measure = new Measure(1,"Длина");
             measureRepository.insert(measure);
-            return measure.getId();
-        });
-
-        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
-        TransactionStatus status = transactionManager.getTransaction(definition);
-        try {
-            Measure measure = new Measure(1,"Ширина");
+            measureRepository.delete(measure);
+            measure = new Measure(1,"Ширина");
             measureRepository.insert(measure);
-            transactionManager.commit(status);
+            transactionManager.commit(transactionStatus);
         } catch (Exception e) {
-            transactionManager.rollback(status);
+            transactionManager.rollback(transactionStatus);
         }
 
-        status = transactionManager.getTransaction(definition);
+        transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);
         try {
             measureRepository.delete(1);
             Measure measure = new Measure(1,"Высота");
             measureRepository.insert(measure);
-            transactionManager.commit(status);
+            measure.setName("Глубина");
+            measureRepository.update(measure);
+            transactionManager.commit(transactionStatus);
         } catch (Exception e) {
-            transactionManager.rollback(status);
+            transactionManager.rollback(transactionStatus);
         }
 
         UnitmeasureRepository unitmeasureRepository =

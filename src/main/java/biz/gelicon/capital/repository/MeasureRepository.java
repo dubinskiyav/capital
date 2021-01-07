@@ -38,41 +38,6 @@ public class MeasureRepository implements TableRepository<Measure>{
         return Objects.requireNonNullElse(i, 0);
     }
 
-    /*
-    @Override
-    public int insert(Measure measure) {
-        if (logFlag) {
-            logger.info("Saving...{}", measure.toString());
-        }
-        // Установим следующее значение id
-        measure.setId(DatebaseUtils.getSequenceNextValue("measure_id_gen",jdbcTemplate));
-        Integer result = -1;
-        result = jdbcTemplate.update(""
-                        + " INSERT INTO measure ("
-                        + "   id, "
-                        + "   name "
-                        + " ) VALUES(?,?)",
-                measure.getId(),
-                measure.getName()
-        );
-        return result;
-    }
-
-    @Override
-    public int update(Measure measure) {
-        //Названия параметров должны совпадать с полями
-        // и обязательно должны быть геттеры на все поля
-        int result = -1;
-        result = namedParameterJdbcTemplate.update(""
-                        + " UPDATE measure SET "
-                        + "   name = :name "
-                        + " WHERE id = :id ",
-                new BeanPropertySqlParameterSource(measure));
-        return result;
-    }
-
-     */
-
     @Override
     public List<Measure> findAll() {
         return jdbcTemplate.query(""
