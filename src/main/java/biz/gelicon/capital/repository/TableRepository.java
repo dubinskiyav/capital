@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,10 +162,7 @@ public interface TableRepository<T> {
     }
 
     default List<T> findAll() { // Все записи
-        return null;
-    }
-
-    default T findById(Integer id) { // Запись по id
+        // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
         // Получим описание таблицы
@@ -181,29 +179,87 @@ public interface TableRepository<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //System.out.println(t.toString());
         // Сформируем текст запроса
-        String sqlText = "SELECT ";
-        String comma = "";
-        for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-            sqlText = sqlText
-                    + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
-            if (comma.equals("")) { comma = ", "; }
-        }
-        sqlText = sqlText + " FROM " + tableName
-                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
-        sqlText = " SELECT * FROM " + tableName
-                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+        String sqlText = " SELECT * FROM " + tableName;
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         BeanPropertyRowMapper beanPropertyRowMapper = new BeanPropertyRowMapper<>(t.getClass());
+        List<T> tList = jdbcTemplate.query(sqlText, beanPropertyRowMapper);
+        return tList;
+    }
+
+    default T findById(Integer id) { // Запись по id
+        // Получим класс дженерика класса
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                cls
+        );
+        // Создадим объект - модель
+        Object t = null;
         try {
-            t = jdbcTemplate.queryForObject(sqlText,
-                    beanPropertyRowMapper);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
+            Constructor<?> ctor = cls.getConstructor();
+            t = ctor.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return (T) t;
-        // https://www.codeflow.site/ru/article/spring__spring-jdbctemplate-querying-examples
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        if (true) {
+            // Сформируем текст запроса
+            String sqlText = "SELECT ";
+            String comma = "";
+            for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
+                sqlText = sqlText
+                        + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
+                if (comma.equals("")) { comma = ", "; }
+            }
+            sqlText = sqlText + " FROM " + tableName
+                    + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+            // Попробуем получить все поля вручную
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(sqlText);
+            if (rows.size() == 0) {
+                return null;
+            }
+            if (rows.size() != 1) {
+                throw new RuntimeException("Запрос возвращает более одной записи");
+            }
+            Map<String, Object> row = rows.get(0);
+            // Пробежимся по полям результата запроса
+            for (Map.Entry<String, Object> entry : row.entrySet()) {
+                // Миллион раз делает за 1038 миллисекунд
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                // Найдем сеттер для поля (по имени в базе данных)
+                Method methodSet = tableMetadata.getColumnMetadataList().stream()
+                        .filter(c -> c.getColumnName().equals(key))
+                        .findAny()
+                        .map(c -> c.getMethodSet())
+                        .orElse(null);
+                if (methodSet != null) { // Сеттер есть
+                    try {
+                        methodSet.invoke(t, value); // Вызовем для t с параметром из value
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return (T) t;
+        } else {
+            String sqlText = " SELECT * FROM " + tableName
+                    + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+            BeanPropertyRowMapper beanPropertyRowMapper = new BeanPropertyRowMapper<>(t.getClass());
+            try {
+                t = jdbcTemplate.queryForObject(sqlText,
+                        beanPropertyRowMapper);
+            } catch (EmptyResultDataAccessException e) {
+                return null;
+            }
+            return (T) t;
+        }
     }
 }
 

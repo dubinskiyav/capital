@@ -14,6 +14,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.List;
+
 @Repository
 public class Test01 {
 
@@ -33,8 +35,10 @@ public class Test01 {
     TransactionStatus transactionStatus;
 
     public void test1() {
-        System.out.println(measureunitRepository.findById(2));
-        System.out.println(measureRepository.count());
+        System.out.println("Tests started");
+        Measureunit measureunit = measureunitRepository.findById(2);
+        Integer measureCount = measureRepository.count();
+        List<Measureunit> measureunitList = measureunitRepository.findAll();
         // Каждая операция - в своей транзакции, так как TableRepository аннотирован как
         // @Transactional(propagation = Propagation.REQUIRED)
         measureunitRepository.deleteAll();
@@ -77,7 +81,7 @@ public class Test01 {
         unitmeasure.setName("Метр");
         unitmeasure.setShortName("м.");
         unitmeasureRepository.insert(unitmeasure);
-        Measureunit measureunit = new Measureunit();
+        measureunit = new Measureunit();
         measureunit.setId(1);
         measureunit.setMeasureId(1);
         measureunit.setUnitmeasureId(1);
@@ -85,6 +89,8 @@ public class Test01 {
         measureunitRepository.insert(measureunit);
         measureunit = new Measureunit(2,2,1,0);
         measureunitRepository.insert(measureunit);
+
+        System.out.println("Tests ended");
 
     }
 
