@@ -188,6 +188,7 @@ public interface TableRepository<T> {
     }
 
     default T findById(Integer id) { // Запись по id
+        // https://www.codeflow.site/ru/article/spring__spring-jdbctemplate-querying-examples
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
