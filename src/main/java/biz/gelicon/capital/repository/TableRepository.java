@@ -1,6 +1,7 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.utils.JpaUtils;
+import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
 import biz.gelicon.capital.utils.TableRowMapper;
 import org.slf4j.Logger;
@@ -173,6 +174,7 @@ public interface TableRepository<T> {
                 tableMetadataMap,
                 cls
         );
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         // Сделаем маппер
         TableRowMapper tableRowMapper = new TableRowMapper(tableName);
         // Сформируем текст запроса
@@ -184,9 +186,12 @@ public interface TableRepository<T> {
             if (comma.equals("")) { comma = ", "; }
         }
         sqlText = sqlText + " FROM " + tableName;
-        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         List<T> tList = jdbcTemplate.query(sqlText,tableRowMapper);
-
+        // Новый маппер
+        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper();
+        // Установим у него класс модели
+        resultSetRowMapper.setModelCls(cls);
+        tList = jdbcTemplate.query(sqlText,resultSetRowMapper);
         return tList;
     }
 

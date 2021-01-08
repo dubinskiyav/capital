@@ -19,7 +19,6 @@ public class TableMetadata {
     Field idField; // Первичный ключ
     String idFieldName; // Имя поля первичного ключа
     List<ColumnMetadata> columnMetadataList; // Коллекция полей таблицы
-    ResultSetMetaData resultSetMetaData; // Метаданные результирующего сета
 
     public String getTableName() {
         return this.tableName;
@@ -51,14 +50,6 @@ public class TableMetadata {
 
     public void setModelCls(Class modelCls) {
         this.modelCls = modelCls;
-    }
-
-    public ResultSetMetaData getResultSetMetaData() {
-        return resultSetMetaData;
-    }
-
-    public void setResultSetMetaData(ResultSetMetaData resultSetMetaData) {
-        this.resultSetMetaData = resultSetMetaData;
     }
 
     public void loadTableMetadata(Object o) {
