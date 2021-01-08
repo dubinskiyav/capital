@@ -2,6 +2,7 @@ package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
+import biz.gelicon.capital.utils.TableRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -172,20 +173,20 @@ public interface TableRepository<T> {
                 tableMetadataMap,
                 cls
         );
-        // Создадим объект - модель
-        Object t = null;
-        try {
-            Constructor<?> ctor = cls.getConstructor();
-            t = ctor.newInstance();
-        } catch (Exception e) {
-            logger.error("cls.getConstructor filed", e);
-            throw new RuntimeException("cls.getConstructor filed", e);
-        }
+        // Сделаем маппер
+        TableRowMapper tableRowMapper = new TableRowMapper(tableName);
         // Сформируем текст запроса
-        String sqlText = " SELECT * FROM " + tableName;
+        String sqlText = "SELECT ";
+        String comma = "";
+        for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
+            sqlText = sqlText
+                    + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
+            if (comma.equals("")) { comma = ", "; }
+        }
+        sqlText = sqlText + " FROM " + tableName;
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-        BeanPropertyRowMapper beanPropertyRowMapper = new BeanPropertyRowMapper<>(t.getClass());
-        List<T> tList = jdbcTemplate.query(sqlText, beanPropertyRowMapper);
+        List<T> tList = jdbcTemplate.query(sqlText,tableRowMapper);
+
         return tList;
     }
 
@@ -206,8 +207,9 @@ public interface TableRepository<T> {
             Constructor<?> ctor = cls.getConstructor();
             t = ctor.newInstance();
         } catch (Exception e) {
-            logger.error("cls.getConstructor filed", e);
-            throw new RuntimeException("cls.getConstructor filed", e);
+            String errText = "cls.getConstructor filed";
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
         }
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         if (true) {

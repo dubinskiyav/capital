@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,10 +15,11 @@ import java.util.stream.Collectors;
 public class TableMetadata {
 
     String tableName; // Имя таблицы в базе данных
+    Class modelCls;
     Field idField; // Первичный ключ
     String idFieldName; // Имя поля первичного ключа
     List<ColumnMetadata> columnMetadataList; // Коллекция полей таблицы
-
+    ResultSetMetaData resultSetMetaData; // Метаданные результирующего сета
 
     public String getTableName() {
         return this.tableName;
@@ -43,6 +45,22 @@ public class TableMetadata {
         this.idField = idField;
     }
 
+    public Class getModelCls() {
+        return modelCls;
+    }
+
+    public void setModelCls(Class modelCls) {
+        this.modelCls = modelCls;
+    }
+
+    public ResultSetMetaData getResultSetMetaData() {
+        return resultSetMetaData;
+    }
+
+    public void setResultSetMetaData(ResultSetMetaData resultSetMetaData) {
+        this.resultSetMetaData = resultSetMetaData;
+    }
+
     public void loadTableMetadata(Object o) {
         // Получим класс дженерика интерфейса аннотированного как @Table
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(o);
@@ -56,6 +74,8 @@ public class TableMetadata {
     public void loadTableMetadata(Class cls) {
         // Получим и запишем имя таблицы
         setTableName(JpaUtils.getTableName(cls));
+        // Запишем класс модели
+        setModelCls(cls);
         // Найдем поле - первичный ключ и запишем
         setIdField(JpaUtils.getIdField(cls));
         if (getIdField() == null) {
