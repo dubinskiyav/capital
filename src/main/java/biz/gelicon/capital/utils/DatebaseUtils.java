@@ -1,6 +1,9 @@
 package biz.gelicon.capital.utils;
 
 
+import biz.gelicon.capital.repository.TableRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 // Общие методы работы с базой данных
 public class DatebaseUtils {
 
+    static Logger logger = LoggerFactory.getLogger(TableRepository.class);
     public static String dbType; // Тип текущей БД
 
     // Формирует текст ошибки в читаемом виде
@@ -94,14 +98,16 @@ public class DatebaseUtils {
         Connection connection = null;
         try {
             connection = jdbcTemplate.getDataSource().getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("jdbcTemplate.getDataSource().getConnection() filed", e);
+            throw new RuntimeException("jdbcTemplate.getDataSource().getConnection() filed", e);
         }
         String dbDriverName = null;
         try {
             dbDriverName = connection.getMetaData().getDriverName().toLowerCase();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("connection.getMetaData().getDriverName().toLowerCase() filed", e);
+            throw new RuntimeException("connection.getMetaData().getDriverName().toLowerCase() filed", e);
         }
         if (dbDriverName != null && dbDriverName.contains("postgresql")) {
             dbType = "postgresql";
@@ -109,18 +115,20 @@ public class DatebaseUtils {
     }
 
     // Возвращает connection из jdbcTemplate
-    public static Connection getJdbcTemplateConnection(JdbcTemplate jdbcTemplate){
+    public static Connection getJdbcTemplateConnection(JdbcTemplate jdbcTemplate) {
         if (jdbcTemplate == null || jdbcTemplate.getDataSource() == null) {
             throw new RuntimeException("Нет коннекта");
         }
         Connection connection = null;
         try {
             connection = jdbcTemplate.getDataSource().getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("jdbcTemplate.getDataSource().getConnection() filed", e);
+            throw new RuntimeException("jdbcTemplate.getDataSource().getConnection() filed", e);
         }
         if (connection == null) {
-            throw new RuntimeException("Нет коннекта");
+            logger.error("connection is null");
+            throw new RuntimeException("connection is null");
         }
         return connection;
     }
@@ -175,7 +183,9 @@ public class DatebaseUtils {
             }
             ps.close();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            String errText = String.format("Retriving foreign key for table %s filed", tableName);
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
         }
         return list;
     }
@@ -230,7 +240,9 @@ public class DatebaseUtils {
             }
             ps.close();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            String errText = String.format("Retriving foreign key for master table %s filed", masterTableName);
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
         }
         return list;
     }

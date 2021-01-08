@@ -1,8 +1,9 @@
 package biz.gelicon.capital.repository;
 
-import biz.gelicon.capital.model.Measureunit;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.TableMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +22,9 @@ import java.util.Objects;
 
 @Transactional(propagation = Propagation.REQUIRED)
 public interface TableRepository<T> {
+
+    Logger logger = LoggerFactory.getLogger(TableRepository.class);
+    Boolean logFlag = true;
 
     Map<String, TableMetadata> tableMetadataMap = new HashMap<>();// Коллекция из метаданных для таблиц
 
@@ -177,7 +178,8 @@ public interface TableRepository<T> {
             Constructor<?> ctor = cls.getConstructor();
             t = ctor.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("cls.getConstructor filed", e);
+            throw new RuntimeException("cls.getConstructor filed", e);
         }
         // Сформируем текст запроса
         String sqlText = " SELECT * FROM " + tableName;
@@ -204,7 +206,8 @@ public interface TableRepository<T> {
             Constructor<?> ctor = cls.getConstructor();
             t = ctor.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("cls.getConstructor filed", e);
+            throw new RuntimeException("cls.getConstructor filed", e);
         }
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         if (true) {
@@ -242,9 +245,13 @@ public interface TableRepository<T> {
                     try {
                         methodSet.invoke(t, value); // Вызовем для t с параметром из value
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        String errText = String.format("Invoke method %s failed - access error", methodSet.toString());
+                        logger.error(errText, e);
+                        throw new RuntimeException(errText, e);
                     } catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                        String errText = String.format("Invoke method %s failed - target error", methodSet.toString());
+                        logger.error(errText, e);
+                        throw new RuntimeException(errText, e);
                     }
                 }
             }

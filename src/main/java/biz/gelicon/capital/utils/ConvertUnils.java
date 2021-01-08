@@ -29,8 +29,9 @@ public class ConvertUnils {
         try {
             return dateFormat.parse(s);
         } catch (ParseException e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            String errText = String.format("Converting %s to date filed", s);
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
         }
     }
 

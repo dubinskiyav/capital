@@ -6,8 +6,11 @@ import biz.gelicon.capital.model.Measureunit;
 import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.repository.MeasureRepository;
 import biz.gelicon.capital.repository.MeasureunitRepository;
+import biz.gelicon.capital.repository.TableRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
 import biz.gelicon.capital.repository.UnitmeasurerecalcRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Repository
 public class Test01 {
+
+    static Logger logger = LoggerFactory.getLogger(Test01.class);
 
     @Autowired
     MeasureRepository measureRepository;
@@ -57,6 +62,8 @@ public class Test01 {
             measureRepository.insert(measure);
             transactionManager.commit(transactionStatus);
         } catch (Exception e) {
+            String errText = String.format("Error. Transaction will be rolled back");
+            logger.error(errText, e);
             transactionManager.rollback(transactionStatus);
         }
 
@@ -71,6 +78,9 @@ public class Test01 {
             measureRepository.insert(measure);
             transactionManager.commit(transactionStatus);
         } catch (Exception e) {
+            String errText = String.format("Error. Transaction will be rolled back");
+            logger.error(errText, e);
+            transactionManager.rollback(transactionStatus);
             transactionManager.rollback(transactionStatus);
         }
 

@@ -1,6 +1,9 @@
 package biz.gelicon.capital.utils;
 
 import biz.gelicon.capital.CapitalApplication;
+import biz.gelicon.capital.repository.TableRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -14,6 +17,8 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 
 public class JpaUtils {
+
+    static Logger logger = LoggerFactory.getLogger(JpaUtils.class);
 
     // Возвращает имя таблицы у объекта аннотированного как @Table
     public static String getTableName(Object o) {
@@ -60,7 +65,9 @@ public class JpaUtils {
         try {
             return (Integer) f.get(o);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            String errText = String.format("No access for %s field of % object", f.toString(), o.toString());
+            logger.error(errText, e);
+            //throw new RuntimeException(errText, e);
         }
         return null;
     }
