@@ -104,6 +104,10 @@ public class Test01 {
         unitmeasure.setName("Литр");
         unitmeasure.setShortName("л");
         unitmeasureRepository.set(unitmeasure);
+        unitmeasure.setId(null);
+        unitmeasure.setName("Тонна");
+        unitmeasure.setShortName("тн");
+        unitmeasureRepository.insertOrUpdate(unitmeasure);
 
         measureunit = new Measureunit();
         measureunit.setId(1);

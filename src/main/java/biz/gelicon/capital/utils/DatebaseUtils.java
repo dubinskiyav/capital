@@ -23,6 +23,7 @@ public class DatebaseUtils {
 
     static Logger logger = LoggerFactory.getLogger(TableRepository.class);
     public static String dbType; // Тип текущей БД
+    public static Boolean trySequence = true;
 
     // Формирует текст ошибки в читаемом виде
     public static String makeErrorMessage(Exception e) {
@@ -47,11 +48,27 @@ public class DatebaseUtils {
             String sequenceName,
             JdbcTemplate jdbcTemplate
     ) {
-        if (sequenceName == null || jdbcTemplate == null || !isPostgreSQL(jdbcTemplate)) {
-            // integer	4 байта	типичный выбор для целых чисел	-2147483648 .. +2147483647
-            return ThreadLocalRandom.current().nextInt(1000000000) + 1000000000;
+        if (trySequence) { // Если хотим через последовательности
+            if (sequenceName != null && jdbcTemplate != null) { // Есть откуда и есть через что
+                if (isPostgreSQL(jdbcTemplate)) { // Сделано пока только доя PostgreSQL
+                    // Проверим, есть ли такая последовательность
+                    if (jdbcTemplate.queryForObject(""
+                                    + " SELECT COUNT(*) "
+                                    + " FROM   information_schema.sequences\n"
+                                    + " WHERE  sequence_name = '" + sequenceName + "'",
+                            Integer.class) == 1) {
+                        // Есть
+                        return jdbcTemplate.queryForObject(
+                                "SELECT nextval('" + sequenceName + "')",
+                                Integer.class);
+                    }
+                }
+            }
         }
-        return jdbcTemplate.queryForObject("SELECT nextval('" + sequenceName + "')", Integer.class);
+        // Иначе и в далльшейшем полагаемся на случай
+        trySequence = false;
+        // integer	                              -2147483648...+2147483647
+        return ThreadLocalRandom.current().nextInt(1000000000) + 1000000000;
     }
 
     // Устанавливает тип базы данных
@@ -122,7 +139,8 @@ public class DatebaseUtils {
             dbDriverName = connection.getMetaData().getDriverName().toLowerCase();
         } catch (SQLException e) {
             logger.error("connection.getMetaData().getDriverName().toLowerCase() filed", e);
-            throw new RuntimeException("connection.getMetaData().getDriverName().toLowerCase() filed", e);
+            throw new RuntimeException(
+                    "connection.getMetaData().getDriverName().toLowerCase() filed", e);
         }
         if (dbDriverName != null && dbDriverName.contains("postgresql")) {
             dbType = "postgresql";
@@ -255,7 +273,8 @@ public class DatebaseUtils {
             }
             ps.close();
         } catch (Exception e) {
-            String errText = String.format("Retriving foreign key for master table %s filed", masterTableName);
+            String errText = String
+                    .format("Retriving foreign key for master table %s filed", masterTableName);
             logger.error(errText, e);
             throw new RuntimeException(errText, e);
         }
