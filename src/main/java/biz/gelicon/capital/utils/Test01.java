@@ -91,6 +91,20 @@ public class Test01 {
         unitmeasure.setName("Метр");
         unitmeasure.setShortName("м.");
         unitmeasureRepository.insert(unitmeasure);
+        unitmeasure.setId(null);
+        unitmeasure.setName("Хуиля");
+        unitmeasure.setShortName("миля");
+        unitmeasureRepository.insertOrUpdate(unitmeasure);
+        unitmeasure.setName("Миля");
+        unitmeasure.setShortName("миля");
+        unitmeasureRepository.insertOrUpdate(unitmeasure);
+        unitmeasure.setShortName("мил.");
+        unitmeasureRepository.set(unitmeasure);
+        unitmeasure.setId(2);
+        unitmeasure.setName("Литр");
+        unitmeasure.setShortName("л");
+        unitmeasureRepository.set(unitmeasure);
+
         measureunit = new Measureunit();
         measureunit.setId(1);
         measureunit.setMeasureId(1);

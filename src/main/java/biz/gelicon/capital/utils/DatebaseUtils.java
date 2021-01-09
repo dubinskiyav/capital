@@ -47,7 +47,7 @@ public class DatebaseUtils {
             String sequenceName,
             JdbcTemplate jdbcTemplate
     ) {
-        if (sequenceName == null || jdbcTemplate == null || !isPostgreSQL()) {
+        if (sequenceName == null || jdbcTemplate == null || !isPostgreSQL(jdbcTemplate)) {
             // integer	4 байта	типичный выбор для целых чисел	-2147483648 .. +2147483647
             return ThreadLocalRandom.current().nextInt(1000000000) + 1000000000;
         }
@@ -79,6 +79,16 @@ public class DatebaseUtils {
         return dbType;
     }
 
+    // Возвращает наименование драйвера для JdbcTemplate
+    public static String getDbType(JdbcTemplate jdbcTemplate) {
+        try {
+            return jdbcTemplate.getDataSource().getConnection().getMetaData().getDriverName();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     // Тип базы данных по умолчанию - postgresql
     public static void setDbTypeDefault() {
         dbType = "postgresql";
@@ -87,6 +97,11 @@ public class DatebaseUtils {
     // Проверяет, не PostgreSQL ли использутеся
     public static Boolean isPostgreSQL() {
         return getDbType().contains("postgresql");
+    }
+
+    // Проверяет, не PostgreSQL ли использутеся для JdbcTemplate
+    public static Boolean isPostgreSQL(JdbcTemplate jdbcTemplate) {
+        return getDbType(jdbcTemplate).toLowerCase().contains("postgresql");
     }
 
     // Устанавливает тип СУБД из jdbcTemplate

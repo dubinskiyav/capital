@@ -1,20 +1,18 @@
 package biz.gelicon.capital.repository;
 
+import biz.gelicon.capital.utils.ColumnMetadata;
+import biz.gelicon.capital.utils.DatebaseUtils;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
-import biz.gelicon.capital.utils.TableRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -50,6 +48,8 @@ public interface TableRepository<T> {
                 tableMetadataMap,
                 t.getClass()
         );
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate =
+                JpaUtils.getNamedParameterJdbcTemplate();
         String sqlTextTop = "INSERT INTO " + tableMetadata.getTableName() + " (";
         String sqlTextBotom = ") VALUES (";
         String comma = "";
@@ -61,10 +61,7 @@ public interface TableRepository<T> {
             if (comma.equals("")) { comma = ", "; }
         }
         String sqlText = sqlTextTop + sqlTextBotom + ")";
-        //System.out.println(sqlText);
         int result = -1;
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils
-                .getNamedParameterJdbcTemplate();
         result = namedParameterJdbcTemplate.update(sqlText,
                 new BeanPropertySqlParameterSource(t));
         return result;
@@ -146,18 +143,68 @@ public interface TableRepository<T> {
         return JpaUtils.getJdbcTemplate().update(sqlText);
     }
 
-    default int insertOrUpdate(T t) { // Добавление или изменение записи в зависимости от id
+    // Добавление или изменение записи в зависимости от id
+    default int insertOrUpdate(T t) {
         if (t == null) {return -1;}
-        if (1 == 2) { // todo Сделать
+        String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                t.getClass()
+        );
+        // Получим значение первичного ключа
+        Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
+        if (id == null) {
+            // Сгенерируем значение
+            JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+            id = DatebaseUtils.getSequenceNextValue(
+                    tableName + "_id_gen",
+                    jdbcTemplate
+            );
+            // Установим у t
+            // Получим имя pk
+            String key = tableMetadata.getIdFieldName();
+            // Найдем сеттер для поля (по имени в базе данных)
+            Method methodSet = tableMetadata.getColumnMetadataList().stream()
+                    .filter(c -> c.getColumnName().equals(key))
+                    .findAny()
+                    .map(ColumnMetadata::getMethodSet)
+                    .orElse(null);
+            if (methodSet != null) { // Сеттер есть
+                try {
+                    methodSet.invoke(t, id); // Вызовем для t с параметром из value
+                } catch (IllegalAccessException e) {
+                    String errText = String
+                            .format("Invoke method %s failed - access error", methodSet.toString());
+                    logger.error(errText, e);
+                    throw new RuntimeException(errText, e);
+                } catch (InvocationTargetException e) {
+                    String errText = String
+                            .format("Invoke method %s failed - target error", methodSet.toString());
+                    logger.error(errText, e);
+                    throw new RuntimeException(errText, e);
+                }
+            }
             return insert(t);
         } else {
             return update(t);
         }
     }
 
-    default int set(T t) { // Добавление или изменение записи в зависимости от наличия в базе
+    // Добавление или изменение записи в зависимости от наличия в базе
+    default int set(T t) {
         if (t == null) {return -1;}
-        if (findById(12345) == null) { // todo Сделать
+        String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
+        // Получим описание таблицы
+        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
+                tableName,
+                tableMetadataMap,
+                t.getClass()
+        );
+        // Получим значение первичного ключа
+        Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
+        if (id == null || findById(id) == null) {
             return insert(t);
         } else {
             return update(t);
@@ -175,8 +222,6 @@ public interface TableRepository<T> {
                 cls
         );
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-        // Сделаем маппер
-        TableRowMapper tableRowMapper = new TableRowMapper(tableName);
         // Сформируем текст запроса
         String sqlText = "SELECT ";
         String comma = "";
@@ -186,12 +231,9 @@ public interface TableRepository<T> {
             if (comma.equals("")) { comma = ", "; }
         }
         sqlText = sqlText + " FROM " + tableName;
-        List<T> tList = jdbcTemplate.query(sqlText,tableRowMapper);
-        // Новый маппер
-        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper();
-        // Установим у него класс модели
-        resultSetRowMapper.setModelCls(cls);
-        tList = jdbcTemplate.query(sqlText,resultSetRowMapper);
+        // Маппер с классом для модели
+        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
+        List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
         return tList;
     }
 
@@ -206,75 +248,21 @@ public interface TableRepository<T> {
                 tableMetadataMap,
                 cls
         );
-        // Создадим объект - модель
-        Object t = null;
-        try {
-            Constructor<?> ctor = cls.getConstructor();
-            t = ctor.newInstance();
-        } catch (Exception e) {
-            String errText = "cls.getConstructor filed";
-            logger.error(errText, e);
-            throw new RuntimeException(errText, e);
-        }
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-        if (true) {
-            // Сформируем текст запроса
-            String sqlText = "SELECT ";
-            String comma = "";
-            for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-                sqlText = sqlText
-                        + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
-                if (comma.equals("")) { comma = ", "; }
-            }
-            sqlText = sqlText + " FROM " + tableName
-                    + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
-            // Попробуем получить все поля вручную
-            List<Map<String, Object>> rows = jdbcTemplate.queryForList(sqlText);
-            if (rows.size() == 0) {
-                return null;
-            }
-            if (rows.size() != 1) {
-                throw new RuntimeException("Запрос возвращает более одной записи");
-            }
-            Map<String, Object> row = rows.get(0);
-            // Пробежимся по полям результата запроса
-            for (Map.Entry<String, Object> entry : row.entrySet()) {
-                // Миллион раз делает за 1038 миллисекунд
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                // Найдем сеттер для поля (по имени в базе данных)
-                Method methodSet = tableMetadata.getColumnMetadataList().stream()
-                        .filter(c -> c.getColumnName().equals(key))
-                        .findAny()
-                        .map(c -> c.getMethodSet())
-                        .orElse(null);
-                if (methodSet != null) { // Сеттер есть
-                    try {
-                        methodSet.invoke(t, value); // Вызовем для t с параметром из value
-                    } catch (IllegalAccessException e) {
-                        String errText = String.format("Invoke method %s failed - access error", methodSet.toString());
-                        logger.error(errText, e);
-                        throw new RuntimeException(errText, e);
-                    } catch (InvocationTargetException e) {
-                        String errText = String.format("Invoke method %s failed - target error", methodSet.toString());
-                        logger.error(errText, e);
-                        throw new RuntimeException(errText, e);
-                    }
-                }
-            }
-            return (T) t;
-        } else {
-            String sqlText = " SELECT * FROM " + tableName
-                    + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
-            BeanPropertyRowMapper beanPropertyRowMapper = new BeanPropertyRowMapper<>(t.getClass());
-            try {
-                t = jdbcTemplate.queryForObject(sqlText,
-                        beanPropertyRowMapper);
-            } catch (EmptyResultDataAccessException e) {
-                return null;
-            }
-            return (T) t;
+        String sqlText = " SELECT * FROM " + tableName
+                + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
+        // Маппер с классом для модели
+        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
+        List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
+        if (tList.size() == 0) {
+            return null;
         }
+        if (tList.size() > 1) {
+            String errText = String.format("Too many rows for %s", sqlText);
+            logger.error(errText);
+            throw new RuntimeException(errText);
+        }
+        return (T) tList.get(0);
     }
 }
 

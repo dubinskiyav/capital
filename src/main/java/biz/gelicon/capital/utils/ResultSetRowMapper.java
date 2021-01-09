@@ -11,8 +11,10 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ResultSetRowMapper<T> implements RowMapper {
+public class ResultSetRowMapper implements RowMapper {
 
     static Logger logger = LoggerFactory.getLogger(JpaUtils.class);
 
@@ -22,18 +24,35 @@ public class ResultSetRowMapper<T> implements RowMapper {
 
     private Object currModel;
 
+    private TableMetadata tableMetadata;
+    private Map<String,Object> stringObjectMap; // Вместо модели, если нет класса
+
     private ResultSetMetaData resultSetMetaData; // Метаданные результирующего сета
+
+    public ResultSetRowMapper(Class modelCls){
+        this.modelCls = modelCls;
+    }
 
     // Смена класса приводит к пересчету всего
     public void setModelCls(Class modelCls) {
+        if (modelCls == null) {
+            // Все обнулим
+            this.modelCls = null;
+            this.tableName = null;
+            this.resultSetMetaData = null;
+            this.currModel = null;
+            this.tableMetadata = null;
+            return;
+        }
         if (this.modelCls != null && this.modelCls == modelCls) {
             // Класс не сменился - ничего не делаем
             return;
         }
         this.modelCls = modelCls;
-        this.tableName = JpaUtils.getTableName(modelCls); // Получим таблицу из класса
+        this.tableName = JpaUtils.getTableName(modelCls); // Получим имя таблицы из класса
         this.resultSetMetaData = null; // Обнулим метаданные рузультирующего сета
         this.currModel = null; // Обнулим текущую моедль данных
+        this.tableMetadata = null;
     }
 
     public Class getModelCls() {
@@ -69,53 +88,55 @@ public class ResultSetRowMapper<T> implements RowMapper {
     public Object mapRow(ResultSet resultSet, int i) throws SQLException {
         // Проверим, если ли уже ResultSetMetaData
         if (resultSetMetaData == null) {
-            // считаем
+            // считаем из результирующего сета
             resultSetMetaData = resultSet.getMetaData();
         }
         int columnCount = resultSetMetaData.getColumnCount();
-        // Получим описание таблицы из коллекции
-        /*
-        TableMetadata tableMetadata = TableRepository.tableMetadataMap.get(tableName);
-        // Оно уже должно там быть, иначе валимся
-        if (tableMetadata == null) {
-            String errText = String
-                    .format("There isn't tableMetadata for table %s", getTableName());
-            logger.error(errText);
-            throw new RuntimeException(errText);
+        if (modelCls != null) { // Модель установлена
+            if (tableMetadata == null) { // Еще не считывали
+                // Получим описание таблицы
+                tableMetadata = TableMetadata.getTableMetadataFromMap(
+                        tableName,
+                        TableRepository.tableMetadataMap,
+                        modelCls
+                );
+            }
+            currModel = newModel();
+        } else {
+            stringObjectMap = new HashMap<>();
         }
-         */
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                TableRepository.tableMetadataMap,
-                modelCls
-        );
-        currModel = newModel();
         // Пробежимся по полям результата запроса
         for (int columnNumber = 1; columnNumber <= columnCount; columnNumber++) {
             String key = resultSetMetaData.getColumnName(columnNumber);
             Object value = resultSet.getObject(columnNumber);
-            //logger.info("key=" + key + " value=" + value.toString());
-            // Найдем сеттер для поля (по имени в базе данных)
-            Method methodSet = tableMetadata.getColumnMetadataList().stream()
-                    .filter(c -> c.getColumnName().equals(key))
-                    .findAny()
-                    .map(ColumnMetadata::getMethodSet)
-                    .orElse(null);
-            if (methodSet != null) { // Сеттер есть
-                try {
-                    methodSet.invoke(currModel, value); // Вызовем для t с параметром из value
-                } catch (IllegalAccessException e) {
-                    String errText = String.format("Invoke method %s failed - access error", methodSet.toString());
-                    logger.error(errText, e);
-                    throw new RuntimeException(errText, e);
-                } catch (InvocationTargetException e) {
-                    String errText = String.format("Invoke method %s failed - target error", methodSet.toString());
-                    logger.error(errText, e);
-                    throw new RuntimeException(errText, e);
+            if (tableMetadata != null) { // или modelCls != null - делаем для модели
+                // Найдем сеттер для поля (по имени в базе данных)
+                Method methodSet = tableMetadata.getColumnMetadataList().stream()
+                        .filter(c -> c.getColumnName().equals(key))
+                        .findAny()
+                        .map(ColumnMetadata::getMethodSet)
+                        .orElse(null);
+                if (methodSet != null) { // Сеттер есть
+                    try {
+                        methodSet.invoke(currModel, value); // Вызовем для t с параметром из value
+                    } catch (IllegalAccessException e) {
+                        String errText = String.format("Invoke method %s failed - access error", methodSet.toString());
+                        logger.error(errText, e);
+                        throw new RuntimeException(errText, e);
+                    } catch (InvocationTargetException e) {
+                        String errText = String.format("Invoke method %s failed - target error", methodSet.toString());
+                        logger.error(errText, e);
+                        throw new RuntimeException(errText, e);
+                    }
                 }
+            } else { // Модели нет - делаем в stringObjectMap из результата запроса
+                stringObjectMap.put(key,value);
             }
         }
-        return currModel;
+        if (tableMetadata != null) { // или modelCls != null - возвращаем модель
+            return currModel;
+        } else {
+            return stringObjectMap;
+        }
     }
 }

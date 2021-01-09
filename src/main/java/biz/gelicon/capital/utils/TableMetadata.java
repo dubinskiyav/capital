@@ -129,7 +129,10 @@ public class TableMetadata {
             Map<String, TableMetadata> tableMetadataMap,
             Class cls
     ){
-        TableMetadata tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        TableMetadata tableMetadata = null;
+        if (tableName != null) {
+            tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
+        }
         if (tableMetadata == null) { // В коллекции не было
             tableMetadata = new TableMetadata(); // Создаем
             tableMetadata.loadTableMetadata(cls); // Получим все метаданные

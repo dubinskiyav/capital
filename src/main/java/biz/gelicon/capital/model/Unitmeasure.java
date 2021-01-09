@@ -61,7 +61,7 @@ public class Unitmeasure {
         return shortName;
     }
 
-    public void setShortName(String name) {
+    public void setShortName(String shortName) {
         this.shortName = shortName;
     }
 
