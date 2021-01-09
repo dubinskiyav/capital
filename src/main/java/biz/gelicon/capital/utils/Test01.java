@@ -1,6 +1,5 @@
 package biz.gelicon.capital.utils;
 
-import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.model.Measureunit;
 import biz.gelicon.capital.model.Unitmeasure;
@@ -9,15 +8,23 @@ import biz.gelicon.capital.repository.MeasureunitRepository;
 import biz.gelicon.capital.repository.TableRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
 import biz.gelicon.capital.repository.UnitmeasurerecalcRepository;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import javax.persistence.Table;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class Test01 {
@@ -41,6 +48,20 @@ public class Test01 {
 
     public void test1() {
         System.out.println("Tests started");
+
+
+        // Считаем все аннотации @Table
+        Reflections reflections = new Reflections("biz.gelicon.capital");
+        Set<Class<?>> set = reflections.getTypesAnnotatedWith(Table.class);
+
+        set.forEach(s ->
+            TableMetadata.getTableMetadataFromMap(
+                    null,
+                    TableRepository.tableMetadataMap,
+                    s
+            )
+        );
+
         Measureunit measureunit = measureunitRepository.findById(2);
         Integer measureCount = measureRepository.count();
         List<Measureunit> measureunitList = measureunitRepository.findAll();

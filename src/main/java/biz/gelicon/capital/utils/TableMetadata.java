@@ -136,7 +136,7 @@ public class TableMetadata {
         if (tableMetadata == null) { // В коллекции не было
             tableMetadata = new TableMetadata(); // Создаем
             tableMetadata.loadTableMetadata(cls); // Получим все метаданные
-            tableMetadataMap.put(tableName, tableMetadata); // Загрузим в воллекцию
+            tableMetadataMap.put(tableMetadata.getTableName(), tableMetadata); // Загрузим в воллекцию
         }
         return tableMetadata;
     }
