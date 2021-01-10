@@ -14,9 +14,18 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Пользовательский RowMapper для ResultSet <p> Необходимо установить класс модели, тогда результат
+ * будет в виде модели <p> Если модель не установлена - возвращает Map из полей результата, key -
+ * имя поля в запросе <p> Пример использования <p> ResultSetRowMapper resultSetRowMapper = new
+ * ResultSetRowMapper(cls); <p> List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
+ *
+ * @see <a href="https://www.codeflow.site/ru/article/spring__spring-jdbctemplate-querying-examples">Пользовательский
+ * RowMapper</a>
+ */
 public class ResultSetRowMapper implements RowMapper {
 
-    static Logger logger = LoggerFactory.getLogger(JpaUtils.class);
+    static Logger logger = LoggerFactory.getLogger(ResultSetRowMapper.class);
 
     private String tableName; // Имя таблицы
 
@@ -25,15 +34,17 @@ public class ResultSetRowMapper implements RowMapper {
     private Object currModel;
 
     private TableMetadata tableMetadata;
-    private Map<String,Object> stringObjectMap; // Вместо модели, если нет класса
+    private Map<String, Object> stringObjectMap; // Вместо модели, если нет класса
 
     private ResultSetMetaData resultSetMetaData; // Метаданные результирующего сета
 
-    public ResultSetRowMapper(Class modelCls){
+    public ResultSetRowMapper(Class modelCls) {
         this.modelCls = modelCls;
     }
 
-    // Смена класса приводит к пересчету всего
+    /**
+     * Смена класса модели
+     */
     public void setModelCls(Class modelCls) {
         if (modelCls == null) {
             // Все обнулим
@@ -63,7 +74,7 @@ public class ResultSetRowMapper implements RowMapper {
         return tableName;
     }
 
-    public Object newModel() {
+    private Object newModel() {
         // Создадим объект - модель
         Constructor<?> ctor;
         try {
@@ -120,17 +131,19 @@ public class ResultSetRowMapper implements RowMapper {
                     try {
                         methodSet.invoke(currModel, value); // Вызовем для t с параметром из value
                     } catch (IllegalAccessException e) {
-                        String errText = String.format("Invoke method %s failed - access error", methodSet.toString());
+                        String errText = String.format("Invoke method %s failed - access error",
+                                methodSet.toString());
                         logger.error(errText, e);
                         throw new RuntimeException(errText, e);
                     } catch (InvocationTargetException e) {
-                        String errText = String.format("Invoke method %s failed - target error", methodSet.toString());
+                        String errText = String.format("Invoke method %s failed - target error",
+                                methodSet.toString());
                         logger.error(errText, e);
                         throw new RuntimeException(errText, e);
                     }
                 }
             } else { // Модели нет - делаем в stringObjectMap из результата запроса
-                stringObjectMap.put(key,value);
+                stringObjectMap.put(key, value);
             }
         }
         if (tableMetadata != null) { // или modelCls != null - возвращаем модель

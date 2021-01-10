@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Метаданные модели, полученные из аннотаций @Table @Id @Column и др.
+ */
 public class TableMetadata {
 
     String tableName; // Имя таблицы в базе данных
@@ -52,6 +54,13 @@ public class TableMetadata {
         this.modelCls = modelCls;
     }
 
+
+    /**
+     * Получает все поля из аннотаций по классу репозитория <p> Для модели получает класс дженерика
+     * объекта
+     *
+     * @param o класс модели
+     */
     public void loadTableMetadata(Object o) {
         // Получим класс дженерика интерфейса аннотированного как @Table
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(o);
@@ -62,6 +71,11 @@ public class TableMetadata {
         return this.columnMetadataList;
     }
 
+    /**
+     * Получает все поля из аннотаций по классу модели
+     *
+     * @param cls класс модели
+     */
     public void loadTableMetadata(Class cls) {
         // Получим и запишем имя таблицы
         setTableName(JpaUtils.getTableName(cls));
@@ -80,7 +94,7 @@ public class TableMetadata {
         List<Method> methods = new ArrayList<>();
         methods = Arrays.asList(cls.getMethods());
         for (int i = 0; i < methods.size(); i++) {
-            methodMap.put(methods.get(i).getName(),methods.get(i));
+            methodMap.put(methods.get(i).getName(), methods.get(i));
         }
 
         // Ищем все поля помеченные аннотацией @Column
@@ -94,27 +108,30 @@ public class TableMetadata {
             columnMetadata.setColumnName(field.getAnnotation(Column.class).name());
             columnMetadata.setNullable(field.getAnnotation(Column.class).nullable());
             columnMetadata.setField(field);
-            columnMetadata.setColumnDefinition(field.getAnnotation(Column.class).columnDefinition());
+            columnMetadata
+                    .setColumnDefinition(field.getAnnotation(Column.class).columnDefinition());
             columnMetadata.setColumn(field.getAnnotation(Column.class));
             columnMetadata.setIdFlag(field.isAnnotationPresent(Id.class));
             // Найдем геттер
             String methodName = "get"
-                    + columnMetadata.getField().getName().substring(0,1).toUpperCase()
-                    + columnMetadata.getField().getName().substring(1); ;
+                    + columnMetadata.getField().getName().substring(0, 1).toUpperCase()
+                    + columnMetadata.getField().getName().substring(1);
+            ;
             if (methodMap.get(methodName) != null) {
                 columnMetadata.setMethodGet(methodMap.get(methodName));
             } else { // попробуем найти is
                 methodName = "is"
-                        + columnMetadata.getField().getName().substring(0,1).toUpperCase()
-                        + columnMetadata.getField().getName().substring(1); ;
+                        + columnMetadata.getField().getName().substring(0, 1).toUpperCase()
+                        + columnMetadata.getField().getName().substring(1);
+                ;
                 if (methodMap.get(methodName) != null) {
                     columnMetadata.setMethodGet(methodMap.get(methodName));
                 }
             }
             // Найдем сеттер
             methodName = "set"
-                    + columnMetadata.getField().getName().substring(0,1).toUpperCase()
-                    + columnMetadata.getField().getName().substring(1); ;
+                    + columnMetadata.getField().getName().substring(0, 1).toUpperCase()
+                    + columnMetadata.getField().getName().substring(1);
             if (methodMap.get(methodName) != null) {
                 columnMetadata.setMethodSet(methodMap.get(methodName));
             }
@@ -122,13 +139,21 @@ public class TableMetadata {
         }
     }
 
-    // Возвращает описание таблицы из коллекции.
-    // Если описания в коллекции отсутствует - предварительно добавляет его туда
+    /**
+     * Возвращает описание таблицы из коллекции tableMetadataMap. <p> Если описания в коллекции
+     * отсутствует - предварительно добавляет его туда. <p> Наличие проверяет по имени таблицы
+     * <p>Если имя таблицы пустое - должен быть указан класс модели
+     *
+     * @param tableName        Имя таблицы в базе данных
+     * @param tableMetadataMap Коллекеция метаданных, где искать и куда добавлять
+     * @param cls              Класс модели
+     * @return TableMetadata - описание таблицы
+     */
     public static TableMetadata getTableMetadataFromMap(
             String tableName,
             Map<String, TableMetadata> tableMetadataMap,
             Class cls
-    ){
+    ) {
         TableMetadata tableMetadata = null;
         if (tableName != null) {
             tableMetadata = tableMetadataMap.get(tableName); // Получим из коллекции
@@ -136,7 +161,10 @@ public class TableMetadata {
         if (tableMetadata == null) { // В коллекции не было
             tableMetadata = new TableMetadata(); // Создаем
             tableMetadata.loadTableMetadata(cls); // Получим все метаданные
-            tableMetadataMap.put(tableMetadata.getTableName(), tableMetadata); // Загрузим в воллекцию
+            tableMetadataMap.put( // Загрузим в воллекцию
+                    tableMetadata.getTableName(),
+                    tableMetadata
+            );
         }
         return tableMetadata;
     }

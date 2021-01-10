@@ -1,19 +1,12 @@
 package biz.gelicon.capital;
 
-import biz.gelicon.capital.model.Measure;
-import biz.gelicon.capital.model.Unitmeasure;
-import biz.gelicon.capital.repository.MeasureRepository;
-import biz.gelicon.capital.repository.UnitmeasureRepository;
-import biz.gelicon.capital.utils.DatebaseUtils;
 import biz.gelicon.capital.utils.Test01;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
                              содержащий аннотацию @SpringBootApplication и метод main.
@@ -29,13 +22,12 @@ public class CapitalApplication implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(CapitalApplication.class);
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
     private static ApplicationContext applicationContext;
 
     public static void main(String[] args) {
+        logger.info("Running...");
         applicationContext = SpringApplication.run(CapitalApplication.class, args);
+        logger.info("Reading ApplicationContext...Ok");
         // Тесты
         Test01 test01 = CapitalApplication.getApplicationContext().getBean(Test01.class);
         test01.test1();
@@ -44,8 +36,7 @@ public class CapitalApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         logger.info("StartApplication...");
-        // Установим тип СУБД
-        DatebaseUtils.setDbType(jdbcTemplate);
+        logger.info("StartApplication...Ok");
     }
 
     public static ApplicationContext getApplicationContext() {

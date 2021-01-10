@@ -7,23 +7,37 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-// Общие методы конвертирования данных
+/** Общие методы конвертирования данных
+ *
+ */
 public class ConvertUnils {
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertUnils.class);
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-    // Возвращает true для пустой или пробелльной строки и null
+    /** Возвращает true для пустой или пробельной строки и null
+     *
+     * @param s строка
+     * @return результат
+     */
     public static boolean empty(String s) {
         return s == null || s.trim().isEmpty();
     }
 
-    // Дату в строку формата "31.11.2020"
+    /** Конвертирует дату в строку формата "31.11.2020"
+     *
+     * @param d дата
+     * @return результат
+     */
     public static String dateToStr(Date d) {
         return d == null ? null : dateFormat.format(d);
     }
 
-    // Дату из строки формата "31.11.2020"
+    /** Конвертирует строку формата "31.11.2020" в дату
+     *
+     * @param s строка
+     * @return результат
+     */
     public static Date strToDate(String s) {
         if (empty(s)) {return null;}
         try {
@@ -35,7 +49,11 @@ public class ConvertUnils {
         }
     }
 
-    // округляет дату-время до даты
+    /** округляет дату-время до даты
+     *
+     * @param d датавремя
+     * @return результат
+     */
     public static Date datetimeToDate(Date d) {
         return d == null ? null : strToDate(dateToStr(d));
     }

@@ -4,6 +4,9 @@ import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * Метаданные колонки для {@link TableMetadata#columnMetadataList}
+ */
 public class ColumnMetadata {
 
     String columnName; // Имя поля в базе данных

@@ -20,119 +20,156 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Интерфейс работы с @Table. <p> Реализует дефолтные методы: int count() int insert(T t) int
+ * update(T t) int delete(Integer id) int deleteAll() int delete(T t) int insertOrUpdate(T t) int
+ * set(T t) List<T> findAll() T findById(Integer id) <p> Для работы должна быть заполнена
+ * Map<String, TableMetadata> tableMetadataMap
+ */
 @Transactional(propagation = Propagation.REQUIRED)
 public interface TableRepository<T> {
 
     Logger logger = LoggerFactory.getLogger(TableRepository.class);
     Boolean logFlag = true;
 
-    Map<String, TableMetadata> tableMetadataMap = new HashMap<>();// Коллекция из метаданных для таблиц
+    /**
+     * Коллекция из метаданных для таблиц <p> Должна быть заполнена при запуске программы для всех
+     * аннотированных @Table <p> Необходимы аннотации @Table(name), @Id, @Column(name)
+     */
+    Map<String, TableMetadata> tableMetadataMap = new HashMap<>();
 
-    default int count() { // Количество записей в таблице
+    /**
+     * Возвращает количество записей в таблице
+     */
+    default int count() {
         // Имя класса - из дженерика
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls);
-        // todo подставить имя таблицы
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-        Integer i = jdbcTemplate
-                .queryForObject(" SELECT COUNT(*) FROM " + tableName,
-                        Integer.class);
+        Integer i = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM " + tableName,
+                Integer.class);
         return Objects.requireNonNullElse(i, 0);
     }
 
-    default int insert(T t) { // Добавление записи
-        String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                t.getClass()
-        );
+    /**
+     * Добавление записи
+     *
+     * @param t Объект
+     * @return код успеха
+     */
+    default int insert(T t) {
+        String tableName = JpaUtils.getTableName(t); // Ключом является имя класса
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         NamedParameterJdbcTemplate namedParameterJdbcTemplate =
                 JpaUtils.getNamedParameterJdbcTemplate();
-        String sqlTextTop = "INSERT INTO " + tableMetadata.getTableName() + " (";
-        String sqlTextBotom = ") VALUES (";
+        StringBuilder sqlTextTop = new StringBuilder(
+                "INSERT INTO " + tableMetadata.getTableName() + " (");
+        StringBuilder sqlTextBotom = new StringBuilder(") VALUES (");
         String comma = "";
         for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-            sqlTextTop = sqlTextTop + comma + tableMetadata.getColumnMetadataList().get(i)
-                    .getColumnName();
-            sqlTextBotom = sqlTextBotom + comma + ":" + tableMetadata.getColumnMetadataList().get(i)
-                    .getField().getName();
+            sqlTextTop.append(comma).append(tableMetadata.getColumnMetadataList().get(i)
+                    .getColumnName());
+            sqlTextBotom.append(comma).append(":")
+                    .append(tableMetadata.getColumnMetadataList().get(i)
+                            .getField().getName());
             if (comma.equals("")) { comma = ", "; }
         }
-        String sqlText = sqlTextTop + sqlTextBotom + ")";
-        int result = -1;
-        result = namedParameterJdbcTemplate.update(sqlText,
-                new BeanPropertySqlParameterSource(t));
-        return result;
+        String sqlText = sqlTextTop + sqlTextBotom.toString() + ")";
+        try {
+            return namedParameterJdbcTemplate.update(sqlText,
+                    new BeanPropertySqlParameterSource(t));
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
     }
 
-    default int update(T t) { // Изменение записи
+    /**
+     * Изменение записи
+     *
+     * @param t Объект
+     * @return код успеха
+     */
+    default int update(T t) {
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                t.getClass()
-        );
-        String sqlText = "UPDATE " + tableMetadata.getTableName() + " SET ";
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
+        StringBuilder sqlText = new StringBuilder(
+                "UPDATE " + tableMetadata.getTableName() + " SET ");
         String comma = "";
         String idName = "";
         for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
             if (!tableMetadata.getColumnMetadataList().get(i).getIdFlag()) {
-                sqlText = sqlText + comma + tableMetadata.getColumnMetadataList().get(i)
-                        .getColumnName();
-                sqlText = sqlText + " = :" + tableMetadata.getColumnMetadataList().get(i).getField()
-                        .getName();
+                sqlText.append(comma).append(tableMetadata.getColumnMetadataList().get(i)
+                        .getColumnName());
+                sqlText.append(" = :")
+                        .append(tableMetadata.getColumnMetadataList().get(i).getField()
+                                .getName());
                 if (comma.equals("")) { comma = ", "; }
             } else {
                 idName = tableMetadata.getColumnMetadataList().get(i).getField().getName();
             }
         }
-        sqlText = sqlText + " WHERE " + tableMetadata.getIdFieldName() + " = :" + idName;
-        int result = -1;
+        sqlText.append(" WHERE ").append(tableMetadata.getIdFieldName()).append(" = :")
+                .append(idName);
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = JpaUtils
                 .getNamedParameterJdbcTemplate();
-        result = namedParameterJdbcTemplate.update(sqlText,
-                new BeanPropertySqlParameterSource(t));
-        return result;
+        try {
+            return namedParameterJdbcTemplate.update(sqlText.toString(),
+                    new BeanPropertySqlParameterSource(t));
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
     }
 
-    // Удаление записи по умолчанию
-    // Необходимы аннотации @Table(name), @Id, @Column(name)
+    /**
+     * Удаление записи по первичному ключу. <p> Если вызвать с id = -123 то удалит все записи
+     *
+     * @param id значение первичного ключа
+     * @return код успеха
+     */
     default int delete(Integer id) {
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                cls
-        );
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         String sqlText = ""
                 + " DELETE FROM " + tableMetadata.getTableName();
         if (id != -123) {
             sqlText = sqlText + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
         }
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-        return jdbcTemplate.update(sqlText);
+        try {
+            return jdbcTemplate.update(sqlText);
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
     }
 
-    // Удаление всех записей из таблицы
+    /**
+     * Удаление всех записей из таблицы
+     */
     default int deleteAll() {
         return delete(-123);
     }
 
-    // Удаление записи по умолчанию
-    // Необходимы аннотации @Table(name), @Id, @Column(name)
+    /**
+     * Удаление записи. <p> Должо быть установлено поле - первичный ключ
+     *
+     * @param t Объект
+     * @return код успеха
+     */
     default int delete(T t) {
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                t.getClass()
-        );
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         // Составим текст удаления
@@ -140,19 +177,26 @@ public interface TableRepository<T> {
                 + " DELETE FROM " + tableMetadata.getTableName()
                 + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
         // Выполним удаление
-        return JpaUtils.getJdbcTemplate().update(sqlText);
+        try {
+            return JpaUtils.getJdbcTemplate().update(sqlText);
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
     }
 
-    // Добавление или изменение записи в зависимости от id
+    /**
+     * Добавление или изменение записи в зависимости от id
+     *
+     * @param t Объект
+     * @return код успеха
+     */
     default int insertOrUpdate(T t) {
         if (t == null) {return -1;}
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                t.getClass()
-        );
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         if (id == null) {
@@ -192,16 +236,19 @@ public interface TableRepository<T> {
         }
     }
 
-    // Добавление или изменение записи в зависимости от наличия в базе
+    /**
+     * Добавление или изменение записи в зависимости от наличия в базе. <p> Наличие проверяет по
+     * первичному ключу (если не null). Если пк = null или если записи по пк нет в базе -
+     * добавляет.
+     *
+     * @param t Объект
+     * @return код успеха
+     */
     default int set(T t) {
         if (t == null) {return -1;}
         String tableName = JpaUtils.getTableName(t); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                t.getClass()
-        );
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         if (id == null || findById(id) == null) {
@@ -211,49 +258,64 @@ public interface TableRepository<T> {
         }
     }
 
-    default List<T> findAll() { // Все записи
+    /**
+     * Возвращает все записи из таблицы без условия
+     *
+     * @return коллекция из объектов
+     */
+    default List<T> findAll() {
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                cls
-        );
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         // Сформируем текст запроса
-        String sqlText = "SELECT ";
+        StringBuilder sqlText = new StringBuilder("SELECT ");
         String comma = "";
         for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-            sqlText = sqlText
-                    + comma + tableMetadata.getColumnMetadataList().get(i).getColumnName();
+            sqlText.append(comma)
+                    .append(tableMetadata.getColumnMetadataList().get(i).getColumnName());
             if (comma.equals("")) { comma = ", "; }
         }
-        sqlText = sqlText + " FROM " + tableName;
+        sqlText.append(" FROM ").append(tableName);
         // Маппер с классом для модели
         ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
-        List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
-        return tList;
+        try {
+            List<T> tList = jdbcTemplate.query(sqlText.toString(), resultSetRowMapper);
+            return tList;
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
     }
 
-    default T findById(Integer id) { // Запись по id
-        // https://www.codeflow.site/ru/article/spring__spring-jdbctemplate-querying-examples
+    /**
+     * Возвращает запись по id
+     *
+     * @param id - значение первичного ключа
+     * @return объект
+     */
+    default T findById(Integer id) {
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
-        // Получим описание таблицы
-        TableMetadata tableMetadata = TableMetadata.getTableMetadataFromMap(
-                tableName,
-                tableMetadataMap,
-                cls
-        );
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         String sqlText = " SELECT * FROM " + tableName
                 + " WHERE " + tableMetadata.getIdFieldName() + " = " + id;
         // Маппер с классом для модели
         ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
-        List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
+        List<T> tList = null;
+        try {
+        tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
         if (tList.size() == 0) {
             return null;
         }

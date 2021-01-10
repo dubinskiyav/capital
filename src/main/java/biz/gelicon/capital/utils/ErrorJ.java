@@ -1,6 +1,8 @@
 package biz.gelicon.capital.utils;
 
-// Вспомогательный класс для пуляния ошибки в форму
+/**
+ * Вспомогательный класс для пуляния ошибки в форму
+ */
 public class ErrorJ {
 
     Integer code;
