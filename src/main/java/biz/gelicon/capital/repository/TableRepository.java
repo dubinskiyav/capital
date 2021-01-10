@@ -62,6 +62,42 @@ public interface TableRepository<T> {
         String tableName = JpaUtils.getTableName(t); // Ключом является имя класса
         // Найдем в коллекции описание таблицы по имени
         TableMetadata tableMetadata = tableMetadataMap.get(tableName);
+        // Получим значение первичного ключа
+        Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
+        Method methodSet = null;
+        Integer idSave = id;
+        if (id == null) {
+            // Сгенерируем значение
+            JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+            id = DatebaseUtils.getSequenceNextValue(
+                    tableName + "_id_gen",
+                    jdbcTemplate
+            );
+            // Установим у t
+            // Получим имя pk
+            String key = tableMetadata.getIdFieldName();
+            // Найдем сеттер для поля (по имени в базе данных)
+            methodSet = tableMetadata.getColumnMetadataList().stream()
+                    .filter(c -> c.getColumnName().equals(key))
+                    .findAny()
+                    .map(ColumnMetadata::getMethodSet)
+                    .orElse(null);
+            if (methodSet != null) { // Сеттер есть
+                try {
+                    methodSet.invoke(t, id); // Вызовем для t с параметром из value
+                } catch (IllegalAccessException e) {
+                    String errText = String
+                            .format("Invoke method %s failed - access error", methodSet.toString());
+                    logger.error(errText, e);
+                    throw new RuntimeException(errText, e);
+                } catch (InvocationTargetException e) {
+                    String errText = String
+                            .format("Invoke method %s failed - target error", methodSet.toString());
+                    logger.error(errText, e);
+                    throw new RuntimeException(errText, e);
+                }
+            }
+        }
         NamedParameterJdbcTemplate namedParameterJdbcTemplate =
                 JpaUtils.getNamedParameterJdbcTemplate();
         StringBuilder sqlTextTop = new StringBuilder(
@@ -81,6 +117,18 @@ public interface TableRepository<T> {
             return namedParameterJdbcTemplate.update(sqlText,
                     new BeanPropertySqlParameterSource(t));
         } catch (Exception e) {
+            if (idSave == null) { // Надо восстановить пустоту в первичном ключе
+                if (methodSet != null) { // Сеттер есть
+                    try {
+                        methodSet.invoke(t, idSave); // Вызовем для t с параметром из value
+                    } catch (Exception ex) {
+                        String errText = String
+                                .format("Invoke method %s failed ", methodSet.toString());
+                        logger.error(errText, e);
+                        throw new RuntimeException(errText, ex);
+                    }
+                }
+            }
             String errText = "SQL execute filed: " + sqlText;
             logger.error(errText, e);
             throw new RuntimeException(errText, e);
@@ -200,36 +248,6 @@ public interface TableRepository<T> {
         // Получим значение первичного ключа
         Integer id = JpaUtils.getIdValueIntegerOfField(tableMetadata.getIdField(), t);
         if (id == null) {
-            // Сгенерируем значение
-            JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-            id = DatebaseUtils.getSequenceNextValue(
-                    tableName + "_id_gen",
-                    jdbcTemplate
-            );
-            // Установим у t
-            // Получим имя pk
-            String key = tableMetadata.getIdFieldName();
-            // Найдем сеттер для поля (по имени в базе данных)
-            Method methodSet = tableMetadata.getColumnMetadataList().stream()
-                    .filter(c -> c.getColumnName().equals(key))
-                    .findAny()
-                    .map(ColumnMetadata::getMethodSet)
-                    .orElse(null);
-            if (methodSet != null) { // Сеттер есть
-                try {
-                    methodSet.invoke(t, id); // Вызовем для t с параметром из value
-                } catch (IllegalAccessException e) {
-                    String errText = String
-                            .format("Invoke method %s failed - access error", methodSet.toString());
-                    logger.error(errText, e);
-                    throw new RuntimeException(errText, e);
-                } catch (InvocationTargetException e) {
-                    String errText = String
-                            .format("Invoke method %s failed - target error", methodSet.toString());
-                    logger.error(errText, e);
-                    throw new RuntimeException(errText, e);
-                }
-            }
             return insert(t);
         } else {
             return update(t);
