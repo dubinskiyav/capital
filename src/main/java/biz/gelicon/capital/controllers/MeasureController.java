@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -31,8 +32,8 @@ import java.util.List;
 // https://java.fandom.com/ru/wiki/@RequestMapping
 @RestController
 @RequestMapping(value = "/measure",    // задаёт "каталог", в котором будут размещаться методы контроллера
-        consumes = "application/json", // определяет, что Content-Type запроса клиента должен быть "application/json"
-        produces = "application/json") // определяет, что возвращать будет "application/json"
+        consumes = "application/json; charset=UTF-8", // определяет, что Content-Type запроса клиента должен быть "application/json"
+        produces = "application/json; charset=UTF-8") // определяет, что возвращать будет "application/json"
 public class MeasureController {
 
     private static final Logger logger = LoggerFactory.getLogger(MeasureController.class);
@@ -45,11 +46,13 @@ public class MeasureController {
 
     @InitBinder   // Чтобы не вызывать самому валидатор - он сам вызовется
     protected void initBinder(WebDataBinder binder) { // todo Непонятно что это
-        binder.setValidator(measureValidator);
+        //binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
     }
 
     @RequestMapping(value = "json", method = RequestMethod.POST)
-    public List<Measure> measure() {
+    public List<Measure> measure(
+            @RequestBody Object sort
+    ) {
         List<Measure> measureList = measureRepository.findAll();
         return measureList;
     }

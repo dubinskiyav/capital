@@ -43,5 +43,9 @@ public class CapitalApplication implements CommandLineRunner {
         return applicationContext;
     }
 
+    public static void setApplicationContext(ApplicationContext ac) {
+        applicationContext = ac;
+    }
+
 }
 

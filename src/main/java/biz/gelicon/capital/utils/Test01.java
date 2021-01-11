@@ -120,6 +120,8 @@ public class Test01 {
         measureunit = new Measureunit(2, 2, 1, 0);
         measureunitRepository.insert(measureunit);
 
+        measureRepository.findAll().forEach(System.out::println);
+
         System.out.println("Tests ended");
 
     }
