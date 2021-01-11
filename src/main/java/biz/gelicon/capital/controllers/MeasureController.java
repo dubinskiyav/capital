@@ -10,6 +10,7 @@ import biz.gelicon.capital.validators.MeasureValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -49,8 +50,10 @@ public class MeasureController {
         binder.setValidator(measureValidator);
     }
 
-    @RequestMapping(value = "index", method = RequestMethod.POST)
-    public List<Measure> measure() {
+    @RequestMapping(value = "/measure", method = RequestMethod.POST)
+    public List<Measure> measure(
+            @RequestBody Sort sort
+    ) {
         List<Measure> measureList = measureRepository.findAll();
         return measureList;
     }

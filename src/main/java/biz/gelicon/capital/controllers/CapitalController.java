@@ -5,19 +5,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller // Класс, который обрабатывает HTTP запросы, должен быть отмечен аннотацией @Controller
+@RestController
 public class CapitalController {
 
     private static final Logger logger = LoggerFactory.getLogger(CapitalController.class);
 
-    @RequestMapping(value = "/capital") // за обработку запроса отвечает метод контроллера.
-    // Такой метод должен быть объявлен с помощью аннотации @RequestMapping
-    public String capitalController(
-            Model model
-    ) {
+    @RequestMapping(value = "/capital")
+    public @ResponseBody String capitalController() {
         logger.info("Capital start. ");
 
-        return "capital";
+        return "Capital WEB";
     }
 }
