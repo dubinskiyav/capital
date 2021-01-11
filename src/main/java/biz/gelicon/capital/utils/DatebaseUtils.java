@@ -1,7 +1,6 @@
 package biz.gelicon.capital.utils;
 
 
-import biz.gelicon.capital.repository.TableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;

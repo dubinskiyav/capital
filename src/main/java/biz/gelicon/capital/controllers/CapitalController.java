@@ -1,9 +1,5 @@
 package biz.gelicon.capital.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,11 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CapitalController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CapitalController.class);
 
     @RequestMapping(value = "/capital")
     public @ResponseBody String capitalController() {
-        logger.info("Capital start. ");
 
         return "Capital WEB";
     }
