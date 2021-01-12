@@ -46,7 +46,7 @@ public class MeasureController {
 
     @InitBinder   // Чтобы не вызывать самому валидатор - он сам вызовется
     protected void initBinder(WebDataBinder binder) { // todo Непонятно что это
-        //binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
+        binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
     }
 
     @RequestMapping(value = "json", method = RequestMethod.POST)
