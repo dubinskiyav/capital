@@ -55,7 +55,7 @@ public class MeasureController {
     public List<Measure> measure(
             @RequestBody GridDataOption gridDataOption
     ) {
-        logger.info("measure: GridDataOption = " + gridDataOption.toString());
+        //logger.info("measure: GridDataOption = " + gridDataOption.toString());
         List<Measure> measureList = measureRepository.findAll();
         return measureList;
     }

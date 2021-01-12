@@ -1,11 +1,16 @@
 package biz.gelicon.capital.utils;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Описание текущей страницы запроса указывается, какую страницу надо вернуть и какой размер
- * страницы в строках. нумерация страниц начинается с нуля и какая сортировка
+ * страницы в строках и какая сортировка.
+ * Нумерация страниц начинается с нуля
  */
 public class GridDataOption {
 
@@ -43,39 +48,31 @@ public class GridDataOption {
         this.sort = sort;
     }
 
-    public void buildPageRequest(){
-
-    }
-
-    /*
-    public List<OrderBy> getSort() {
-        if (true) {
-            return ConvertUnils.getStreamFromIterator(this.pageRequest.getSort().iterator())
-                    .map(o -> new OrderBy(o.getProperty(), o.getDirection().ordinal()))
-                    .collect(Collectors.toList());
-        } else {
-            List<OrderBy> orderByList = new ArrayList<>();
-            this.pageRequest.getSort().iterator().forEachRemaining(o ->
-                    orderByList.add(new OrderBy(o.getProperty(), o.getDirection().ordinal())));
-            return orderByList;
-        }
-    }
-
-    public void SetSort(List<OrderBy> orderByList) {
-        List<Sort.Order> orders = new ArrayList<>();
-        if (orderByList != null) {
-            orders = orderByList.stream()
-                    .map(o -> new Sort.Order(Sort.Direction.values()[o.direction], o.fieldName))
-                    .collect(Collectors.toList());
-        }
-        this.pageRequest = PageRequest.of(
-                pageRequest.getPageNumber(),
-                pageRequest.getPageSize(),
-                Sort.by(orders)
-        );
-    }
-
+    /**
+     * Строит и возвращает PageRequest из pageNumber, pageSize и List<OrderBy> sort
+     * @return PageRequest
      */
+    public PageRequest getPageRequest(){
+        List<Sort.Order> orders = new ArrayList<>();
+        if (sort != null && sort.size()>0) {
+            orders = sort.stream()
+                    .map(o -> new Sort.Order(Sort.Direction.values()[o.direction],o.fieldName))
+                    .collect(Collectors.toList());
+        }
+        return PageRequest.of(
+                pageNumber,
+                pageSize,
+                Sort.by(orders));
+    }
+
+    @Override
+    public String toString() {
+        return "GridDataOption {page=" + this.pageNumber
+                + ", size=" + this.pageSize
+                + ", sort=" + this.sort.stream()
+                .map(OrderBy::toString)
+                .collect(Collectors.joining(",", "{", "}")) + "}"; // todo - сделать
+    }
 
     /**
      * Вспомогательный класс для сортровки Имя поля - как в мобели, а не как в базе
@@ -105,14 +102,11 @@ public class GridDataOption {
         public String getFieldName() {
             return fieldName;
         }
-    }
 
-    @Override
-    public String toString() {
-        return "GridDataOption {page=" + this.pageNumber
-                + ", size=" + this.pageSize
-                + ", sort=" + this.sort; // todo - сделать
+        @Override
+        public String toString() {
+            return fieldName + " " + direction;
+        }
     }
-
 
 }
