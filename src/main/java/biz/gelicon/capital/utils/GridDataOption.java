@@ -1,11 +1,7 @@
 package biz.gelicon.capital.utils;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Описание текущей страницы запроса указывается, какую страницу надо вернуть и какой размер
@@ -13,66 +9,51 @@ import java.util.stream.Collectors;
  */
 public class GridDataOption {
 
-    /**
-     * Рзамер страницы в строках по умолчанию
-     */
-    public static final int DEFAULT_PAGE_SIZE = 25;
+    public static final int DEFAULT_PAGE_SIZE = 25; // Рзамер страницы в строках по умолчанию
 
-    private PageRequest pageRequest;
+    private int pageNumber; // Текущая страница, нумерация с 0
+
+    private int pageSize; // Размер страницы в строках
+
+    private List<OrderBy> sort; // Установленные сортировки
 
     public GridDataOption() {
-        System.out.println("GridDataOption()");
-        this.pageRequest = PageRequest.of(
-                0,
-                GridDataOption.DEFAULT_PAGE_SIZE,
-                Sort.by(Sort.DEFAULT_DIRECTION)
-        );
-        System.out.println("GridDataOption() - Ok");
+        this.pageNumber = 0;
+        this.pageSize = DEFAULT_PAGE_SIZE;
+        this.sort = new ArrayList<>();
     }
 
     public int getPageNumber() {
-        return pageRequest.getPageNumber();
+        return pageNumber;
     }
 
-    public void setPageNumber(int pageNumber) {
-        this.pageRequest = PageRequest.of(
-                pageNumber,
-                pageRequest.getPageSize(),
-                this.pageRequest.getSort()
-        );
-    }
+    public void setPageNumber(int pageNumber) { this.pageNumber = pageNumber; }
 
     public int getPageSize() {
-        return this.pageRequest.getPageSize();
+        return this.pageSize;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageRequest = PageRequest.of(
-                pageRequest.getPageNumber(),
-                pageSize,
-                this.pageRequest.getSort()
-        );
+    public void setPageSize(int pageSize) { this.pageSize = pageSize; }
+
+    public List<OrderBy> getSort() {
+        return sort;
     }
 
-    public PageRequest getPageRequest() {
-        return pageRequest;
+    public void setSort(List<OrderBy> sort) {
+        this.sort = sort;
     }
 
-    public void setPageRequest(PageRequest pageRequest) {
-        this.pageRequest = pageRequest;
+    public void buildPageRequest(){
+
     }
 
-    /**
-     * Из pageRequest Sort List<Sort.Order> возвращает сотрировку
-     * в виде коллекции объектов OrderBy (fieldName, direction)
-     * @return
-     */
+    /*
     public List<OrderBy> getSort() {
         if (true) {
             return ConvertUnils.getStreamFromIterator(this.pageRequest.getSort().iterator())
                     .map(o -> new OrderBy(o.getProperty(), o.getDirection().ordinal()))
                     .collect(Collectors.toList());
-        } else  {
+        } else {
             List<OrderBy> orderByList = new ArrayList<>();
             this.pageRequest.getSort().iterator().forEachRemaining(o ->
                     orderByList.add(new OrderBy(o.getProperty(), o.getDirection().ordinal())));
@@ -80,11 +61,6 @@ public class GridDataOption {
         }
     }
 
-    /**
-     * Из коллекции объектов OrderBy (fieldName, direction) устанавливает значение
-     * pageRequest Sort List<Sort.Order>
-     * @param orderByList
-     */
     public void SetSort(List<OrderBy> orderByList) {
         List<Sort.Order> orders = new ArrayList<>();
         if (orderByList != null) {
@@ -98,6 +74,8 @@ public class GridDataOption {
                 Sort.by(orders)
         );
     }
+
+     */
 
     /**
      * Вспомогательный класс для сортровки Имя поля - как в мобели, а не как в базе
@@ -131,9 +109,9 @@ public class GridDataOption {
 
     @Override
     public String toString() {
-        return "GridDataOption {page=" + this.pageRequest.getPageNumber()
-                + ", size=" + this.pageRequest.getPageSize()
-                + ", sort=" + this.pageRequest.getSort().toString();
+        return "GridDataOption {page=" + this.pageNumber
+                + ", size=" + this.pageSize
+                + ", sort=" + this.sort; // todo - сделать
     }
 
 

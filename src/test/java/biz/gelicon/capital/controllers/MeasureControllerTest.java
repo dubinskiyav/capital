@@ -51,7 +51,7 @@ public class MeasureControllerTest {
     void measureTest() throws Exception {
         logger.info("test measure start ");
         this.mockMvc.perform(post("/measure/json")
-                .content("{\"pageSize\":10, \"pageNumber\":0, \"sort\":[]}")
+                .content("{\"pageSize\":10, \"pageNumber\":0, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
                 //.content("{}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // выводить результат в консоль
