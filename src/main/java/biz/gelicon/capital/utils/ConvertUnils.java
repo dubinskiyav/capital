@@ -6,16 +6,22 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-/** Общие методы конвертирования данных
- *
+/**
+ * Общие методы конвертирования данных
  */
 public class ConvertUnils {
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertUnils.class);
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-    /** Возвращает true для пустой или пробельной строки и null
+    /**
+     * Возвращает true для пустой или пробельной строки и null
      *
      * @param s строка
      * @return результат
@@ -24,7 +30,8 @@ public class ConvertUnils {
         return s == null || s.trim().isEmpty();
     }
 
-    /** Конвертирует дату в строку формата "31.11.2020"
+    /**
+     * Конвертирует дату в строку формата "31.11.2020"
      *
      * @param d дата
      * @return результат
@@ -33,7 +40,8 @@ public class ConvertUnils {
         return d == null ? null : dateFormat.format(d);
     }
 
-    /** Конвертирует строку формата "31.11.2020" в дату
+    /**
+     * Конвертирует строку формата "31.11.2020" в дату
      *
      * @param s строка
      * @return результат
@@ -49,7 +57,8 @@ public class ConvertUnils {
         }
     }
 
-    /** округляет дату-время до даты
+    /**
+     * округляет дату-время до даты
      *
      * @param d датавремя
      * @return результат
@@ -57,5 +66,11 @@ public class ConvertUnils {
     public static Date datetimeToDate(Date d) {
         return d == null ? null : strToDate(dateToStr(d));
     }
+
+    public static <T> Stream<T> getStreamFromIterator(Iterator<T> iterator) {
+        Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterator, 0);
+        return StreamSupport.stream(spliterator, false);
+    }
+
 
 }
