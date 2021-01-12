@@ -4,6 +4,7 @@ import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.repository.MeasureRepository;
+import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.validators.MeasureValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class MeasureController {
 
     @RequestMapping(value = "json", method = RequestMethod.POST)
     public List<Measure> measure(
-            @RequestBody Object sort
+            @RequestBody GridDataOption gridDataOption
     ) {
         List<Measure> measureList = measureRepository.findAll();
         return measureList;

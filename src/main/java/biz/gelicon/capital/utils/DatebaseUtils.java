@@ -204,20 +204,44 @@ public class DatebaseUtils {
         List<String> list = new ArrayList<>();
         try {
             PreparedStatement ps = connection.prepareStatement(""
-                    + " SELECT TC.table_name, "
-                    + "        KCU.column_name, "
-                    + "        CCU.table_name master_table_name, "
-                    + "        CCU.column_name master_column_name, "
-                    + "        TC.constraint_name "
-                    + " FROM   information_schema.table_constraints TC, "
-                    + "        information_schema.key_column_usage KCU, "
-                    + "        information_schema.constraint_column_usage CCU "
-                    + " WHERE  TC.table_name = ? "
-                    + "   AND  TC.constraint_type = 'FOREIGN KEY' "
-                    + "   AND  KCU.constraint_name = TC.constraint_name  "
-                    + "   AND  KCU.table_schema = TC.table_schema "
-                    + "   AND  CCU.constraint_name = TC.constraint_name  "
-                    + "   AND  CCU.table_schema = TC.table_schema ");
+                    + " SELECT TC.table_name,                                   "
+                    + "        KCU.column_name,                                 "
+                    + "        CCU.table_name master_table_name,                "
+                    + "        CCU.column_name master_column_name,              "
+                    + "        TC.constraint_name                               "
+                    + " FROM   information_schema.table_constraints TC,         "
+                    + "        information_schema.key_column_usage KCU,         "
+                    + "        information_schema.constraint_column_usage CCU   "
+                    + " WHERE  TC.table_name = ?                                "
+                    + "   AND  TC.constraint_type = 'FOREIGN KEY'               "
+                    + "   AND  KCU.constraint_name = TC.constraint_name         "
+                    + "   AND  KCU.table_schema = TC.table_schema               "
+                    + "   AND  CCU.constraint_name = TC.constraint_name         "
+                    + "   AND  CCU.table_schema = TC.table_schema               ");
+            //SELECT T.relname table_name,
+            //       A.attname column_name,
+            //       TF.relname master_table_name,
+            //       AM.attname master_column_name,
+            //       TC.conname constraint_name
+            //FROM   pg_catalog.pg_class T,
+            //       pg_catalog.pg_constraint TC,
+            //       pg_catalog.pg_class TF,
+            //       pg_catalog.pg_attribute A,
+            //       pg_catalog.pg_constraint TM,
+            //       pg_catalog.pg_attribute AM
+            //WHERE  T.relname = 'statement'
+            //  AND  TC.conrelid = T.oid
+            //  AND  TC.contype = 'f'
+            //  AND  TF.oid = TC.confrelid
+            //  AND  A.attrelid = T.oid
+            //  AND  A.attnum = TC.conkey[1]
+            //  AND  A.attname = 'methoddeliv_id'
+            //  AND  TM.conrelid = TF.oid
+            //  AND  TM.contype = 'p'
+            //  AND  AM.attrelid = TM.conrelid
+            //  AND  AM.attnum = 1
+
+
             ps.setString(1, tableName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
