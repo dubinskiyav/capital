@@ -21,11 +21,13 @@ public class GridDataOption {
     private PageRequest pageRequest;
 
     public GridDataOption() {
+        System.out.println("GridDataOption()");
         this.pageRequest = PageRequest.of(
                 0,
                 GridDataOption.DEFAULT_PAGE_SIZE,
                 Sort.by(Sort.DEFAULT_DIRECTION)
         );
+        System.out.println("GridDataOption() - Ok");
     }
 
     public int getPageNumber() {
@@ -84,15 +86,17 @@ public class GridDataOption {
      * @param orderByList
      */
     public void SetSort(List<OrderBy> orderByList) {
-        List<Sort.Order> orders = orderByList.stream()
-                .map(o -> new Sort.Order(Sort.Direction.values()[o.direction],o.fieldName))
-                .collect(Collectors.toList());
+        List<Sort.Order> orders = new ArrayList<>();
+        if (orderByList != null) {
+            orders = orderByList.stream()
+                    .map(o -> new Sort.Order(Sort.Direction.values()[o.direction], o.fieldName))
+                    .collect(Collectors.toList());
+        }
         this.pageRequest = PageRequest.of(
                 pageRequest.getPageNumber(),
                 pageRequest.getPageSize(),
                 Sort.by(orders)
         );
-
     }
 
     /**
@@ -123,6 +127,13 @@ public class GridDataOption {
         public String getFieldName() {
             return fieldName;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "GridDataOption {page=" + this.pageRequest.getPageNumber()
+                + ", size=" + this.pageRequest.getPageSize()
+                + ", sort=" + this.pageRequest.getSort().toString();
     }
 
 
