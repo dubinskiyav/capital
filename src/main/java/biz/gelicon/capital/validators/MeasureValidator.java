@@ -9,13 +9,16 @@ import org.springframework.validation.Validator;
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
-// Валидоатор для объекта measure
+/**
+ * Валидоатор для объекта measure
+ * */
 @Component
 public class MeasureValidator implements Validator {
 
     @Autowired
     private javax.validation.Validator validator;
 
+    // Проверка на совпадение класса
     @Override
     public boolean supports(Class<?> aClass) {
         return Measure.class.equals(aClass);
@@ -23,11 +26,15 @@ public class MeasureValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        if (true) return;
         Measure measure = (Measure) target;
+        // Дополнительные ручные проверки
+        if (measure.getName() != null && measure.getName().equalsIgnoreCase("наименование")) {
+            errors.rejectValue("name", "",
+                    "Наименование не должны быть равно значению '" + measure.getName() + "'");
+        }
+
+        if (true) {return;} // Так как стандартный валидлатор вызываем в контроллере почему то
         // вызов стандартного валидатора
-        // Но есди этого не сделать - стандартная валидация не вызовется
-        // Сформируем коллекцию из ошибок, если они есть
         Set<ConstraintViolation<Measure>> validates = validator.validate(measure);
         // Цикл по коллекции ошибок
         for (ConstraintViolation<Measure> constraintViolation : validates) {
@@ -35,11 +42,6 @@ public class MeasureValidator implements Validator {
             String message = constraintViolation.getMessage();
             // Пуляем ошибку
             errors.rejectValue(propertyPath, "", message);
-        }
-        // Дополнительные ручные проверки
-        if (measure.getName() != null && measure.getName().equalsIgnoreCase("наименование")) {
-            errors.rejectValue("name", "",
-                    "Наименование не должны быть равно значению '" + measure.getName() + "'");
         }
     }
 }

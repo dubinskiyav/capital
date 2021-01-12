@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +47,7 @@ public class MeasureController {
 
     @InitBinder   // Чтобы не вызывать самому валидатор - он сам вызовется
     protected void initBinder(WebDataBinder binder) { // todo Непонятно что это
-        binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
+        //binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
     }
 
     @RequestMapping(value = "json", method = RequestMethod.POST)
@@ -120,31 +121,22 @@ public class MeasureController {
     @Transactional(propagation = Propagation.REQUIRED)
     @RequestMapping(value = "post", method = RequestMethod.POST)
     public Measure post(
-            @RequestBody Measure measure,
-            BindingResult bindingResult
+            @RequestBody Measure measure
     ) {
-        // Сначала сами проверим
-        // Это можно перенести в вализатор для Measure
-        // Здесь оставил только для примера
-        if (measure.getName().toLowerCase().equals("Наименование")) {
-            bindingResult.rejectValue("name", "",
-                    "Поле 'Наименование' не может иметь значение '" + measure.getName() + "'");
-        }
-        // Проверим с помощью валидатора
-        // validator.validate(measure, bindingResult); // Это не надо так как сделали initBinder
-        // И наш валидатор вызовется сам
-        // Проверим на наличие ошибок
-        if(bindingResult.hasErrors()) { // Если есть ошибки валидации полей - валимся
-            logger.error(bindingResult.getAllErrors().toString());
-            throw new PostRecordException(bindingResult);
+        DataBinder dataBinder = new DataBinder(measure);
+        dataBinder.addValidators(measureValidator);
+        dataBinder.validate();
+        if (dataBinder.getBindingResult().hasErrors()) {
+            logger.error(dataBinder.getBindingResult().getAllErrors().toString());
+            throw new PostRecordException(dataBinder.getBindingResult());
         }
         try {
             measureRepository.insertOrUpdate(measure);
         } catch (RuntimeException e) {
             String errText = "Ошибка сохранения записи " + measure.toString();
             logger.error(errText);
-            bindingResult.rejectValue("id", "", e.getMessage());
-            throw new PostRecordException(bindingResult);
+            dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
+            throw new PostRecordException(dataBinder.getBindingResult());
         }
         return measure;
     }
