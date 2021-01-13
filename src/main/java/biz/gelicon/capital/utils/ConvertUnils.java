@@ -2,6 +2,7 @@ package biz.gelicon.capital.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -72,5 +74,42 @@ public class ConvertUnils {
         return StreamSupport.stream(spliterator, false);
     }
 
+    /**
+     * Составляет секцию ORDER BY из Pageable
+     *
+     * @param pageable
+     * @return
+     */
+    public static String buildOrderByFromPegable(Pageable pageable) {
+        if (pageable == null) {return "";} // Чтобы не заморачиваться там где вызываем
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(
+                        pageable.getSort().iterator(),
+                        Spliterator.ORDERED),
+                false)
+                .map(o -> o.getProperty() + " " + o.getDirection().toString())
+                .collect(Collectors.joining(",", "ORDER BY ", ""));
+    }
+
+    /**
+     * Составляет секцию LIMIT OFFSET из Pageable
+     *
+     * @param pageable
+     * @return
+     */
+    public static String buildLimitFromPegable(Pageable pageable) {
+        if (pageable == null || pageable.isUnpaged() || pageable.getPageSize() < 1) {
+            // Чтобы не заморачиваться там где вызываем
+            return "";
+        }
+        // Выводим по страницам
+        // Ограницим число строк размером страницы
+        String limitPart = "LIMIT " + pageable.getPageSize();
+        if (pageable.getPageNumber() > 0) { // Это не первая страница
+            // Сместимсся на столько записей, сколько их в предудущих страницах
+            limitPart = limitPart + " OFFSET " + pageable.getPageNumber() * pageable.getPageSize();
+        }
+        return limitPart;
+    }
 
 }

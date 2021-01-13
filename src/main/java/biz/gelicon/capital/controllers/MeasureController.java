@@ -6,6 +6,8 @@ import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.repository.MeasureRepository;
 import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.validators.MeasureValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,16 @@ public class MeasureController {
     public List<Measure> measure(
             @RequestBody GridDataOption gridDataOption
     ) {
-        //logger.info("measure: GridDataOption = " + gridDataOption.toString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String gridDataOptionAsString = null;
+        try {
+            gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);
+        } catch (JsonProcessingException e) {
+            String errText = "Ошимбка при преобразовании";
+            logger.error(errText);
+            throw new RuntimeException(errText);
+        }
+        logger.info("measure: gridDataOptionAsString = " + gridDataOptionAsString);
         List<Measure> measureList = measureRepository.findAll();
         return measureList;
     }

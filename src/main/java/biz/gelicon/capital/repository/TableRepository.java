@@ -1,12 +1,14 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.utils.ColumnMetadata;
+import biz.gelicon.capital.utils.ConvertUnils;
 import biz.gelicon.capital.utils.DatebaseUtils;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -297,6 +299,41 @@ public interface TableRepository<T> {
             if (comma.equals("")) { comma = ", "; }
         }
         sqlText.append(" FROM ").append(tableName);
+        // Маппер с классом для модели
+        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
+        try {
+            List<T> tList = jdbcTemplate.query(sqlText.toString(), resultSetRowMapper);
+            return tList;
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
+    }
+
+    /**
+     * Возвращает записи из таблицы в соответствие с page
+     * @param page
+     * @return
+     */
+    default List<T> findAll (Pageable page) {
+        // Получим класс дженерика класса
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = tableMetadataMap.get(tableName);
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        // Сформируем текст запроса
+        StringBuilder sqlText = new StringBuilder("SELECT ");
+        String comma = "";
+        for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
+            sqlText.append(comma)
+                    .append(tableMetadata.getColumnMetadataList().get(i).getColumnName());
+            if (comma.equals("")) { comma = ", "; }
+        }
+        sqlText.append(" FROM ").append(tableName);
+        sqlText.append("\n").append(ConvertUnils.buildOrderByFromPegable(page));
+        sqlText.append("\n").append(ConvertUnils.buildLimitFromPegable(page));
         // Маппер с классом для модели
         ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
         try {

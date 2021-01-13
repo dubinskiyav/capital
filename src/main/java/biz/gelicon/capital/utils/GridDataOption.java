@@ -52,7 +52,7 @@ public class GridDataOption {
      * Строит и возвращает PageRequest из pageNumber, pageSize и List<OrderBy> sort
      * @return PageRequest
      */
-    public PageRequest getPageRequest(){
+    public PageRequest buildPageRequest(){
         List<Sort.Order> orders = new ArrayList<>();
         if (sort != null && sort.size()>0) {
             orders = sort.stream()
@@ -77,10 +77,13 @@ public class GridDataOption {
     /**
      * Вспомогательный класс для сортровки Имя поля - как в мобели, а не как в базе
      */
-    static class OrderBy {
+    public static class OrderBy {
 
         private String fieldName;
         private int direction;
+
+        public OrderBy() {
+        }
 
         public OrderBy(String fieldName, int direction) {
             this.fieldName = fieldName;
