@@ -284,11 +284,7 @@ public interface TableRepository<T> {
      * @return коллекция из объектов
      */
     default List<T> findAll() {
-        // Получим класс дженерика класса
-        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
-        // Сформируем текст запроса
-        String sqlText = buildSelectSQL(cls, null);
-        return selectList(cls, sqlText);
+        return findAll(null);
     }
 
     /**
@@ -299,33 +295,7 @@ public interface TableRepository<T> {
     default List<T> findAll (Pageable page) {
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
-        // Сформируем текст запроса
-        String sqlText = buildSelectSQL(cls, page);
-        return selectList(cls, sqlText);
-    }
 
-    /**
-     * Возвращает List из сласса и запроса
-     * @param cls
-     * @param sqlText
-     * @return
-     */
-    private List<T> selectList(Class cls, String sqlText) {
-        // Маппер с классом для модели
-        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
-        try {
-            JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-            List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
-            return tList;
-        } catch (Exception e) {
-            String errText = "SQL execute filed: " + sqlText;
-            logger.error(errText, e);
-            throw new RuntimeException(errText, e);
-        }
-    }
-
-    // Формирует текст запроса с учетом или без учета Pageable page
-    private <T> String buildSelectSQL(Class cls, Pageable page){
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
         // Найдем в коллекции описание таблицы по имени
         TableMetadata tableMetadata = tableMetadataMap.get(tableName);
@@ -342,7 +312,17 @@ public interface TableRepository<T> {
             sqlText.append("\n").append(ConvertUnils.buildOrderByFromPegable(page));
             sqlText.append("\n").append(ConvertUnils.buildLimitFromPegable(page));
         }
-        return sqlText.toString();
+        // Маппер с классом для модели
+        ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
+        try {
+            JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+            List<T> tList = jdbcTemplate.query(sqlText.toString(), resultSetRowMapper);
+            return tList;
+        } catch (Exception e) {
+            String errText = "SQL execute filed: " + sqlText;
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
     }
 
     /**

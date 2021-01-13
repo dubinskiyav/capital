@@ -98,7 +98,7 @@ public class ConvertUnils {
      * @return
      */
     public static String buildLimitFromPegable(Pageable pageable) {
-        if (pageable == null || pageable.isUnpaged() || pageable.getPageSize() < 1) {
+        if (pageable == null || pageable.isUnpaged() || pageable.getPageSize() < 0) {
             // Чтобы не заморачиваться там где вызываем
             return "";
         }
