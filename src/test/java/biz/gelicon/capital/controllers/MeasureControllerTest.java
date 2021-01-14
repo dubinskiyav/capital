@@ -63,8 +63,8 @@ public class MeasureControllerTest {
         List<GridDataOption.OrderBy> sort = new ArrayList<>();
         sort.add(new GridDataOption.OrderBy("name",0));
         GridDataOption gridDataOption = new GridDataOption();
-        gridDataOption.setPageNumber(0);
-        gridDataOption.setPageSize(3);
+        gridDataOption.setPageNumber(1);
+        gridDataOption.setPageSize(1);
         gridDataOption.setSort(sort);
         ObjectMapper objectMapper = new ObjectMapper();
         String gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);

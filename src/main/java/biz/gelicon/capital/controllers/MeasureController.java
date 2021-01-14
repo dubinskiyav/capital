@@ -4,6 +4,7 @@ import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.repository.MeasureRepository;
+import biz.gelicon.capital.utils.ConvertUnils;
 import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.validators.MeasureValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +70,8 @@ public class MeasureController {
             throw new RuntimeException(errText);
         }
         logger.info("measure: gridDataOptionAsString = " + gridDataOptionAsString);
-        List<Measure> measureList = measureRepository.findAll();
+        List<Measure> measureList =
+                measureRepository.findAll(gridDataOption.buildPageRequest());
         return measureList;
     }
 

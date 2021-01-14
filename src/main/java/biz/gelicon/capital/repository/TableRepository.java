@@ -300,23 +300,24 @@ public interface TableRepository<T> {
         // Найдем в коллекции описание таблицы по имени
         TableMetadata tableMetadata = tableMetadataMap.get(tableName);
         // Сформируем текст запроса
-        StringBuilder sqlText = new StringBuilder("SELECT ");
+        StringBuilder sqlTextBuilder = new StringBuilder("SELECT ");
         String comma = "";
         for (int i = 0; i < tableMetadata.getColumnMetadataList().size(); i++) {
-            sqlText.append(comma)
+            sqlTextBuilder.append(comma)
                     .append(tableMetadata.getColumnMetadataList().get(i).getColumnName());
             if (comma.equals("")) { comma = ", "; }
         }
-        sqlText.append(" FROM ").append(tableName);
+        sqlTextBuilder.append(" FROM ").append(tableName);
         if (page != null) {
-            sqlText.append("\n").append(ConvertUnils.buildOrderByFromPegable(page));
-            sqlText.append("\n").append(ConvertUnils.buildLimitFromPegable(page));
+            sqlTextBuilder.append("\n").append(ConvertUnils.buildOrderByFromPegable(page));
+            sqlTextBuilder.append("\n").append(ConvertUnils.buildLimitFromPegable(page));
         }
+        String sqlText = sqlTextBuilder.toString();
         // Маппер с классом для модели
         ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
         try {
             JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-            List<T> tList = jdbcTemplate.query(sqlText.toString(), resultSetRowMapper);
+            List<T> tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
             return tList;
         } catch (Exception e) {
             String errText = "SQL execute filed: " + sqlText;
