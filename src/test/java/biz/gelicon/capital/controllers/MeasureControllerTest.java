@@ -2,9 +2,11 @@ package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.model.Measure;
+import biz.gelicon.capital.utils.DatabaseCreate;
 import biz.gelicon.capital.utils.GridDataOption;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,7 +21,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,10 +51,16 @@ public class MeasureControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    DatabaseCreate databaseCreate;
+
     @BeforeEach
     public void initTests() {
         logger.info("initTests");
         CapitalApplication.setApplicationContext(applicationContext);
+        databaseCreate.clear();
+        databaseCreate.load();
+
 
     }
 
@@ -63,8 +74,8 @@ public class MeasureControllerTest {
         List<GridDataOption.OrderBy> sort = new ArrayList<>();
         sort.add(new GridDataOption.OrderBy("name",0));
         GridDataOption gridDataOption = new GridDataOption();
-        gridDataOption.setPageNumber(1);
-        gridDataOption.setPageSize(1);
+        gridDataOption.setPageNumber(2);
+        gridDataOption.setPageSize(4);
         gridDataOption.setSort(sort);
         ObjectMapper objectMapper = new ObjectMapper();
         String gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);
@@ -80,12 +91,21 @@ public class MeasureControllerTest {
                 .andDo(print()) // выводить результат в консоль
                 .andExpect(status().isOk()) // Статус вернет 200
                 .andExpect(content().string(containsString("{\"id\":")));
+        List<Measure> measureListExpected = Stream.of(
+                new Measure(25,"Магнитный поток"),
+                new Measure(17,"Мощность"),
+                new Measure(20,"Освещенность"),
+                new Measure(11,"Плоский угол"))
+                .collect(Collectors.toList());
         MvcResult result = this.mockMvc.perform(post("/measure/json")
-                .content("{\"pageSize\":10, \"pageNumber\":0, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
+                .content("{\"pageSize\":4, \"pageNumber\":2, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Measure> measureList = objectMapper.readValue(content, new TypeReference<List<Measure>>(){});
+        List<Measure> measureList =
+                objectMapper.readValue(content, new TypeReference<>() {});
+        Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
+        Assert.assertArrayEquals(measureListExpected.toArray(),measureList.toArray());
         for (int i = 0; i < measureList.size(); i++) {
             logger.info(measureList.get(i).toString());
         }

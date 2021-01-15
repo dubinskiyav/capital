@@ -5,6 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
@@ -16,7 +17,7 @@ public class Measure {
     @Column(name = "id")
     private Integer id;
 
-    @NotEmpty(message="Наименование не может быть пустым")
+    @NotEmpty(message = "Наименование не может быть пустым")
     @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
     @Column(name = "name", nullable = false, columnDefinition = "Наименование")
     private String name;
@@ -57,6 +58,15 @@ public class Measure {
                 + "id=" + id + ", "
                 + "name=" + name
                 + "}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {return true;}
+        if (obj.getClass() != this.getClass()) { return false; }
+        Measure model = (Measure) obj;
+        return Integer.compare(id, model.id) == 0
+                && Objects.equals(name, model.name);
     }
 
 }
