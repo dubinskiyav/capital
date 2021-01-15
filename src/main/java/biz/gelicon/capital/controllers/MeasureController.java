@@ -1,6 +1,5 @@
 package biz.gelicon.capital.controllers;
 
-import biz.gelicon.capital.exceptions.BadArgumentsException;
 import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
@@ -154,12 +153,6 @@ public class MeasureController {
             throw new PostRecordException(dataBinder.getBindingResult());
         }
         return measure;
-    }
-
-    @GetMapping("throw")
-    public void getException() throws Exception {
-        logger.info("/exception/throw");
-        throw new BadArgumentsException("bad arguments");
     }
 
 }

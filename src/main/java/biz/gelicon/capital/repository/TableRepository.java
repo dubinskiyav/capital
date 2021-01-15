@@ -322,7 +322,8 @@ public interface TableRepository<T> {
                 // Вызовем наше исключение
                 String errText = "SQL build error: " + sqlTextBuilder.toString();
                 logger.error(errText);
-                throw new BadPagingException(errText);
+                throw new RuntimeException(errText);
+                //throw new BadPagingException(errText);
             }
         }
         String sqlText = sqlTextBuilder.toString();
