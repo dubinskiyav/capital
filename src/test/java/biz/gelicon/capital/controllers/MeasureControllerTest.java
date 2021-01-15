@@ -1,7 +1,6 @@
 package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.CapitalApplication;
-import biz.gelicon.capital.exceptions.BadPagingException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.utils.DatabaseCreate;
 import biz.gelicon.capital.utils.GridDataOption;
@@ -20,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -60,13 +59,13 @@ public class MeasureControllerTest {
     @BeforeEach
     public void initTests() {
         logger.info("initTests");
+
         CapitalApplication.setApplicationContext(applicationContext);
         databaseCreate.clear();
         databaseCreate.load();
 
 
     }
-
 
     @Test
     void measureTest() throws Exception {
@@ -119,6 +118,10 @@ public class MeasureControllerTest {
     void badPaging() throws Exception {
         logger.info("measureExceptioonTest start ");
         // Укажем пагинацию и не укажем сортировку
+        this.mockMvc.perform(post("/measure/json")
+                .content("{\"pageSize\":4, \"pageNumber\":2}")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print());
         MvcResult result = this.mockMvc.perform(post("/measure/json")
                 .content("{\"pageSize\":4, \"pageNumber\":2}")
                 .contentType(MediaType.APPLICATION_JSON))

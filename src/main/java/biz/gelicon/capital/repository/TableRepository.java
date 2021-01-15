@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -315,15 +316,15 @@ public interface TableRepository<T> {
         if (page != null) {
             String orderBy = ConvertUnils.buildOrderByFromPegable(page);
             String limit = ConvertUnils.buildLimitFromPegable(page);
-            if (orderBy != null) {sqlTextBuilder.append("\n").append(orderBy);}
-            if (limit != null) { sqlTextBuilder.append("\n").append(limit);}
+            if (orderBy != null) {sqlTextBuilder.append(" ").append(orderBy);}
+            if (limit != null) { sqlTextBuilder.append(" ").append(limit);}
             // Если есть пагинация, но нет сортировки - ошибка
             if (limit != null && orderBy == null) {
                 // Вызовем наше исключение
                 String errText = "SQL build error: " + sqlTextBuilder.toString();
                 logger.error(errText);
-                throw new RuntimeException(errText);
-                //throw new BadPagingException(errText);
+                //throw new RuntimeException(errText);
+                throw new BadPagingException(errText);
             }
         }
         String sqlText = sqlTextBuilder.toString();
