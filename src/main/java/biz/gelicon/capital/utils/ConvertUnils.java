@@ -83,7 +83,8 @@ public class ConvertUnils {
      * @return
      */
     public static String buildOrderByFromPegable(Pageable pageable) {
-        if (pageable == null) {return "";} // Чтобы не заморачиваться там где вызываем
+        if (pageable == null) {return null;}
+        if (pageable.getSort().isEmpty()) {return null;}
         return StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(
                         pageable.getSort().iterator(),
@@ -101,8 +102,7 @@ public class ConvertUnils {
      */
     public static String buildLimitFromPegable(Pageable pageable) {
         if (pageable == null || pageable.isUnpaged() || pageable.getPageSize() < 0) {
-            // Чтобы не заморачиваться там где вызываем
-            return "";
+            return null;
         }
         // Выводим по страницам
         // Ограницим число строк размером страницы

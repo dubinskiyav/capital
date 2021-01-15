@@ -289,10 +289,11 @@ public interface TableRepository<T> {
 
     /**
      * Возвращает записи из таблицы в соответствие с page
+     *
      * @param page
      * @return
      */
-    default List<T> findAll (Pageable page) {
+    default List<T> findAll(Pageable page) {
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
 
@@ -309,8 +310,16 @@ public interface TableRepository<T> {
         }
         sqlTextBuilder.append(" FROM ").append(tableName);
         if (page != null) {
-            sqlTextBuilder.append("\n").append(ConvertUnils.buildOrderByFromPegable(page));
-            sqlTextBuilder.append("\n").append(ConvertUnils.buildLimitFromPegable(page));
+            String orderBy = ConvertUnils.buildOrderByFromPegable(page);
+            String limit = ConvertUnils.buildLimitFromPegable(page);
+            if (orderBy != null) {sqlTextBuilder.append("\n").append(orderBy);}
+            if (limit != null) { sqlTextBuilder.append("\n").append(limit);}
+            // Если есть пагинация, но нет сортировки - ошибка
+            if (limit != null && orderBy == null) {
+                String errText = "SQL build error: " + sqlTextBuilder.toString();
+                logger.error(errText);
+                throw new RuntimeException(errText);
+            }
         }
         String sqlText = sqlTextBuilder.toString();
         // Маппер с классом для модели
@@ -345,7 +354,7 @@ public interface TableRepository<T> {
         ResultSetRowMapper resultSetRowMapper = new ResultSetRowMapper(cls);
         List<T> tList = null;
         try {
-        tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
+            tList = jdbcTemplate.query(sqlText, resultSetRowMapper);
         } catch (Exception e) {
             String errText = "SQL execute filed: " + sqlText;
             logger.error(errText, e);

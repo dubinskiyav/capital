@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
@@ -38,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@WebAppConfiguration
 public class MeasureControllerTest {
 
     static Logger logger = LoggerFactory.getLogger(MeasureControllerTest.class);
@@ -65,14 +69,13 @@ public class MeasureControllerTest {
     }
 
 
-    // todo требуется наполнение
     @Test
     void measureTest() throws Exception {
         logger.info("test measure start ");
 
         // /Создадим json равный GridDataOption для передачи в контроллер
         List<GridDataOption.OrderBy> sort = new ArrayList<>();
-        sort.add(new GridDataOption.OrderBy("name",0));
+        sort.add(new GridDataOption.OrderBy("name", 0));
         GridDataOption gridDataOption = new GridDataOption();
         gridDataOption.setPageNumber(2);
         gridDataOption.setPageSize(4);
@@ -80,8 +83,8 @@ public class MeasureControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);
         // и обратно считаем
-        GridDataOption gridDataOptio1 = objectMapper.readValue(gridDataOptionAsString,GridDataOption.class);
-
+        GridDataOption gridDataOptio1 = objectMapper
+                .readValue(gridDataOptionAsString, GridDataOption.class);
 
         this.mockMvc.perform(post("/measure/json")
                 //.content("{\"pageSize\":10, \"pageNumber\":0, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
@@ -91,27 +94,38 @@ public class MeasureControllerTest {
                 .andDo(print()) // выводить результат в консоль
                 .andExpect(status().isOk()) // Статус вернет 200
                 .andExpect(content().string(containsString("{\"id\":")));
+        // Проверим пагинацию
         List<Measure> measureListExpected = Stream.of(
-                new Measure(25,"Магнитный поток"),
-                new Measure(17,"Мощность"),
-                new Measure(20,"Освещенность"),
-                new Measure(11,"Плоский угол"))
+                new Measure(25, "Магнитный поток"),
+                new Measure(17, "Мощность"),
+                new Measure(20, "Освещенность"),
+                new Measure(11, "Плоский угол"))
                 .collect(Collectors.toList());
         MvcResult result = this.mockMvc.perform(post("/measure/json")
-                .content("{\"pageSize\":4, \"pageNumber\":2, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
+                .content(
+                        "{\"pageSize\":4, \"pageNumber\":2, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Measure> measureList =
-                objectMapper.readValue(content, new TypeReference<>() {});
-        Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
-        Assert.assertArrayEquals(measureListExpected.toArray(),measureList.toArray());
-        for (int i = 0; i < measureList.size(); i++) {
-            logger.info(measureList.get(i).toString());
-        }
-
         logger.info("content = " + content);
+        List<Measure> measureList =
+                objectMapper.readValue(content, new TypeReference<>() {
+                });
+        Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
+        Assert.assertArrayEquals(measureListExpected.toArray(), measureList.toArray());
         logger.info("test measure finish");
+    }
+
+    @Test
+    void noLogin() throws Exception {
+        logger.info("measureExceptioonTest start ");
+        // Укажем пагинацию и не укажем сортировку
+        this.mockMvc.perform(post("/measure/json")
+                .content("{\"pageSize\":4, \"pageNumber\":2}")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        logger.info("measureExceptioonTest finish");
     }
 
     @Test
