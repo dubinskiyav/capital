@@ -1,5 +1,6 @@
 package biz.gelicon.capital.repository;
 
+import biz.gelicon.capital.exceptions.BadPagingException;
 import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.ConvertUnils;
 import biz.gelicon.capital.utils.DatebaseUtils;
@@ -9,11 +10,13 @@ import biz.gelicon.capital.utils.TableMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -316,9 +319,10 @@ public interface TableRepository<T> {
             if (limit != null) { sqlTextBuilder.append("\n").append(limit);}
             // Если есть пагинация, но нет сортировки - ошибка
             if (limit != null && orderBy == null) {
+                // Вызовем наше исключение
                 String errText = "SQL build error: " + sqlTextBuilder.toString();
                 logger.error(errText);
-                throw new RuntimeException(errText);
+                throw new BadPagingException(errText);
             }
         }
         String sqlText = sqlTextBuilder.toString();

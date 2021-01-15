@@ -1,5 +1,6 @@
 package biz.gelicon.capital.controllers;
 
+import biz.gelicon.capital.exceptions.BadArgumentsException;
 import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.DataBinder;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +70,8 @@ public class MeasureController {
                 measureRepository.findAll(gridDataOption.buildPageRequest());
         return measureList;
     }
+
+
 
     /**
      * Добавление меры измерения Получение данных для заполнения формы добавления начальными
@@ -150,6 +154,12 @@ public class MeasureController {
             throw new PostRecordException(dataBinder.getBindingResult());
         }
         return measure;
+    }
+
+    @GetMapping("throw")
+    public void getException() throws Exception {
+        logger.info("/exception/throw");
+        throw new BadArgumentsException("bad arguments");
     }
 
 }

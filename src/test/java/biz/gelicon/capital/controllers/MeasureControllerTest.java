@@ -1,6 +1,7 @@
 package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.CapitalApplication;
+import biz.gelicon.capital.exceptions.BadPagingException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.utils.DatabaseCreate;
 import biz.gelicon.capital.utils.GridDataOption;
@@ -9,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +17,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -117,14 +116,15 @@ public class MeasureControllerTest {
     }
 
     @Test
-    void noLogin() throws Exception {
+    void badPagingLogin() throws Exception {
         logger.info("measureExceptioonTest start ");
         // Укажем пагинацию и не укажем сортировку
         this.mockMvc.perform(post("/measure/json")
                 .content("{\"pageSize\":4, \"pageNumber\":2}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadPagingException))
+        ;
         logger.info("measureExceptioonTest finish");
     }
 
