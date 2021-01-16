@@ -2,25 +2,20 @@ package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.exceptions.BadPagingException;
 import biz.gelicon.capital.exceptions.FetchQueryException;
-import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.ConvertUnils;
-import biz.gelicon.capital.utils.DatebaseUtils;
+import biz.gelicon.capital.utils.DatabaseUtils;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -78,7 +73,7 @@ public interface TableRepository<T> {
         if (id == null) {
             // Сгенерируем значение
             JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-            id = DatebaseUtils.getSequenceNextValue(
+            id = DatabaseUtils.getSequenceNextValue(
                     tableName + "_id_gen",
                     jdbcTemplate
             );

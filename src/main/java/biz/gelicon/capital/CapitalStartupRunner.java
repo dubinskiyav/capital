@@ -1,7 +1,7 @@
 package biz.gelicon.capital;
 
 import biz.gelicon.capital.repository.TableRepository;
-import biz.gelicon.capital.utils.DatebaseUtils;
+import biz.gelicon.capital.utils.DatabaseUtils;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class CapitalStartupRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         logger.info("CapitalStartupRunner started with option names : {}", args.getOptionNames());
         // Установим тип СУБД
-        DatebaseUtils.setDbType(jdbcTemplate);
+        DatabaseUtils.setDbType(jdbcTemplate);
         // Считаем все аннотации @Table
         logger.info("Reading @Table metadata...");
         Reflections reflections = new Reflections("biz.gelicon.capital");

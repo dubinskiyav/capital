@@ -20,9 +20,9 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Различные методы работы с базой данных
  */
-public class DatebaseUtils {
+public class DatabaseUtils {
 
-    static Logger logger = LoggerFactory.getLogger(DatebaseUtils.class);
+    static Logger logger = LoggerFactory.getLogger(DatabaseUtils.class);
     public static String dbType = "postgresql"; // Тип текущей БД
     public static Boolean trySequence = true; // Пробуем получить id из последовательностей
 
@@ -307,5 +307,22 @@ public class DatebaseUtils {
             throw new RuntimeException(errText, e);
         }
         return list;
+    }
+
+    public static void setSequence(String name, Integer value, JdbcTemplate jdbcTemplate) {
+        Connection connection = DatabaseUtils.getJdbcTemplateConnection(jdbcTemplate);
+        if (!isPostgreSQL(jdbcTemplate)) {
+            throw new RuntimeException("Установка последовательности не реализована для данного типа СУБД");
+        }
+        String sqlText = " ALTER SEQUENCE measure_id_gen RESTART WITH 33";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlText);
+            ps.executeUpdate();
+            ps.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 }

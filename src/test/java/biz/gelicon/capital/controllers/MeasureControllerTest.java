@@ -172,6 +172,7 @@ public class MeasureControllerTest {
     @Test
     void InsertUpdateDeleteOkTest() throws Exception {
         logger.info("InsertUpdateDeleteOkTest() - Start");
+        // Добавление
         Measure measure = new Measure(null, "Новая мера измерения");
         ObjectMapper objectMapper = new ObjectMapper();
         String measureAsString = objectMapper.writeValueAsString(measure);
@@ -180,6 +181,7 @@ public class MeasureControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andDo(print()) // выводить результат в консоль
+                .andExpect(content().string(containsString("Новая мера измерения")))
         ;
         measure = null;
         // Вызовем изменение

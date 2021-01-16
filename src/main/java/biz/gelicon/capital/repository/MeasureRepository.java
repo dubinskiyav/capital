@@ -1,12 +1,16 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.model.Measure;
+import biz.gelicon.capital.utils.DatabaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 @Repository
 public class MeasureRepository implements TableRepository<Measure>{
@@ -23,13 +27,14 @@ public class MeasureRepository implements TableRepository<Measure>{
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public int load() {
-        insert(new Measure(1, "Вес"));
-        insert(new Measure(2, "Расстояние"));
-        insert(new Measure(3, "Время"));
-        insert(new Measure(4, "Сила тока"));
-        insert(new Measure(5, "Температура"));
-        insert(new Measure(6, "Количество вечества"));
-        insert(new Measure(7, "Сила света"));
+        insert(new Measure(-1, "Без меры измерения"));
+        insert(new Measure( 1, "Вес"));
+        insert(new Measure( 2, "Расстояние"));
+        insert(new Measure( 3, "Время"));
+        insert(new Measure( 4, "Сила тока"));
+        insert(new Measure( 5, "Температура"));
+        insert(new Measure( 6, "Количество вечества"));
+        insert(new Measure( 7, "Сила света"));
         insert(new Measure(11, "Плоский угол"));
         insert(new Measure(12, "Телесный угол"));
         insert(new Measure(13, "Температура по шкале Цельсия"));
@@ -53,6 +58,7 @@ public class MeasureRepository implements TableRepository<Measure>{
         insert(new Measure(31, "Эффективная доза ионизирующего излучения"));
         insert(new Measure(32, "Активность катализатора"));
         logger.info("31 measures loaded");
+        DatabaseUtils.setSequence("measure_id_gen", 33, jdbcTemplate);
         return 31;
     }
 
