@@ -3,6 +3,7 @@ package biz.gelicon.capital.controllers;
 import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.exceptions.BadPagingException;
 import biz.gelicon.capital.exceptions.FetchQueryException;
+import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.utils.DatabaseCreate;
 import biz.gelicon.capital.utils.GridDataOption;
@@ -148,7 +149,11 @@ public class MeasureControllerTest {
                 .content(measureAsString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // выводить результат в консоль
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof PostRecordException))
+                .andExpect(content().string(containsString("SQL execute filed: INSERT INTO measure (id, name) VALUES (:id, :name)")))
         ;
+        logger.info("addErrorTest() - Ok");
     }
 
     @Test

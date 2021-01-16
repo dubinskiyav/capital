@@ -5,18 +5,19 @@ import org.springframework.validation.BindingResult;
 public class PostRecordException extends RuntimeException {
 
     private BindingResult bindingResult;
+    private static final String errText = "Ошибка модификации данных в базе";
 
     public PostRecordException(
             BindingResult bindingResult
     ) {
-        super(bindingResult.toString());
+        super(errText);
     }
 
     public PostRecordException(
             BindingResult bindingResult,
             Throwable err
     ) {
-        super(bindingResult.toString(), err);
+        super(errText, err);
         this.bindingResult = bindingResult;
     }
 

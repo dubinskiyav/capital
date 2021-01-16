@@ -3,9 +3,9 @@ package biz.gelicon.capital.utils;
 import biz.gelicon.capital.exceptions.BadPagingException;
 import biz.gelicon.capital.exceptions.FetchQueryException;
 import biz.gelicon.capital.exceptions.PostRecordException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,7 +53,11 @@ public class RestControllerExceptionHandler {
             // и потом из него сделать Map fieldErrors в errorResponse
             errorResponse.setFieldErrors(fieldErrors);
         }
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.OK);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+
+        return new ResponseEntity<ErrorResponse>(errorResponse, headers, HttpStatus.OK);
     }
 
 }
