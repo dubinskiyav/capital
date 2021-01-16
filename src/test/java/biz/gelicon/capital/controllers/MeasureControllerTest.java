@@ -70,8 +70,12 @@ public class MeasureControllerTest {
 
     }
 
+    /**
+     * Тестирование выборки данных
+     * @throws Exception
+     */
     @Test
-    void measureTest() throws Exception {
+    void measureSelectTest() throws Exception {
         logger.info("test measure start ");
 
         // /Создадим json равный GridDataOption для передачи в контроллер
@@ -113,12 +117,16 @@ public class MeasureControllerTest {
                 });
         Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
         Assert.assertArrayEquals(measureListExpected.toArray(), measureList.toArray());
-        logger.info("test measure finish");
+        logger.info("measureSelectTest() - Ok");
     }
 
+    /**
+     * Тестирование ошитбки при выборе
+     * указали пагинацию и не укажзали сортировку
+     * @throws Exception
+     */
     @Test
     void badPaging() throws Exception {
-        logger.info("measureExceptioonTest start ");
         assertTrue(true);
         // Укажем пагинацию и не укажем сортировку
         this.mockMvc.perform(post("/measure/json")
@@ -131,7 +139,7 @@ public class MeasureControllerTest {
                 .andExpect(content().string(containsString("LIMIT")))
                 .andExpect(content().string(containsString("OFFSET")))
         ;
-        logger.info("measureExceptioonTest finish");
+        logger.info("badPaging() - Ok");
     }
 
     /**
@@ -139,7 +147,7 @@ public class MeasureControllerTest {
      * @throws Exception
      */
     @Test
-    void addErrorTest() throws Exception {
+    void insertErrorTest() throws Exception {
         // Создадим measure который уже существует
         Measure measure = new Measure(null, "Вес");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -149,20 +157,34 @@ public class MeasureControllerTest {
                 .content(measureAsString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // выводить результат в консоль
+                .andExpect(status().isOk()) // Ошибки быть не должно
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof PostRecordException))
                 .andExpect(content().string(containsString("SQL execute filed: INSERT INTO measure (id, name) VALUES (:id, :name)")))
         ;
-        logger.info("addErrorTest() - Ok");
+        logger.info("insertErrorTest() - Ok");
     }
 
+    /**
+     * Проверка безошибочного добавления-изменения-удаления записи
+     * @throws Exception
+     */
     @Test
-    void addTest() throws Exception {
-        if (true) {return;}
-        this.mockMvc.perform(get("/measure/post"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("{")));
+    void InsertUpdateDeleteOkTest() throws Exception {
+        logger.info("InsertUpdateDeleteOkTest() - Start");
+        Measure measure = new Measure(null, "Новая мера измерения");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String measureAsString = objectMapper.writeValueAsString(measure);
+        this.mockMvc.perform(post("/measure/post")
+                .content(measureAsString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()) // Ошибки быть не должно
+                .andDo(print()) // выводить результат в консоль
+        ;
+        measure = null;
+        // Вызовем изменение
+        // upd
+        logger.info("InsertUpdateDeleteOkTest() - Ok");
     }
 
     @Test
