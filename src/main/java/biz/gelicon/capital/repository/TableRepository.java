@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -324,7 +325,11 @@ public interface TableRepository<T> {
                 String errText = "SQL build error: " + sqlTextBuilder.toString();
                 logger.error(errText);
                 //throw new RuntimeException(errText);
-                throw new BadPagingException(errText);
+                //throw new BadPagingException(errText);
+                //throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        errText);
             }
         }
         String sqlText = sqlTextBuilder.toString();
@@ -337,7 +342,11 @@ public interface TableRepository<T> {
         } catch (Exception e) {
             String errText = "SQL execute filed: " + sqlText;
             logger.error(errText, e);
-            throw new RuntimeException(errText, e);
+            //throw new RuntimeException(errText, e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    errText,
+                    e);
         }
     }
 

@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
@@ -122,12 +121,15 @@ public class MeasureControllerTest {
                 .content("{\"pageSize\":4, \"pageNumber\":2}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
+        /*
         MvcResult result = this.mockMvc.perform(post("/measure/json")
                 .content("{\"pageSize\":4, \"pageNumber\":2}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
+
+         */
         /*
         this.mockMvc.perform(post("/measure/json")
                 .content("{\"pageSize\":4, \"pageNumber\":2}")
