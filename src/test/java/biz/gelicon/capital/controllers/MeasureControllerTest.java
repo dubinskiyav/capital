@@ -1,6 +1,8 @@
 package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.CapitalApplication;
+import biz.gelicon.capital.exceptions.BadPagingException;
+import biz.gelicon.capital.exceptions.FetchQueryException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.utils.DatabaseCreate;
 import biz.gelicon.capital.utils.GridDataOption;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -86,7 +89,6 @@ public class MeasureControllerTest {
         this.mockMvc.perform(post("/measure/json")
                 //.content("{\"pageSize\":10, \"pageNumber\":0, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
                 .content(gridDataOptionAsString)
-                //.content("{}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // выводить результат в консоль
                 .andExpect(status().isOk()) // Статус вернет 200
@@ -116,36 +118,43 @@ public class MeasureControllerTest {
     @Test
     void badPaging() throws Exception {
         logger.info("measureExceptioonTest start ");
+        assertTrue(true);
         // Укажем пагинацию и не укажем сортировку
         this.mockMvc.perform(post("/measure/json")
                 .content("{\"pageSize\":4, \"pageNumber\":2}")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print());
-        /*
-        MvcResult result = this.mockMvc.perform(post("/measure/json")
-                .content("{\"pageSize\":4, \"pageNumber\":2}")
-                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andReturn();
-        String content = result.getResponse().getContentAsString();
-
-         */
-        /*
-        this.mockMvc.perform(post("/measure/json")
-                .content("{\"pageSize\":4, \"pageNumber\":2}")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadPagingException))
+                .andExpect(status().isOk()) // Ошибки быть не должно
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof BadPagingException))
+                .andExpect(content().string(containsString("LIMIT")))
+                .andExpect(content().string(containsString("OFFSET")))
         ;
-
-         */
         logger.info("measureExceptioonTest finish");
+    }
+
+    /**
+     * Проверка ошибочного добавления записи
+     * @throws Exception
+     */
+    @Test
+    void addErrorTest() throws Exception {
+        // Создадим measure который уже существует
+        Measure measure = new Measure(null, "Вес");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String measureAsString = objectMapper.writeValueAsString(measure);
+        this.mockMvc.perform(post("/measure/post")
+                //.content("{\"id\":1,\"name\":\"Вес\"}")
+                .content(measureAsString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()) // выводить результат в консоль
+        ;
     }
 
     @Test
     void addTest() throws Exception {
         if (true) {return;}
-        this.mockMvc.perform(get("/measure/add"))
+        this.mockMvc.perform(get("/measure/post"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("{")));

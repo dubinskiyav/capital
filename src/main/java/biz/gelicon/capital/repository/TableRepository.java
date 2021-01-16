@@ -1,6 +1,8 @@
 package biz.gelicon.capital.repository;
 
 import biz.gelicon.capital.exceptions.BadPagingException;
+import biz.gelicon.capital.exceptions.FetchQueryException;
+import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.ConvertUnils;
 import biz.gelicon.capital.utils.DatebaseUtils;
@@ -139,6 +141,7 @@ public interface TableRepository<T> {
             String errText = "SQL execute filed: " + sqlText;
             logger.error(errText, e);
             throw new RuntimeException(errText, e);
+            //throw new PostRecordException(errText, e);
         }
     }
 
@@ -298,7 +301,7 @@ public interface TableRepository<T> {
      * @param page
      * @return
      */
-    default List<T> findAll(Pageable page) {
+    default List<T> findAll(Pageable page){
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
 
@@ -324,12 +327,7 @@ public interface TableRepository<T> {
                 // Вызовем наше исключение
                 String errText = "SQL build error: " + sqlTextBuilder.toString();
                 logger.error(errText);
-                //throw new RuntimeException(errText);
-                //throw new BadPagingException(errText);
-                //throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        errText);
+                throw new BadPagingException(errText);
             }
         }
         String sqlText = sqlTextBuilder.toString();
@@ -342,11 +340,11 @@ public interface TableRepository<T> {
         } catch (Exception e) {
             String errText = "SQL execute filed: " + sqlText;
             logger.error(errText, e);
-            //throw new RuntimeException(errText, e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    errText,
-                    e);
+            try {
+                throw new FetchQueryException(errText,e);
+            } catch (FetchQueryException fetchQueryException) {
+                throw new RuntimeException(errText,e);
+            }
         }
     }
 

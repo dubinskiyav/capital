@@ -1,6 +1,7 @@
 package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.exceptions.DeleteRecordException;
+import biz.gelicon.capital.exceptions.FetchQueryException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.repository.MeasureRepository;
@@ -151,7 +152,7 @@ public class MeasureController {
             String errText = "Ошибка сохранения записи " + measure.toString();
             logger.error(errText);
             dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
-            throw new PostRecordException(dataBinder.getBindingResult());
+            throw new PostRecordException(dataBinder.getBindingResult(), e);
         }
         return measure;
     }

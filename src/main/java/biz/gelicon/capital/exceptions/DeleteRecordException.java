@@ -6,6 +6,7 @@ package biz.gelicon.capital.exceptions;
 public class DeleteRecordException extends RuntimeException {
 
     public DeleteRecordException(String errorMessage, Throwable err) {
+
         super(errorMessage, err);
     }
 }
