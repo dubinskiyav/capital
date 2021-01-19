@@ -393,11 +393,14 @@ public interface TableRepository<T> {
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         if (DatabaseUtils.checkTableExist(tableName,jdbcTemplate)) {
             DatabaseUtils.executeSql("DROP TABLE " + tableName, jdbcTemplate);
+            logger.info("Table " + tableName + " dropped");
         }
         if (isPostgreSQL(jdbcTemplate)) {
+            String sequenceName = tableName + "_id_gen";
             // Удалим последовательность
-            if (DatabaseUtils.checkSequenceExist(tableName + "_id_gen", jdbcTemplate)) {
-                DatabaseUtils.executeSql(" DROP SEQUENCE " + tableName + "_id_gen", jdbcTemplate);
+            if (DatabaseUtils.checkSequenceExist(sequenceName, jdbcTemplate)) {
+                DatabaseUtils.executeSql(" DROP SEQUENCE " + sequenceName, jdbcTemplate);
+                logger.info("Sequence " + sequenceName + " dropped");
             }
         }
     }
@@ -413,6 +416,7 @@ public interface TableRepository<T> {
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         String sqlText = "CREATE TABLE " + tableName + "()";
             DatabaseUtils.executeSql(sqlText, jdbcTemplate);
+        logger.info("Table " + tableName + " created");
     }
 
     /**
@@ -421,6 +425,7 @@ public interface TableRepository<T> {
      * @return
      */
     default int load() {
+        logger.info("0 record loaded");
         return 0;
     }
 
@@ -431,6 +436,7 @@ public interface TableRepository<T> {
         drop();
         create();
         load();
+        logger.info("Table recreated");
     }
 
 }

@@ -13,7 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 @Repository
-public class MeasureRepository implements TableRepository<Measure>{
+public class MeasureRepository implements TableRepository<Measure> {
 
     private static final Logger logger = LoggerFactory.getLogger(MeasureRepository.class);
     private boolean logFlag = false;
@@ -28,12 +28,12 @@ public class MeasureRepository implements TableRepository<Measure>{
 
     @Override
     public void create() {
-        String[] sqlStatements = {
-                "CREATE TABLE measure (\n"
-                        + "    id INTEGER NOT NULL,\n"
-                        + "    name varchar(100) NOT NULL,\n"
-                        + "    PRIMARY KEY (id)\n"
-                        + ")",
+        String[] sqlStatements = {""
+                + "CREATE TABLE measure (\n"
+                + "    id INTEGER NOT NULL,\n"
+                + "    name VARCHAR(100) NOT NULL,\n"
+                + "    PRIMARY KEY (id)\n"
+                + ")",
                 "CREATE SEQUENCE measure_id_gen AS INTEGER START WITH 1 INCREMENT BY 1",
                 "ALTER SEQUENCE measure_id_gen OWNED BY measure.id",
                 "ALTER TABLE measure ADD UNIQUE (name)",
@@ -49,13 +49,13 @@ public class MeasureRepository implements TableRepository<Measure>{
     @Override
     public int load() {
         insert(new Measure(-1, "Без меры измерения"));
-        insert(new Measure( 1, "Вес"));
-        insert(new Measure( 2, "Расстояние"));
-        insert(new Measure( 3, "Время"));
-        insert(new Measure( 4, "Сила тока"));
-        insert(new Measure( 5, "Температура"));
-        insert(new Measure( 6, "Количество вечества"));
-        insert(new Measure( 7, "Сила света"));
+        insert(new Measure(1, "Вес"));
+        insert(new Measure(2, "Расстояние"));
+        insert(new Measure(3, "Время"));
+        insert(new Measure(4, "Сила тока"));
+        insert(new Measure(5, "Температура"));
+        insert(new Measure(6, "Количество вечества"));
+        insert(new Measure(7, "Сила света"));
         insert(new Measure(11, "Плоский угол"));
         insert(new Measure(12, "Телесный угол"));
         insert(new Measure(13, "Температура по шкале Цельсия"));

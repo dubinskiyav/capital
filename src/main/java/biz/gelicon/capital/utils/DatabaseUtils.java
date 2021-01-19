@@ -7,7 +7,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DatabaseUtils {
 
     static Logger logger = LoggerFactory.getLogger(DatabaseUtils.class);
-    public static String dbType = "postgresql"; // Тип текущей БД
+    public static String dbType = null; // "postgresql"; // Тип текущей БД
     public static Boolean trySequence = true; // Пробуем получить id из последовательностей
 
     /**
@@ -95,6 +97,11 @@ public class DatabaseUtils {
      * @return тип базы данных (значение поля dbType)
      */
     public static String getDbType() {
+        if (dbType == null) {
+            // Установим переменную
+            // todo - сделать
+            dbType = "postgresql";
+        }
         return dbType;
     }
 
@@ -105,11 +112,21 @@ public class DatabaseUtils {
      * @return наименование драйвера базы данных
      */
     public static String getDbType(JdbcTemplate jdbcTemplate) {
-        try {
-            return jdbcTemplate.getDataSource().getConnection().getMetaData().getDriverName();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        // todo сделать
+        if (false) {
+            DataSource dataSource = jdbcTemplate.getDataSource();
+            try {
+                Connection connection = dataSource.getConnection();
+                DatabaseMetaData databaseMetaData = connection.getMetaData();
+                String databaseProductName = databaseMetaData.getDatabaseProductName();
+                String driverName = databaseMetaData.getDriverName();
+                return driverName;
+                //return jdbcTemplate.getDataSource().getConnection().getMetaData().getDriverName();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
+        return "postgresql";
     }
 
 
