@@ -310,19 +310,38 @@ public class DatabaseUtils {
     }
 
     public static void setSequence(String name, Integer value, JdbcTemplate jdbcTemplate) {
-        Connection connection = DatabaseUtils.getJdbcTemplateConnection(jdbcTemplate);
         if (!isPostgreSQL(jdbcTemplate)) {
             throw new RuntimeException("Установка последовательности не реализована для данного типа СУБД");
         }
         String sqlText = " ALTER SEQUENCE measure_id_gen RESTART WITH 33";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sqlText);
-            ps.executeUpdate();
-            ps.close();
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        }
-
+        jdbcTemplate.update(sqlText);
     }
+
+    public static boolean checkSequenceExist(String sequenceName, JdbcTemplate jdbcTemplate) {
+        if (!isPostgreSQL(jdbcTemplate)) {
+            throw new RuntimeException("Проверка существования последовательности не реализована для данного типа СУБД");
+        }
+        String sqlText = ""
+                + " SELECT COUNT(*)\n"
+                + " FROM   pg_class \n"
+                + " WHERE  relname = '" + sequenceName + "'";
+        return jdbcTemplate.queryForObject(sqlText, Integer.class) == 1;
+    }
+
+    /**
+     * Выполнение SQL операбота
+     * @param sqlText
+     * @param jdbcTemplate
+     */
+    public static void executeSql(String sqlText, JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update(sqlText);
+    }
+
+    public static boolean checkTableExist(String tableName, JdbcTemplate jdbcTemplate) {
+        String sqlText = "SELECT COUNT(*) \n"
+                + "FROM   information_schema.tables\n"
+                + "WHERE  table_name = '" + tableName + "'";
+        return jdbcTemplate.queryForObject(sqlText, Integer.class) == 1;
+    }
+
 }

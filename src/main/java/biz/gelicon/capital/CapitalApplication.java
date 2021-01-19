@@ -1,6 +1,6 @@
 package biz.gelicon.capital;
 
-import biz.gelicon.capital.utils.Test01;
+import biz.gelicon.capital.utils.RecreateDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -28,9 +28,10 @@ public class CapitalApplication implements CommandLineRunner {
         logger.info("Running...");
         applicationContext = SpringApplication.run(CapitalApplication.class, args);
         logger.info("Reading ApplicationContext...Ok");
-        // Тесты
-        Test01 test01 = CapitalApplication.getApplicationContext().getBean(Test01.class);
-        test01.test1();
+        // Пересоздание базы данных
+        RecreateDatabase recreateDatabase = CapitalApplication.getApplicationContext().getBean(
+                RecreateDatabase.class);
+        recreateDatabase.recreateAllTables();
     }
 
     @Override

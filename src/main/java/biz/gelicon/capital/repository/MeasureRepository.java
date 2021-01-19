@@ -26,6 +26,27 @@ public class MeasureRepository implements TableRepository<Measure>{
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    @Override
+    public void create() {
+        String[] sqlStatements = {
+                "CREATE TABLE measure (\n"
+                        + "    id INTEGER NOT NULL,\n"
+                        + "    name varchar(100) NOT NULL,\n"
+                        + "    PRIMARY KEY (id)\n"
+                        + ")",
+                "CREATE SEQUENCE measure_id_gen AS INTEGER START WITH 1 INCREMENT BY 1",
+                "ALTER SEQUENCE measure_id_gen OWNED BY measure.id",
+                "ALTER TABLE measure ADD UNIQUE (name)",
+                "COMMENT ON TABLE measure IS 'Мера измерения'",
+                "COMMENT ON COLUMN measure.id IS 'Мера измерения ИД'",
+                "COMMENT ON COLUMN measure.name IS 'Наименование'"
+        };
+        for (String sqlStatement : sqlStatements) {
+            DatabaseUtils.executeSql(sqlStatement, jdbcTemplate);
+        }
+    }
+
+    @Override
     public int load() {
         insert(new Measure(-1, "Без меры измерения"));
         insert(new Measure( 1, "Вес"));
@@ -61,5 +82,6 @@ public class MeasureRepository implements TableRepository<Measure>{
         DatabaseUtils.setSequence("measure_id_gen", 33, jdbcTemplate);
         return 31;
     }
+
 
 }

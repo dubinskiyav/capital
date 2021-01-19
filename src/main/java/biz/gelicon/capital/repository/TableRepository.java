@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static biz.gelicon.capital.utils.DatabaseUtils.isPostgreSQL;
+
 /**
  * Интерфейс работы с @Table. <p> Реализует дефолтные методы: int count() int insert(T t) int
  * update(T t) int delete(Integer id) int deleteAll() int delete(T t) int insertOrUpdate(T t) int
@@ -377,6 +379,58 @@ public interface TableRepository<T> {
             throw new RuntimeException(errText);
         }
         return (T) tList.get(0);
+    }
+
+    /**
+     * Удаление таблицы из базы данных
+     * Удаляет так же последовательность для PostgreSQL
+     * Если существуют
+     */
+    default void drop() {
+        // Получим класс дженерика класса
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        if (DatabaseUtils.checkTableExist(tableName,jdbcTemplate)) {
+            DatabaseUtils.executeSql("DROP TABLE " + tableName, jdbcTemplate);
+        }
+        if (isPostgreSQL(jdbcTemplate)) {
+            // Удалим последовательность
+            if (DatabaseUtils.checkSequenceExist(tableName + "_id_gen", jdbcTemplate)) {
+                DatabaseUtils.executeSql(" DROP SEQUENCE " + tableName + "_id_gen", jdbcTemplate);
+            }
+        }
+    }
+
+    /**
+     * Дефайлтный метод создания таблицы
+     * СОздает таблицу без полей, без последовательностей, без ничего
+     */
+    default void create() {
+        // Получим класс дженерика класса
+        Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
+        String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
+        JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
+        String sqlText = "CREATE TABLE " + tableName + "()";
+            DatabaseUtils.executeSql(sqlText, jdbcTemplate);
+    }
+
+    /**
+     * Дефаустный метод первоначальной загрузки
+     * ВОзвращает количество добавленных записей
+     * @return
+     */
+    default int load() {
+        return 0;
+    }
+
+    /**
+     * пересоздание
+     */
+    default void recreate(){
+        drop();
+        create();
+        load();
     }
 
 }

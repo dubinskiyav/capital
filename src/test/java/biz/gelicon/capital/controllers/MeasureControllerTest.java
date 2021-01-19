@@ -176,15 +176,20 @@ public class MeasureControllerTest {
         Measure measure = new Measure(null, "Новая мера измерения");
         ObjectMapper objectMapper = new ObjectMapper();
         String measureAsString = objectMapper.writeValueAsString(measure);
-        this.mockMvc.perform(post("/measure/post")
+        MvcResult result = this.mockMvc.perform(post("/measure/post")
                 .content(measureAsString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andDo(print()) // выводить результат в консоль
                 .andExpect(content().string(containsString("Новая мера измерения")))
+                .andReturn()
         ;
-        measure = null;
         // Вызовем изменение
+        result = this.mockMvc.perform(post("/upd/{" + measure.getId() + "}")
+                )
+                .andDo(print()).andReturn();
+        String content = result.getResponse().getContentAsString();
+        measure = null;
         // upd
         logger.info("InsertUpdateDeleteOkTest() - Ok");
     }
