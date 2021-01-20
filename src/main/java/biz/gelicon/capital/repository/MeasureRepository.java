@@ -49,10 +49,10 @@ public class MeasureRepository implements TableRepository<Measure> {
     @Override
     public int load() {
         insert(new Measure(-1, "Без меры измерения"));
-        insert(new Measure(1, "Вес"));
-        insert(new Measure(2, "Расстояние"));
+        insert(new Measure(1, "Расстояние"));
+        insert(new Measure(2, "Вес"));
         insert(new Measure(3, "Время"));
-        insert(new Measure(4, "Сила тока"));
+        insert(new Measure(4, "Сила электрического тока"));
         insert(new Measure(5, "Температура"));
         insert(new Measure(6, "Количество вечества"));
         insert(new Measure(7, "Сила света"));
@@ -78,7 +78,7 @@ public class MeasureRepository implements TableRepository<Measure> {
         insert(new Measure(30, "Поглощённая доза ионизирующего излучения"));
         insert(new Measure(31, "Эффективная доза ионизирующего излучения"));
         insert(new Measure(32, "Активность катализатора"));
-        logger.info("31 measures loaded");
+        logger.info("32 measures loaded");
         DatabaseUtils.setSequence("measure_id_gen", 33, jdbcTemplate);
         return 31;
     }

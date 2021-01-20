@@ -429,16 +429,6 @@ public interface TableRepository<T> {
         return 0;
     }
 
-    /**
-     * пересоздание
-     */
-    default void recreate(){
-        drop();
-        create();
-        load();
-        logger.info("Table recreated");
-    }
-
 }
 
 

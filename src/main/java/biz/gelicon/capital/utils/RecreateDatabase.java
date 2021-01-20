@@ -54,14 +54,36 @@ public class RecreateDatabase {
         // Открываем таранзакцию
         defaultTransactionDefinition = new DefaultTransactionDefinition();
         transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);
-        measureRepository.recreate();
-        unitmeasureRepository.recreate();
-        measureunitRepository.recreate();
-        unitmeasurerecalcRepository.recreate();
-        materiallevelRepository.recreate();
-        materialRepository.recreate();
-        serviceRepository.recreate();
-        materialunitmeasureRepository.recreate();
+        // Удаляем все таблицы
+        materialunitmeasureRepository.drop();
+        serviceRepository.drop();
+        materialRepository.drop();
+        materiallevelRepository.drop();
+        unitmeasurerecalcRepository.drop();
+        measureunitRepository.drop();
+        unitmeasureRepository.drop();
+        measureRepository.drop();
+
+        // Создаем все таблицы
+
+        measureRepository.create();
+        unitmeasureRepository.create();
+        measureunitRepository.create();
+        unitmeasurerecalcRepository.create();
+        materiallevelRepository.create();
+        materialRepository.create();
+        serviceRepository.create();
+        materialunitmeasureRepository.create();
+
+        // Грузим все таблицы
+        measureRepository.load();
+        unitmeasureRepository.load();
+        measureunitRepository.load();
+        unitmeasurerecalcRepository.load();
+        materiallevelRepository.load();
+        materialRepository.load();
+        serviceRepository.load();
+        materialunitmeasureRepository.load();
 
         try {
             transactionManager.commit(transactionStatus);
