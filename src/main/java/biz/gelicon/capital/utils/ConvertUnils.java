@@ -2,12 +2,11 @@ package biz.gelicon.capital.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -23,6 +22,8 @@ public class ConvertUnils {
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertUnils.class);
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private final static SimpleDateFormat datetimeFormat = new SimpleDateFormat(
+            "dd.MM.yyyy HH:mm:ss");
 
     /**
      * Возвращает true для пустой или пробельной строки и null
@@ -67,8 +68,33 @@ public class ConvertUnils {
      * @param d датавремя
      * @return результат
      */
+    // округляет дату-время до даты
     public static Date datetimeToDate(Date d) {
-        return d == null ? null : strToDate(dateToStr(d));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(d);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    public static Date getMinDate() {
+        try {
+            return dateFormat.parse("01.01.1900");
+        } catch (ParseException e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public static Date getMaxDate() {
+        try {
+            return dateFormat.parse("31.12.2099");
+        } catch (ParseException e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public static <T> Stream<T> getStreamFromIterator(Iterator<T> iterator) {

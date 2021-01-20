@@ -19,5 +19,3 @@ COMMENT ON COLUMN materiallevel.code IS 'Код';
 COMMENT ON COLUMN materiallevel.date_beg IS 'Начало действия';
 COMMENT ON COLUMN materiallevel.date_end IS 'Окончание действия';
 
-INSERT INTO materiallevel VALUES(1,1,'Корень','Корень','01.01.1900','31.12.2099');
-ALTER SEQUENCE materiallevel_id_gen RESTART WITH 2;
