@@ -120,9 +120,8 @@ public interface TableRepository<T> {
         }
         String sqlText = sqlTextTop + sqlTextBotom.toString() + ")";
         try {
-            BeanPropertySqlParameterSource beanPropertySqlParameterSource = new BeanPropertySqlParameterSource(t);
             return namedParameterJdbcTemplate.update(sqlText,
-                    beanPropertySqlParameterSource);
+                    new BeanPropertySqlParameterSource(t));
         } catch (Exception e) {
             if (idSave == null) { // Надо восстановить пустоту в первичном ключе
                 if (methodSet != null) { // Сеттер есть

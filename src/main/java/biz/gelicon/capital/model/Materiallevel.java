@@ -86,7 +86,7 @@ public class Materiallevel {
     }
 
     public String getCode() {
-        return name;
+        return code;
     }
 
     public void setCode(String code) {

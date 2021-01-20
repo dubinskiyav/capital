@@ -37,11 +37,11 @@ public class MateriallevelRepository implements TableRepository<Materiallevel> {
 
     @Override
     public int load() {
-        insert(new Materiallevel(1, 1, "Справочник материалов и услуг", "0",
+        insert(new Materiallevel(1, 1, "Справочник материалов и услуг", null,
                 ConvertUnils.getMinDate(), ConvertUnils.getMaxDate()));
-        insert(new Materiallevel(2, 1, "Материалы", "1",
+        insert(new Materiallevel(2, 1, "Материалы", null,
                 ConvertUnils.getMinDate(), ConvertUnils.getMaxDate()));
-        insert(new Materiallevel(3, 1, "Услуги", "2",
+        insert(new Materiallevel(3, 1, "Услуги", null,
                 ConvertUnils.getMinDate(), ConvertUnils.getMaxDate()));
         DatabaseUtils.setSequence("materiallevel_id_gen", 4, jdbcTemplate);
         logger.info("materiallevel loaded");
