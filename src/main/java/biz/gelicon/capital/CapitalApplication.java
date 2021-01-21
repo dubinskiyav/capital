@@ -31,7 +31,7 @@ public class CapitalApplication implements CommandLineRunner {
         // Пересоздание базы данных
         RecreateDatabase recreateDatabase = CapitalApplication.getApplicationContext().getBean(
                 RecreateDatabase.class);
-        recreateDatabase.recreateAllTables();
+        recreateDatabase.recreate();
     }
 
     @Override

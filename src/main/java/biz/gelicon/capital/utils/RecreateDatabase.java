@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
@@ -49,24 +51,10 @@ public class RecreateDatabase {
     @Autowired
     MaterialunitmeasureRepository materialunitmeasureRepository;
 
-    public void recreateAllTables() {
-        System.out.println("Tests started");
-        // Открываем таранзакцию
-        defaultTransactionDefinition = new DefaultTransactionDefinition();
-        transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void create() {
+        logger.info("Creating tables ...");
         try {
-            // Удаляем все таблицы
-            materialunitmeasureRepository.drop();
-            serviceRepository.drop();
-            materialRepository.drop();
-            materiallevelRepository.drop();
-            unitmeasurerecalcRepository.drop();
-            measureunitRepository.drop();
-            unitmeasureRepository.drop();
-            measureRepository.drop();
-
-            // Создаем все таблицы
-
             measureRepository.create();
             unitmeasureRepository.create();
             measureunitRepository.create();
@@ -75,8 +63,38 @@ public class RecreateDatabase {
             materialRepository.create();
             serviceRepository.create();
             materialunitmeasureRepository.create();
+        } catch (Exception e) {
+            String errText = String.format("Error. Transaction will be rolled back");
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
+        logger.info("Creating tables ... Ok");
+    }
 
-            // Грузим все таблицы
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void drop() {
+        logger.info("Dropping tables ...");
+        try {
+            materialunitmeasureRepository.drop();
+            serviceRepository.drop();
+            materialRepository.drop();
+            materiallevelRepository.drop();
+            unitmeasurerecalcRepository.drop();
+            measureunitRepository.drop();
+            unitmeasureRepository.drop();
+            measureRepository.drop();
+        } catch (Exception e) {
+            String errText = String.format("Error. Transaction will be rolled back");
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
+        logger.info("Dropping tables ... Ok");
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void load() {
+        logger.info("Loading tables ...");
+        try {
             measureRepository.load();
             unitmeasureRepository.load();
             measureunitRepository.load();
@@ -85,18 +103,49 @@ public class RecreateDatabase {
             materialRepository.load();
             serviceRepository.load();
             materialunitmeasureRepository.load();
+        } catch (Exception e) {
+            String errText = String.format("Error. Transaction will be rolled back");
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
+        logger.info("Loading tables ... Ok");
+    }
 
+    public void recreate() {
+        // Открываем таранзакцию
+        defaultTransactionDefinition = new DefaultTransactionDefinition();
+        transactionStatus = transactionManager.getTransaction(defaultTransactionDefinition);
+        try {
+            drop();
+            create();
+            load();
             transactionManager.commit(transactionStatus);
         } catch (Exception e) {
             String errText = String.format("Error. Transaction will be rolled back");
             logger.error(errText, e);
             transactionManager.rollback(transactionStatus);
+            throw new RuntimeException(errText, e);
         }
-        List<Measure> measureList =
-                measureRepository.findAll();
-        System.out.println("Tests ended");
-
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void delete() {
+        logger.info("Deleting tables ...");
+        try {
+            materialunitmeasureRepository.deleteAll();
+            serviceRepository.deleteAll();
+            materialRepository.deleteAll();
+            materiallevelRepository.deleteAll();
+            unitmeasurerecalcRepository.deleteAll();
+            measureunitRepository.deleteAll();
+            unitmeasureRepository.deleteAll();
+            measureRepository.deleteAll();
+        } catch (Exception e) {
+            String errText = String.format("Error. Transaction will be rolled back");
+            logger.error(errText, e);
+            throw new RuntimeException(errText, e);
+        }
+        logger.info("Deleting tables ... Ok");
+    }
 
 }

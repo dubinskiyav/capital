@@ -2,11 +2,10 @@ package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.CapitalApplication;
 import biz.gelicon.capital.exceptions.BadPagingException;
-import biz.gelicon.capital.exceptions.FetchQueryException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
-import biz.gelicon.capital.utils.DatabaseCreate;
 import biz.gelicon.capital.utils.GridDataOption;
+import biz.gelicon.capital.utils.RecreateDatabase;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
@@ -31,7 +30,6 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,17 +55,15 @@ public class MeasureControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    DatabaseCreate databaseCreate;
+    RecreateDatabase recreateDatabase;
 
     @BeforeEach
     public void initTests() {
         logger.info("initTests");
 
         CapitalApplication.setApplicationContext(applicationContext);
-        databaseCreate.clear();
-        databaseCreate.load();
-
-
+        recreateDatabase.delete();
+        recreateDatabase.load();
     }
 
     /**
@@ -100,10 +96,10 @@ public class MeasureControllerTest {
                 .andExpect(content().string(containsString("{\"id\":")));
         // Проверим пагинацию
         List<Measure> measureListExpected = Stream.of(
+                new Measure(26, "Магнитная индукция"),
                 new Measure(25, "Магнитный поток"),
                 new Measure(17, "Мощность"),
-                new Measure(20, "Освещенность"),
-                new Measure(11, "Плоский угол"))
+                new Measure(20, "Освещенность"))
                 .collect(Collectors.toList());
         MvcResult result = this.mockMvc.perform(post("/measure/json")
                 .content(
@@ -115,7 +111,7 @@ public class MeasureControllerTest {
         List<Measure> measureList =
                 objectMapper.readValue(content, new TypeReference<>() {
                 });
-        Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
+        //Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
         Assert.assertArrayEquals(measureListExpected.toArray(), measureList.toArray());
         logger.info("measureSelectTest() - Ok");
     }
