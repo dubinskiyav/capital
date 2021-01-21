@@ -113,6 +113,7 @@ public class MeasureControllerTest {
                 });
         //Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
         Assert.assertArrayEquals(measureListExpected.toArray(), measureList.toArray());
+
         logger.info("measureSelectTest() - Ok");
     }
 

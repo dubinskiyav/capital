@@ -15,7 +15,7 @@ public class UsefulUtils {
             int from,
             int to
     ) {
-        return () -> new Iterator<Integer>() {
+        return () -> new Iterator<>() {
             int cursor = from;
 
             public boolean hasNext() {
