@@ -21,13 +21,13 @@ public class Unitmeasurerecalc {
     private Integer unitmeasuretoId;
 
     @Column(name = "factor", nullable = false, columnDefinition = "Коэффициент пересчета")
-    private Float factor;
+    private Double factor;
 
     public Unitmeasurerecalc(
             Integer id,
             Integer unitmeasurefromId,
             Integer unitmeasuretoId,
-            Float factor
+            Double factor
     ) {
         this.id = id;
         this.unitmeasurefromId = unitmeasurefromId;
@@ -65,11 +65,11 @@ public class Unitmeasurerecalc {
         this.unitmeasuretoId = unitmeasuretoId;
     }
 
-    public Float getfactor() {
+    public Double getfactor() {
         return factor;
     }
 
-    public void setfactor(Float factor) {
+    public void setfactor(Double factor) {
         this.factor = factor;
     }
 

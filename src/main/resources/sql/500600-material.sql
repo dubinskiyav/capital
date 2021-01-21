@@ -16,4 +16,3 @@ COMMENT ON COLUMN material.id IS 'Материал ИД';
 COMMENT ON COLUMN material.kind IS '1 - Материал, 2 - Услуга';
 COMMENT ON COLUMN material.name IS 'Наименование';
 COMMENT ON COLUMN material.code IS 'Код';
-

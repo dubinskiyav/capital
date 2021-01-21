@@ -326,11 +326,11 @@ public class DatabaseUtils {
         return list;
     }
 
-    public static void setSequence(String name, Integer value, JdbcTemplate jdbcTemplate) {
+    public static void setSequence(String sequenceName, Integer value, JdbcTemplate jdbcTemplate) {
         if (!isPostgreSQL(jdbcTemplate)) {
             throw new RuntimeException("Установка последовательности не реализована для данного типа СУБД");
         }
-        String sqlText = " ALTER SEQUENCE measure_id_gen RESTART WITH 33";
+        String sqlText = " ALTER SEQUENCE " + sequenceName + " RESTART WITH " + value;
         jdbcTemplate.update(sqlText);
     }
 

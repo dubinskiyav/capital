@@ -8,7 +8,7 @@ CREATE TABLE unitmeasurerecalc (
 CREATE SEQUENCE unitmeasurerecalc_id_gen AS INTEGER START WITH 1 INCREMENT BY 1;
 ALTER SEQUENCE unitmeasurerecalc_id_gen OWNED BY unitmeasurerecalc.id;
 ALTER TABLE unitmeasurerecalc ADD UNIQUE (unitmeasurefrom_id, unitmeasureto_id);
-COMMENT ON TABLE unitmeasurerecalc IS 'Пересчет единиц измерения';
+COMMENT ON TABLE unitmeasurerecalc IS 'Пересчет единиц измерения (from = factor to)';
 COMMENT ON COLUMN unitmeasurerecalc.id IS 'Пересчет единиц измерения ИД';
 COMMENT ON COLUMN unitmeasurerecalc.unitmeasurefrom_id IS 'Единица измерения из ИД';
 COMMENT ON COLUMN unitmeasurerecalc.unitmeasureto_id IS 'Единица измерения в ИД';
