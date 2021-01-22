@@ -9,7 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
                              содержащий аннотацию @SpringBootApplication и метод main.
@@ -33,18 +32,15 @@ public class CapitalApplication implements CommandLineRunner {
     private Boolean rcdb = false;
 
     public static void main(String[] args) {
-        logger.info("Running...");
-        applicationContext = SpringApplication.run(CapitalApplication.class, args);
-        logger.info("Reading ApplicationContext...Ok");
-        RecreateDatabase recreateDatabase = CapitalApplication.getApplicationContext()
-                .getBean(RecreateDatabase.class);
-        //recreateDatabase.recreate();
+        logger.info("SpringApplication.run...");
+        SpringApplication.run(CapitalApplication.class, args);
+        logger.info("SpringApplication.run...Ok");
     }
 
     @Override
     public void run(String... args) throws Exception {
-        logger.info("StartApplication...");
-        logger.info("StartApplication...Ok");
+        logger.info("CapitalApplication.run...");
+        logger.info("CapitalApplication.run...Ok");
     }
 
     public static ApplicationContext getApplicationContext() {
