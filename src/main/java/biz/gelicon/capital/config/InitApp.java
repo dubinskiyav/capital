@@ -40,7 +40,7 @@ public class InitApp implements ApplicationRunner {
      * в application.properties
      */
     @Value("${recreatedatabase}")
-    private Boolean rcdb = false;
+    private Boolean recreatedatabase = false;
 
     private static final Logger logger = LoggerFactory.getLogger(InitApp.class);
 
@@ -60,7 +60,7 @@ public class InitApp implements ApplicationRunner {
                         s
                 )
         );
-        if (rcdb) { // Пересоздание базы данных
+        if (recreatedatabase) { // Пересоздание базы данных
             logger.info("recreateDatabase...");
             recreateDatabase.recreate();
             recreateDatabase = CapitalApplication.getApplicationContext()

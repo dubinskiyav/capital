@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -57,13 +58,25 @@ public class MeasureControllerTest {
     @Autowired
     RecreateDatabase recreateDatabase;
 
+    /**
+     * Для пересмоздания базы данных установить
+     * recreatedatabase=true
+     * в application.properties
+     */
+    @Value("${reloadtestdata}")
+    private Boolean reloadtestdata = false;
+
     @BeforeEach
     public void initTests() {
         logger.info("initTests");
-
         CapitalApplication.setApplicationContext(applicationContext);
-        recreateDatabase.delete();
-        recreateDatabase.load();
+        if (reloadtestdata) { // Перегрузить тестовые данные
+            // Сделать прогрузку данных для теста
+            // Пока для тренировки делаю перегрузку начальных данных
+            // но надо грузить конкретные данные для конкретного теста
+            recreateDatabase.delete();
+            recreateDatabase.load();
+        }
     }
 
     /**

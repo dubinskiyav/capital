@@ -118,7 +118,7 @@ public class JpaUtils {
      * @return JdbcTemplate
      */
     public static JdbcTemplate getJdbcTemplate() {
-        logger.info("getJdbcTemplate");
+        //logger.info("getJdbcTemplate");
         ApplicationContext applicationContext = CapitalApplication.getApplicationContext();
             DataSource dataSource = applicationContext.getBean(DataSource.class);
             return new JdbcTemplate(dataSource);
