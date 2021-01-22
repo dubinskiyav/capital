@@ -3,8 +3,10 @@ package biz.gelicon.capital.utils;
 import biz.gelicon.capital.CapitalApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -18,9 +20,13 @@ import java.util.Arrays;
 /**
  * Вспомогательный класс с различными утилитами типа Jpa
  */
+@Repository
 public class JpaUtils {
 
     static Logger logger = LoggerFactory.getLogger(JpaUtils.class);
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     /**
      * Возвращает имя таблицы у объекта аннотированного как @Table
@@ -115,6 +121,16 @@ public class JpaUtils {
         DataSource dataSource = CapitalApplication.getApplicationContext()
                 .getBean(DataSource.class);
         return new JdbcTemplate(dataSource);
+    }
+
+    /**
+     * Возвращает созданную из контекста JdbcTemplate
+     *
+     * @return JdbcTemplate
+     */
+    public JdbcTemplate getJdbcTemplateAutowired() {
+        logger.info("getJdbcTemplateAutowired");
+        return jdbcTemplate;
     }
 
     /**

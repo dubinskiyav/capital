@@ -3,10 +3,13 @@ package biz.gelicon.capital;
 import biz.gelicon.capital.utils.RecreateDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication    /* Точка входа в приложение весенней загрузки — класс,
                              содержащий аннотацию @SpringBootApplication и метод main.
@@ -18,20 +21,24 @@ import org.springframework.context.ApplicationContext;
         "biz.gelicon.capital.repository",
         "biz.gelicon.capital.controllers"})
  */
+//@PropertySource("classpath:application.properties")
+@ConfigurationProperties
 public class CapitalApplication implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(CapitalApplication.class);
 
     private static ApplicationContext applicationContext;
 
+    @Value("${recreatedatabase}")
+    private Boolean rcdb = false;
+
     public static void main(String[] args) {
         logger.info("Running...");
         applicationContext = SpringApplication.run(CapitalApplication.class, args);
         logger.info("Reading ApplicationContext...Ok");
-        // Пересоздание базы данных
-        RecreateDatabase recreateDatabase = CapitalApplication.getApplicationContext().getBean(
-                RecreateDatabase.class);
-        recreateDatabase.recreate();
+        RecreateDatabase recreateDatabase = CapitalApplication.getApplicationContext()
+                .getBean(RecreateDatabase.class);
+        //recreateDatabase.recreate();
     }
 
     @Override
