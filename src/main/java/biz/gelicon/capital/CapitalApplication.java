@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationContext;
  */
 //@PropertySource("classpath:application.properties")
 @ConfigurationProperties
-public class CapitalApplication implements CommandLineRunner {
+public class CapitalApplication{
 
     private static final Logger logger = LoggerFactory.getLogger(CapitalApplication.class);
 
@@ -35,12 +35,6 @@ public class CapitalApplication implements CommandLineRunner {
         logger.info("SpringApplication.run...");
         SpringApplication.run(CapitalApplication.class, args);
         logger.info("SpringApplication.run...Ok");
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        logger.info("CapitalApplication.run...");
-        logger.info("CapitalApplication.run...Ok");
     }
 
     public static ApplicationContext getApplicationContext() {
