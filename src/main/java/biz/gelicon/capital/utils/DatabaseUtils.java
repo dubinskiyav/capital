@@ -355,6 +355,7 @@ public class DatabaseUtils {
     }
 
     public static boolean checkTableExist(String tableName, JdbcTemplate jdbcTemplate) {
+        //String tableSchema = jdbcTemplate.getDataSource();
         String sqlText = "SELECT COUNT(*) \n"
                 + "FROM   information_schema.tables\n"
                 + "WHERE  table_name = '" + tableName + "'";
