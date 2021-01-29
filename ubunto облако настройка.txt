@@ -1,0 +1,161 @@
+78.40.219.225
+ssh root@78.40.219.225
+ssh dav@78.40.219.225
+ssh root@10.15.4.5
+
+
+IP сервера: 78.40.219.225
+Имя пользователя: root
+Пароль: мой
+
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl status ssh
+
+sudo ufw status verbose
+
+sudo ufw allow ssh
+sudo ufw enable
+
+C:\Users\dubin\.ssh\id_rsa.pub  - положить на сервер
+C:\Users\dubin\.ssh\id_rsa.ppk  - оставить у себя
+
+Чтобы заходить только по ключу делаем так
+sudo nano /etc/ssh/sshd_config
+PermitRootLogin no
+
+adduser dav
+top(hap)1
+
+https://hidemy.name/ru/port-scanner/
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-20-04-ru
+
+
+https://www.ibm.com/support/knowledgecenter/STXKQY_5.0.5/com.ibm.spectrum.scale.v5r05.doc/bl1adv_firewallportopenexamples.htm
+
+
+https://amkolomna.ru/content/ustanovka-i-nastroyka-servera-postgresql-pod-linux-ubuntu
+
+
+sudo apt-get install postgresql
+
+sudo apt-get install postgresql-client postgresql-contrib
+
+Эти команды изменяют пароль внутри БД:
+sudo su postgres -c psql postgres
+ALTER USER postgres WITH PASSWORD 'masterkey';
+\q
+теперь нам необходимо сделать тоже самое с unix пользователем ‘postgres’, замечу что пароли должны быть одинаковы:
+снимаем сроки
+sudo passwd -d postgres
+устаавливаем пароль
+sudo su postgres  -c passwd
+masterkey
+
+sudo nano /etc/postgresql/12/main/postgresql.conf
+listen_addresses = '*'
+datestyle = 'iso, dmy'
+
+кому разрешен доступ извне
+https://postgrespro.ru/docs/postgrespro/10/auth-pg-hba-conf
+sudo nano /etc/postgresql/12/main/pg_hba.conf
+host all all all md5
+
+local   all             sysdba                                  md5
+
+перезагрузка сервера
+sudo /etc/init.d/postgresql restart
+
+открыть порт
+sudo ufw allow 5432/tcp
+
+проверить сканером портов
+https://hidemy.name/ru/port-scanner/
+
+
+sudo -u postgres psql
+выйти
+\q
+список пользователей
+\du
+\conninfo
+
+дальше с клиента
+
+CREATE ROLE "SYSDBA" WITH
+	LOGIN
+	SUPERUSER
+	CREATEDB
+	CREATEROLE
+	INHERIT
+	REPLICATION
+	CONNECTION LIMIT -1
+	PASSWORD 'masterkey';
+
+CREATE DATABASE capital
+    WITH 
+    OWNER = "SYSDBA"
+    TEMPLATE = template0
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+COMMENT ON DATABASE capital_test
+    IS 'Базовые сущности системы Капитал';
+
+ОБЯЗАТЕЛЬНО соединиться с базой
+	
+-- Создание схемы
+CREATE SCHEMA dbo;
+-- Устанавливаем путь к схеме
+//SET search_path TO dbo,public;
+-- Проверяем
+SHOW search_path;
+-- Лучше так
+ALTER DATABASE "capital" SET search_path TO dbo
+
+CREATE DATABASE capital_test
+    WITH 
+    OWNER = "SYSDBA"
+    TEMPLATE = template0
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+COMMENT ON DATABASE capital_test
+    IS 'Базовые сущности системы Капитал - тестирование';
+
+ОБЯЗАТЕЛЬНО соединиться с базой
+	
+-- Создание схемы
+CREATE SCHEMA dbo;
+-- Устанавливаем путь к схеме
+//SET search_path TO dbo,public;
+-- Проверяем
+SHOW search_path;
+-- Лучше так
+ALTER DATABASE "capital_test" SET search_path TO dbo
+
+//ALTER ROLE "SYSDBA" SET search_path TO dbo
+
+SELECT r.rolname, 
+       d.datname, 
+       rs.setconfig
+FROM   pg_db_role_setting rs
+       LEFT   JOIN pg_roles      r ON r.oid = rs.setrole
+      LEFT   JOIN pg_database   d ON d.oid = rs.setdatabase
+	  
+
+
+
+--CREATE USER SYSDBA WITH SUPERUSER ENCRYPTED PASSWORD 'masterkey' 
+
+Соединяемся пользователем SYSDBA
+
+без открытия порта 5432 на сервере делаем так
+
+ssh -L 9999:localhost:5432 dav@78.40.219.225
+
+
+
+
+

@@ -2,10 +2,10 @@ package biz.gelicon.capital.controllers;
 
 import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
-import biz.gelicon.capital.model.Measure;
-import biz.gelicon.capital.repository.MeasureRepository;
+import biz.gelicon.capital.model.Unitmeasure;
+import biz.gelicon.capital.repository.UnitmeasureRepository;
 import biz.gelicon.capital.utils.GridDataOption;
-import biz.gelicon.capital.validators.MeasureValidator;
+import biz.gelicon.capital.validators.UnitmeasureValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -32,26 +32,26 @@ import java.util.List;
 // @ResponceBody уже не требуется
 // https://java.fandom.com/ru/wiki/@RequestMapping
 @RestController
-@RequestMapping(value = "/measure",    // задаёт "каталог", в котором будут размещаться методы контроллера
+@RequestMapping(value = "/unitmeasure",    // задаёт "каталог", в котором будут размещаться методы контроллера
         consumes = "application/json; charset=UTF-8", // определяет, что Content-Type запроса клиента должен быть "application/json"
         produces = "application/json; charset=UTF-8") // определяет, что возвращать будет "application/json"
-public class MeasureController {
+public class UnitmeasureController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MeasureController.class);
-
-    @Autowired
-    MeasureRepository measureRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UnitmeasureController.class);
 
     @Autowired
-    private MeasureValidator measureValidator; // Валидатор для дополнительной проверки полей
+    UnitmeasureRepository unitmeasureRepository;
+
+    @Autowired
+    private UnitmeasureValidator unitmeasureValidator; // Валидатор для дополнительной проверки полей
 
     @InitBinder   // Чтобы не вызывать самому валидатор - он сам вызовется
     protected void initBinder(WebDataBinder binder) { // todo Непонятно что это
-        //binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
+        //binder.setValidator(unitmeasureValidator); // todo вернуть установку автовалидатора - непонятно что
     }
 
     @RequestMapping(value = "json", method = RequestMethod.POST)
-    public List<Measure> measure(
+    public List<Unitmeasure> unitmeasure(
             @RequestBody GridDataOption gridDataOption
     ) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -63,10 +63,10 @@ public class MeasureController {
             logger.error(errText);
             throw new RuntimeException(errText);
         }
-        logger.info("measure: gridDataOptionAsString = " + gridDataOptionAsString);
-        List<Measure> measureList =
-                measureRepository.findAll(gridDataOption.buildPageRequest());
-        return measureList;
+        logger.info("unitmeasure: gridDataOptionAsString = " + gridDataOptionAsString);
+        List<Unitmeasure> unitmeasureList =
+                unitmeasureRepository.findAll(gridDataOption.buildPageRequest());
+        return unitmeasureList;
     }
 
 
@@ -78,13 +78,13 @@ public class MeasureController {
      * @return
      */
     @RequestMapping(value = "add", // если не указать "/" в начале, то будет добавляться к value
-            // всего класса, в данном случае "/measure/add"
+            // всего класса, в данном случае "/unitmeasure/add"
             method = RequestMethod.GET) // Получение данных
     // будет производить json в результате, и он будет отправлен в ответ.
-    public Measure add() {
-        Measure measure = new Measure();
-        measure.setName("Длина");
-        return measure;
+    public Unitmeasure add() {
+        Unitmeasure unitmeasure = new Unitmeasure();
+        unitmeasure.setName("Длина");
+        return unitmeasure;
     }
 
     /**
@@ -93,17 +93,17 @@ public class MeasureController {
      * @return
      */
     @RequestMapping(value = "upd/{id}", method = RequestMethod.GET)
-    public Measure upd(
+    public Unitmeasure upd(
             // Берем из пути id https://coderoad.ru/19803731/Spring-%D0%B2-MVC-PathVariable
             @PathVariable("id") Integer id
     ) {
-        Measure measure = measureRepository.findById(id);
-        if (measure == null) {
+        Unitmeasure unitmeasure = unitmeasureRepository.findById(id);
+        if (unitmeasure == null) {
             String errText = "Запись с id = " + id + " не существует";
             logger.error(errText);
             throw new RuntimeException(errText);
         }
-        return measure;
+        return unitmeasure;
     }
 
     /**
@@ -117,7 +117,7 @@ public class MeasureController {
         for (String s : ids.replaceAll("\\s+", "").split(",")) {
             Integer id = Integer.parseInt(s);
             try {
-                measureRepository.delete(id);
+                unitmeasureRepository.delete(id);
             } catch (RuntimeException e) {
                 String errText = "Ошибка удаления записи с id = " + id;
                 logger.error(errText);
@@ -133,25 +133,25 @@ public class MeasureController {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     @RequestMapping(value = "post", method = RequestMethod.POST)
-    public Measure post(
-            @RequestBody Measure measure
+    public Unitmeasure post(
+            @RequestBody Unitmeasure unitmeasure
     ) {
-        DataBinder dataBinder = new DataBinder(measure);
-        dataBinder.addValidators(measureValidator);
+        DataBinder dataBinder = new DataBinder(unitmeasure);
+        dataBinder.addValidators(unitmeasureValidator);
         dataBinder.validate();
         if (dataBinder.getBindingResult().hasErrors()) {
             logger.error(dataBinder.getBindingResult().getAllErrors().toString());
             throw new PostRecordException(dataBinder.getBindingResult());
         }
         try {
-            measureRepository.insertOrUpdate(measure);
+            unitmeasureRepository.insertOrUpdate(unitmeasure);
         } catch (RuntimeException e) {
-            String errText = "Ошибка сохранения записи " + measure.toString();
+            String errText = "Ошибка сохранения записи " + unitmeasure.toString();
             logger.error(errText);
             dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
             throw new PostRecordException(dataBinder.getBindingResult(), e);
         }
-        return measure;
+        return unitmeasure;
     }
 
 }
