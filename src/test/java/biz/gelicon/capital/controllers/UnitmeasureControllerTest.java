@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -115,6 +116,9 @@ public class UnitmeasureControllerTest {
                 new Unitmeasure(21, "Карат",null),
                 new Unitmeasure(25, "Квартал","кв"))
                 .collect(Collectors.toList());
+        //List<Integer> expected = Arrays.asList(10, 7, 21, 25);
+        List<Integer> expected = unitmeasureListExpected.stream()
+                .map(Unitmeasure::getId).collect(Collectors.toList());
         MvcResult result = this.mockMvc.perform(post("/unitmeasure/json")
                 .content(
                         "{\"pageSize\":4, \"pageNumber\":2, \"sort\":[{\"fieldName\":\"name\", \"direction\":0}]}")
@@ -125,8 +129,10 @@ public class UnitmeasureControllerTest {
         List<Unitmeasure> unitmeasureList =
                 objectMapper.readValue(content, new TypeReference<>() {
                 });
-        //Assert.assertTrue(unitmeasureList.get(0).getName().equals("Магнитный поток"));
-        Assert.assertArrayEquals(unitmeasureListExpected.toArray(), unitmeasureList.toArray());
+        List<Integer> selected = unitmeasureList.stream()
+                .map(Unitmeasure::getId).collect(Collectors.toList());
+        Assert.assertArrayEquals(expected.toArray(), selected.toArray());
+        //Assert.assertArrayEquals(unitmeasureListExpected.toArray(), unitmeasureList.toArray());
 
         logger.info("unitmeasureSelectTest() - Ok");
     }
