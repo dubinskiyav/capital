@@ -24,5 +24,5 @@ class CapitalApplicationTests {
         this.mockMvc.perform(get("/measure/add")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string(containsString("{")));
     }
-
+    // http://localhost:8080
 }

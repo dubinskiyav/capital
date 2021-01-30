@@ -33,6 +33,7 @@ public class CapitalApplication{
         logger.info("SpringApplication.run...");
         SpringApplication.run(CapitalApplication.class, args);
         logger.info("SpringApplication.run...Ok");
+
     }
 
     public static ApplicationContext getApplicationContext() {
