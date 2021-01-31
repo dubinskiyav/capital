@@ -55,6 +55,7 @@ public class UnitmeasureController {
     public List<Unitmeasure> unitmeasure(
             @RequestBody GridDataOption gridDataOption
     ) {
+        logger.info("unitmeasure: gridDataOption = " + gridDataOption.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         String gridDataOptionAsString = null;
         try {
