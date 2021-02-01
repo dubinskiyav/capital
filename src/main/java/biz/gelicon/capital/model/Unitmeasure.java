@@ -45,6 +45,10 @@ public class Unitmeasure {
         return id;
     }
 
+    public Integer getKey() {
+        return id;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
