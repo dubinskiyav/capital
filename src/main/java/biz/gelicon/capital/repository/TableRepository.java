@@ -10,6 +10,7 @@ import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -23,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 import static biz.gelicon.capital.utils.DatabaseUtils.isPostgreSQL;
 
@@ -298,7 +302,7 @@ public interface TableRepository<T> {
      * @param page
      * @return
      */
-    default List<T> findAll(Pageable page){
+    default List<T> findAll(Pageable page) {
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
 
@@ -315,6 +319,18 @@ public interface TableRepository<T> {
         }
         sqlTextBuilder.append(" FROM ").append(tableName);
         if (page != null) {
+            // Заменим описания полей с сортировке на имена колонок в базе
+            StreamSupport.stream(
+                    Spliterators.spliteratorUnknownSize(
+                            page.getSort().iterator(),
+                            Spliterator.ORDERED),
+                    false)
+                    .forEach(s -> {
+                        System.out.println(s.getProperty());
+                        if (s.getProperty().equals("shortName")) {
+                        }
+                    });
+
             String orderBy = ConvertUnils.buildOrderByFromPegable(page);
             String limit = ConvertUnils.buildLimitFromPegable(page);
             if (orderBy != null) {sqlTextBuilder.append(" ").append(orderBy);}
@@ -338,9 +354,9 @@ public interface TableRepository<T> {
             String errText = "SQL execute filed: " + sqlText;
             logger.error(errText, e);
             try {
-                throw new FetchQueryException(errText,e);
+                throw new FetchQueryException(errText, e);
             } catch (FetchQueryException fetchQueryException) {
-                throw new RuntimeException(errText,e);
+                throw new RuntimeException(errText, e);
             }
         }
     }
@@ -382,16 +398,15 @@ public interface TableRepository<T> {
     }
 
     /**
-     * Удаление таблицы из базы данных
-     * Удаляет так же последовательность для PostgreSQL
-     * Если существуют
+     * Удаление таблицы из базы данных Удаляет так же последовательность для PostgreSQL Если
+     * существуют
      */
     default void drop() {
         // Получим класс дженерика класса
         Class cls = JpaUtils.getClassGenericInterfaceAnnotationTable(this);
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
-        if (DatabaseUtils.checkTableExist(tableName,jdbcTemplate)) {
+        if (DatabaseUtils.checkTableExist(tableName, jdbcTemplate)) {
             DatabaseUtils.executeSql("DROP TABLE " + tableName, jdbcTemplate);
             logger.info("Table " + tableName + " dropped");
         }
@@ -406,8 +421,8 @@ public interface TableRepository<T> {
     }
 
     /**
-     * Дефайлтный метод создания таблицы
-     * СОздает таблицу без полей, без последовательностей, без ничего
+     * Дефайлтный метод создания таблицы СОздает таблицу без полей, без последовательностей, без
+     * ничего
      */
     default void create() {
         // Получим класс дженерика класса
@@ -415,13 +430,13 @@ public interface TableRepository<T> {
         String tableName = JpaUtils.getTableName(cls); // Ключем является имя класса
         JdbcTemplate jdbcTemplate = JpaUtils.getJdbcTemplate();
         String sqlText = "CREATE TABLE " + tableName + "()";
-            DatabaseUtils.executeSql(sqlText, jdbcTemplate);
+        DatabaseUtils.executeSql(sqlText, jdbcTemplate);
         logger.info("Table " + tableName + " created");
     }
 
     /**
-     * Дефаустный метод первоначальной загрузки
-     * ВОзвращает количество добавленных записей
+     * Дефаустный метод первоначальной загрузки ВОзвращает количество добавленных записей
+     *
      * @return
      */
     default int load() {
