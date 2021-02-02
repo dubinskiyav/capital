@@ -323,41 +323,8 @@ public interface TableRepository<T> {
         }
         sqlTextBuilder.append(" FROM ").append(tableName);
         if (page != null) {
-            // Заменим описания полей с сортировке на имена колонок в базе
-            List<Sort.Order> orders = new ArrayList<>(); // пустая сортировка
-            // Заполняем сортировку
-            StreamSupport.stream(
-                    Spliterators.spliteratorUnknownSize(
-                            page.getSort().iterator(),
-                            Spliterator.ORDERED),
-                    false)
-                    .forEach(s -> {
-                        String columnName = s.getProperty();
-                        // Найдем его в списке колонок
-                        String finalColumnName = columnName;
-                        if (tableMetadata.getColumnMetadataList().stream()
-                                .map(ColumnMetadata::getColumnName)
-                                .filter(cn -> cn.equals(finalColumnName))
-                                .findAny()
-                                .orElse(null) == null) {
-                            // Его нет - надо искать
-                            // Попробуем найти по наименованию поля
-                            String columnNameNew = tableMetadata.getColumnMetadataList().stream()
-                                    .filter(c -> c.getField().getName().equals(finalColumnName))
-                                    .map(ColumnMetadata::getColumnName)
-                                    .findAny()
-                                    .orElse(null);
-                            if (columnNameNew != null) {
-                                // Нашли - переприсваиваем
-                                columnName = columnNameNew;
-                            } else {
-                                // Не нашли - хз че делать
-                                logger.error(columnName + " not found in columns of table " + tableName);
-                            }
-                        }
-                        orders.add(new Sort.Order(s.getDirection(), columnName));
-                    });
-            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by(orders));
+            // Поправим названия полей - заменим имена на колонки
+            page = ConvertUnils.transformSortColumnName(page, tableMetadata);
 
             String orderBy = ConvertUnils.buildOrderByFromPegable(page);
             String limit = ConvertUnils.buildLimitFromPegable(page);

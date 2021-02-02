@@ -2,13 +2,17 @@ package biz.gelicon.capital.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -140,5 +144,52 @@ public class ConvertUnils {
         return limitPart;
     }
 
+    /**
+     * Заменяет описания полей на наименования в сотрировке
+     *
+     * @param page
+     * @param tableMetadata
+     * @return
+     */
+    public static Pageable transformSortColumnName(Pageable page, TableMetadata tableMetadata) {
+        if (page == null || tableMetadata == null) {return null;}
+        List<Sort.Order> orders = new ArrayList<>(); // пустая сортировка
+        // Цикл по всем полям сортировки
+        StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(
+                        page.getSort().iterator(),
+                        Spliterator.ORDERED),
+                false)
+                .forEach(s -> {
+                    String columnName = s.getProperty();
+                    // Найдем его в списке колонок
+                    String finalColumnName = columnName;
+                    if (tableMetadata.getColumnMetadataList().stream()
+                            .map(ColumnMetadata::getColumnName)
+                            .filter(cn -> cn.equals(finalColumnName))
+                            .findAny()
+                            .orElse(null) == null) {
+                        // Его нет - надо искать
+                        // Попробуем найти по наименованию поля
+                        String columnNameNew = tableMetadata.getColumnMetadataList().stream()
+                                .filter(c -> c.getField().getName().equals(finalColumnName))
+                                .map(ColumnMetadata::getColumnName)
+                                .findAny()
+                                .orElse(null);
+                        if (columnNameNew != null) {
+                            // Нашли - переприсваиваем
+                            columnName = columnNameNew;
+                        } else {
+                            // Не нашли - хз че делать
+                            logger.error(
+                                    columnName + " not found in columns of table " + tableMetadata
+                                            .getTableName());
+                        }
+                    }
+                    orders.add(new Sort.Order(s.getDirection(), columnName));
+                });
+        page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by(orders));
+        return page;
+    }
 
 }
