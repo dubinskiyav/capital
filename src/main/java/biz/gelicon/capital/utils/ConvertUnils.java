@@ -1,5 +1,6 @@
 package biz.gelicon.capital.utils;
 
+import biz.gelicon.capital.exceptions.BadPagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -180,10 +181,11 @@ public class ConvertUnils {
                             // Нашли - переприсваиваем
                             columnName = columnNameNew;
                         } else {
-                            // Не нашли - хз че делать
-                            logger.error(
-                                    columnName + " not found in columns of table " + tableMetadata
-                                            .getTableName());
+                            // Не нашли - исключение
+                            String errText = columnName + " not found in columns of table "
+                                    + tableMetadata.getTableName();
+                            logger.error(errText);
+                            throw new RuntimeException(errText);
                         }
                     }
                     orders.add(new Sort.Order(s.getDirection(), columnName));
