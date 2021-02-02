@@ -5,6 +5,7 @@ import biz.gelicon.capital.exceptions.FetchQueryException;
 import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.ConvertUnils;
 import biz.gelicon.capital.utils.DatabaseUtils;
+import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
@@ -12,14 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Order;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -320,16 +324,40 @@ public interface TableRepository<T> {
         sqlTextBuilder.append(" FROM ").append(tableName);
         if (page != null) {
             // Заменим описания полей с сортировке на имена колонок в базе
+            List<Sort.Order> orders = new ArrayList<>(); // пустая сортировка
+            // Заполняем сортировку
             StreamSupport.stream(
                     Spliterators.spliteratorUnknownSize(
                             page.getSort().iterator(),
                             Spliterator.ORDERED),
                     false)
                     .forEach(s -> {
-                        System.out.println(s.getProperty());
-                        if (s.getProperty().equals("shortName")) {
+                        String columnName = s.getProperty();
+                        // Найдем его в списке колонок
+                        String finalColumnName = columnName;
+                        if (tableMetadata.getColumnMetadataList().stream()
+                                .map(ColumnMetadata::getColumnName)
+                                .filter(cn -> cn.equals(finalColumnName))
+                                .findAny()
+                                .orElse(null) == null) {
+                            // Его нет - надо искать
+                            // Попробуем найти по наименованию поля
+                            String columnNameNew = tableMetadata.getColumnMetadataList().stream()
+                                    .filter(c -> c.getField().getName().equals(finalColumnName))
+                                    .map(ColumnMetadata::getColumnName)
+                                    .findAny()
+                                    .orElse(null);
+                            if (columnNameNew != null) {
+                                // Нашли - переприсваиваем
+                                columnName = columnNameNew;
+                            } else {
+                                // Не нашли - хз че делать
+                                logger.error(columnName + " not found in columns of table " + tableName);
+                            }
                         }
+                        orders.add(new Sort.Order(s.getDirection(), columnName));
                     });
+            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by(orders));
 
             String orderBy = ConvertUnils.buildOrderByFromPegable(page);
             String limit = ConvertUnils.buildLimitFromPegable(page);
