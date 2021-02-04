@@ -68,6 +68,10 @@ public class Materiallevel {
         this.id = id;
     }
 
+    public Integer getKey() {
+        return id;
+    }
+
     public Integer getMasterId() {
         return masterId;
     }

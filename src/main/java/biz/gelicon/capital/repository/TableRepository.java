@@ -5,32 +5,24 @@ import biz.gelicon.capital.exceptions.FetchQueryException;
 import biz.gelicon.capital.utils.ColumnMetadata;
 import biz.gelicon.capital.utils.ConvertUnils;
 import biz.gelicon.capital.utils.DatabaseUtils;
-import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.utils.JpaUtils;
 import biz.gelicon.capital.utils.ResultSetRowMapper;
 import biz.gelicon.capital.utils.TableMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Order;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.StreamSupport;
 
 import static biz.gelicon.capital.utils.DatabaseUtils.isPostgreSQL;
 

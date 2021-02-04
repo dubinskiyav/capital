@@ -40,6 +40,10 @@ public class Measure {
         return id;
     }
 
+    public Integer getKey() {
+        return id;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
