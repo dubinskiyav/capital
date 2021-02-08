@@ -49,10 +49,6 @@ public class Unitmeasurerecalc {
         this.id = id;
     }
 
-    public Integer getKey() {
-        return id;
-    }
-
     public Integer getunitmeasurefromId() {
         return unitmeasurefromId;
     }

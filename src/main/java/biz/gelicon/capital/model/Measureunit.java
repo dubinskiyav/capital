@@ -49,10 +49,6 @@ public class Measureunit {
         this.id = id;
     }
 
-    public Integer getKey() {
-        return id;
-    }
-
     public Integer getMeasureId() {
         return measureId;
     }

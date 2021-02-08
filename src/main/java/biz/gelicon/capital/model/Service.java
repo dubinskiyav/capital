@@ -30,10 +30,6 @@ public class Service {
         return serviceId;
     }
 
-    public Integer getKey() {
-        return serviceId;
-    }
-
     public void setServiceId(Integer serviceId) {
         this.serviceId = serviceId;
     }

@@ -44,10 +44,6 @@ public class Materialunitmeasure  {
         this.id = id;
     }
 
-    public Integer getKey() {
-        return id;
-    }
-
     public Integer getMaterialId() {
         return materialId;
     }
