@@ -1,6 +1,5 @@
 package biz.gelicon.capital.controllers;
 
-import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Measure;
 import biz.gelicon.capital.repository.MeasureRepository;
@@ -114,12 +113,16 @@ public class MeasureController {
     public void del(@PathVariable("ids") String ids) {
         for (String s : ids.replaceAll("\\s+", "").split(",")) {
             Integer id = Integer.parseInt(s);
+            Measure measure = new Measure();
+            measure.setId(id);
+            DataBinder dataBinder = new DataBinder(measure);
             try {
                 measureRepository.delete(id);
             } catch (RuntimeException e) {
                 String errText = "Ошибка удаления записи с id = " + id;
                 logger.error(errText);
-                throw new DeleteRecordException(errText, e);
+                dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
+                throw new PostRecordException(dataBinder.getBindingResult(), e);
             }
         }
     }

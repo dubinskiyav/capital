@@ -1,6 +1,5 @@
 package biz.gelicon.capital.controllers;
 
-import biz.gelicon.capital.exceptions.DeleteRecordException;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Unitmeasure;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.DataBinder;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,12 +116,16 @@ public class UnitmeasureController {
     public void del(@PathVariable("ids") String ids) {
         for (String s : ids.replaceAll("\\s+", "").split(",")) {
             Integer id = Integer.parseInt(s);
+            Unitmeasure unitmeasure = new Unitmeasure();
+            unitmeasure.setId(id);
+            DataBinder dataBinder = new DataBinder(unitmeasure);
             try {
                 unitmeasureRepository.delete(id);
             } catch (RuntimeException e) {
                 String errText = "Ошибка удаления записи с id = " + id;
                 logger.error(errText);
-                throw new DeleteRecordException(errText, e);
+                dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
+                throw new PostRecordException(dataBinder.getBindingResult(), e);
             }
         }
     }
