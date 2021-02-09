@@ -5,7 +5,7 @@ import org.springframework.validation.BindingResult;
 public class PostRecordException extends RuntimeException {
 
     private BindingResult bindingResult;
-    private static final String errText = "Ошибка модификации данных в базе";
+    private static final String errText = "Ошибка модификации данных в базе ";
 
     public PostRecordException(
             BindingResult bindingResult
