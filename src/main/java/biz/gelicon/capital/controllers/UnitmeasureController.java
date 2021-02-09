@@ -124,7 +124,7 @@ public class UnitmeasureController {
             } catch (RuntimeException e) {
                 String errText = "Ошибка удаления записи с id = " + id;
                 logger.error(errText);
-                dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
+                dataBinder.getBindingResult().rejectValue("id", "", e.getCause().getMessage());
                 throw new PostRecordException(dataBinder.getBindingResult(), e);
             }
         }
