@@ -152,7 +152,7 @@ public class UnitmeasureController {
         } catch (RuntimeException e) {
             String errText = "Ошибка сохранения записи " + unitmeasure.toString();
             logger.error(errText);
-            dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
+            dataBinder.getBindingResult().rejectValue("id", "", unitmeasure.toString() + " " + e.getMessage());
             throw new PostRecordException(dataBinder.getBindingResult(), e);
         }
         return unitmeasure;

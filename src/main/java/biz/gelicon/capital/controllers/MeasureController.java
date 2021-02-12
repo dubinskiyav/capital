@@ -86,7 +86,7 @@ public class MeasureController {
     // будет производить json в результате, и он будет отправлен в ответ.
     public Measure add() {
         Measure measure = new Measure();
-        measure.setName("Длина");
+        //measure.setName("Длина");
         return measure;
     }
 
@@ -155,7 +155,7 @@ public class MeasureController {
         } catch (RuntimeException e) {
             String errText = "Ошибка сохранения записи " + measure.toString();
             logger.error(errText);
-            dataBinder.getBindingResult().rejectValue("id", "", e.getMessage());
+            dataBinder.getBindingResult().rejectValue("id", "", measure.toString() + " " + e.getMessage());
             throw new PostRecordException(dataBinder.getBindingResult(), e);
         }
         return measure;
