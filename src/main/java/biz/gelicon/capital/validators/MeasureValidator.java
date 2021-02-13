@@ -32,6 +32,10 @@ public class MeasureValidator implements Validator {
             errors.rejectValue("name", "",
                     "Наименование не должны быть равно значению '" + measure.getName() + "'");
         }
+        if (measure.getId() != null && measure.getId() == -1) {
+            errors.rejectValue("id", "",
+                    "Эту запись менять запрещено!");
+        }
 
         if (true) {return;} // Так как стандартный валидлатор вызываем в контроллере почему то
         // вызов стандартного валидатора

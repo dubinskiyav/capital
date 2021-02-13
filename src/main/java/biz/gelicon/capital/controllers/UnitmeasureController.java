@@ -145,7 +145,7 @@ public class UnitmeasureController {
         dataBinder.validate();
         if (dataBinder.getBindingResult().hasErrors()) {
             logger.error(dataBinder.getBindingResult().getAllErrors().toString());
-            throw new PostRecordException(dataBinder.getBindingResult());
+            throw new PostRecordException(dataBinder.getBindingResult(), new Throwable());
         }
         try {
             unitmeasureRepository.insertOrUpdate(unitmeasure);
