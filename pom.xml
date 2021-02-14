@@ -19,7 +19,6 @@
 		<java.version>11</java.version>
 		<downloadSources>true</downloadSources>
 		<downloadJavadocs>true</downloadJavadocs>
-		<jar.finalName>capital</jar.finalName>
 	</properties>
 
 	<dependencies>

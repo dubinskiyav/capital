@@ -183,6 +183,10 @@ SET JAVA_HOME="D:\java\jdk-11"
 получим файл
 capital-0.0.1-SNAPSHOT.jar
 
+Проверяем
+d:\java\jdk-11\bin\java -jar D:\WORK\Programming\capital\target\capital-0.0.1-SNAPSHOT.jar
+
+
 https://www.baeldung.com/spring-boot-app-as-a-service
 
 chmod 500 capital-0.0.1-SNAPSHOT.jar
@@ -220,6 +224,16 @@ sudo service capital-0.0.1-SNAPSHOT.jar start
         </plugin>
     </plugins>
 </build>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<finalName>capital</finalName>
+				</configuration>
+			</plugin>
+
 
 
 sudo chmod 555 capital-0.0.1-SNAPSHOT.jar
