@@ -191,8 +191,8 @@ public class UnitmeasureControllerTest {
     void InsertUpdateDeleteOkTest() throws Exception {
         logger.info("InsertUpdateDeleteOkTest() - Start");
         // Добавление
-        // Имя - случайное, начинается с Z чтобы было в конце и пагинация не сдохла
-        String nameNew = "Z Единица измерения с номером " + String.valueOf(
+        // Имя - случайное, начинается с Я чтобы было в конце и пагинация не сдохла
+        String nameNew = "Я Единица измерения с номером " + String.valueOf(
                 ThreadLocalRandom.current().nextInt(1000000000) + 1000000000);
         Unitmeasure unitmeasure = new Unitmeasure(null, nameNew,"");
         ObjectMapper objectMapper = new ObjectMapper();

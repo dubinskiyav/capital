@@ -61,16 +61,14 @@ public class MeasureControllerTest {
     RecreateDatabase recreateDatabase;
 
     /**
-     * Для пересмоздания базы данных установить
-     * recreatedatabase=true
-     * в application.properties
+     * Для пересмоздания базы данных установить recreatedatabase=true в application.properties
      */
     @Value("${reloadtestdata}")
     private Boolean reloadtestdata = false;
 
     @BeforeEach
     public void initTests() {
-        if (true) return;
+        if (true) { return; }
         logger.info("initTests");
         CapitalApplication.setApplicationContext(applicationContext);
         if (reloadtestdata) { // Перегрузить тестовые данные
@@ -84,6 +82,7 @@ public class MeasureControllerTest {
 
     /**
      * Вызов формы добавления - возвращает пустой json
+     *
      * @throws Exception
      */
     @Test
@@ -98,6 +97,7 @@ public class MeasureControllerTest {
 
     /**
      * Тестирование выборки данных
+     *
      * @throws Exception
      */
     @Test
@@ -125,10 +125,11 @@ public class MeasureControllerTest {
                 .andExpect(content().string(containsString("{\"id\":")));
         // Проверим пагинацию
         List<Measure> measureListExpected = Stream.of(
-                new Measure(6, "Количество вечества"),
                 new Measure(26, "Магнитная индукция"),
                 new Measure(25, "Магнитный поток"),
-                new Measure(17, "Мощность"))
+                new Measure(17, "Мощность"),
+                new Measure(20, "Освещенность")
+        )
                 .collect(Collectors.toList());
         MvcResult result = this.mockMvc.perform(post("/measure/json")
                 .content(
@@ -146,8 +147,8 @@ public class MeasureControllerTest {
     }
 
     /**
-     * Тестирование ошитбки при выборе
-     * указали пагинацию и не укажзали сортировку
+     * Тестирование ошитбки при выборе указали пагинацию и не укажзали сортировку
+     *
      * @throws Exception
      */
     @Test
@@ -170,6 +171,7 @@ public class MeasureControllerTest {
 
     /**
      * Проверка ошибочного добавления записи
+     *
      * @throws Exception
      */
     @Test
@@ -186,21 +188,24 @@ public class MeasureControllerTest {
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof PostRecordException))
-                .andExpect(content().string(containsString("SQL execute filed: INSERT INTO measure")))
+                .andExpect(
+                        content().string(containsString("SQL execute filed: INSERT INTO measure")))
         ;
         logger.info("insertErrorTest() - Ok");
     }
 
     /**
      * Проверка безошибочного добавления-изменения-удаления записи
+     *
      * @throws Exception
      */
     @Test
     void InsertUpdateDeleteOkTest() throws Exception {
         logger.info("InsertUpdateDeleteOkTest() - Start");
         // Добавление
-        // Имя - случайное, начинается с Z чтобы было в конце и пагинация не сдохла
-        String nameNew = "Z Мера с номером " + String.valueOf(ThreadLocalRandom.current().nextInt(1000000000) + 1000000000);
+        // Имя - случайное, начинается с Я чтобы было в конце и пагинация не сдохла
+        String nameNew = "Я Мера с номером " + String
+                .valueOf(ThreadLocalRandom.current().nextInt(1000000000) + 1000000000);
         Measure measure = new Measure(null, nameNew);
         ObjectMapper objectMapper = new ObjectMapper();
         String measureAsString = objectMapper.writeValueAsString(measure);
@@ -210,8 +215,7 @@ public class MeasureControllerTest {
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andDo(print()) // выводить результат в консоль
                 .andExpect(content().string(containsString(nameNew)))
-                .andReturn()
-        ;
+                .andReturn();
         logger.info("InsertUpdateDeleteOkTest() - Ok");
     }
 

@@ -1,5 +1,5 @@
 SET JAVA_HOME="D:\java\jdk-11"
-rem "C:\Program Files (x86)\Java\apache-maven-3.6.3\bin\mvn.cmd" clean package
+"C:\Program Files (x86)\Java\apache-maven-3.6.3\bin\mvn.cmd" clean package
 
 copy "D:\WORK\Programming\capital\target\capital-0.0.1-SNAPSHOT.jar" "D:\WORK\Programming\capital\target\capital.jar"
 
