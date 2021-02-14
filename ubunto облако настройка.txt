@@ -1,6 +1,6 @@
 78.40.219.225
-ssh root@78.40.219.225
-ssh dav@78.40.219.225
+ssh root@78.40.219.225    - вход запрещен, входить dav ом
+ssh dav@78.40.219.225		- top(hap)1
 ssh root@10.15.4.5
 
 
@@ -69,6 +69,12 @@ sudo /etc/init.d/postgresql restart
 
 открыть порт
 sudo ufw allow 5432/tcp
+закрыть порт
+sudo ufw deny 10050
+
+Для react
+sudo ufw allow 8080/tcp
+
 
 проверить сканером портов
 https://hidemy.name/ru/port-scanner/
@@ -155,7 +161,86 @@ FROM   pg_db_role_setting rs
 
 ssh -L 9999:localhost:5432 dav@78.40.219.225
 
+Установить Java 
+
+sudo apt update
+sudo apt install openjdk-11-jdk
 
 
+sudo add-apt-repository ppa:openjdk-r/ppa
+sudo apt-get update
+sudo apt install openjdk-11-jdk
+
+
+
+
+собрать
+
+SET JAVA_HOME="D:\java\jdk-11"
+"C:\Program Files (x86)\Java\apache-maven-3.6.3\bin\mvn.cmd" clean install
+
+в папке target
+получим файл
+capital-0.0.1-SNAPSHOT.jar
+
+https://www.baeldung.com/spring-boot-app-as-a-service
+
+chmod 500 capital-0.0.1-SNAPSHOT.jar
+
+sudo service capital-0.0.1-SNAPSHOT.jar start
+
+<packaging>jar</packaging>
+
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.4.0.RELEASE</version>
+</parent>
+
+<dependencies>
+    ....
+</dependencies>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <executable>true</executable>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+
+sudo chmod 555 capital-0.0.1-SNAPSHOT.jar
+
+$ sudo ln -s /home/dav/capital-0.0.1-SNAPSHOT.jar /etc/init.d/capital-0.0.1-SNAPSHOT.jar
+$ sudo service capital-0.0.1-SNAPSHOT.jar start
+sudo service capital-0.0.1-SNAPSHOT.jar stop
+
+cp capital-0.0.1-SNAPSHOT.jar capital.jar
+$ sudo ln -s /home/dav/capital.jar /etc/init.d/capital.jar
+
+sudo service capital.jar start
+
+service --status-all
+
+ls -l /var/log/
+tail /var/log/syslog
+
+
+https://medium.com/@tough_jonquil_dog_815/jar-%D1%84%D0%B0%D0%B9%D0%BB-%D0%BA%D0%B0%D0%BA-%D1%81%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-ubuntu-ab9557d58f2f
+
+
+Вывести список служб
+systemctl list-units -t service --all
+Инфа по службе
+systemctl status smbd
+
+sudo ln -s /home/dav/capital.service /etc/systemd/system/capital.service
+
+systemctl start capital
 
 

@@ -29,8 +29,9 @@ public class MeasureValidator implements Validator {
         Measure measure = (Measure) target;
         // Дополнительные ручные проверки
         if (measure.getName() != null && measure.getName().equalsIgnoreCase("наименование")) {
-            errors.rejectValue("name", "",
-                    "Наименование не должны быть равно значению '" + measure.getName() + "'");
+            // Добавляем к полю id так как потом из него вытаскиваем
+            errors.rejectValue("id", "",
+                    "Наименование не должны быть равно значению равному '" + measure.getName() + "'");
         }
         if (measure.getId() != null && measure.getId() == -1) {
             errors.rejectValue("id", "",
