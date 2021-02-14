@@ -237,6 +237,7 @@ sudo service capital-0.0.1-SNAPSHOT.jar start
 
 
 sudo chmod 555 capital-0.0.1-SNAPSHOT.jar
+chmod 555 capital.jar
 
 $ sudo ln -s /home/dav/capital-0.0.1-SNAPSHOT.jar /etc/init.d/capital-0.0.1-SNAPSHOT.jar
 $ sudo service capital-0.0.1-SNAPSHOT.jar start
@@ -249,8 +250,18 @@ sudo service capital.jar start
 
 service --status-all
 
+автозапуск сервиса
+update-rc.d capital.jar defaults
+
+
+
+Утилита sysv-rc-conf
+# apt-get install sysv-rc-conf
+# sysv-rc-conf
+
+
 ls -l /var/log/
-tail /var/log/syslog
+tail /var/log/capital.jar.log
 
 
 https://medium.com/@tough_jonquil_dog_815/jar-%D1%84%D0%B0%D0%B9%D0%BB-%D0%BA%D0%B0%D0%BA-%D1%81%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-ubuntu-ab9557d58f2f
