@@ -276,4 +276,8 @@ sudo ln -s /home/dav/capital.service /etc/systemd/system/capital.service
 
 systemctl start capital
 
+Залить файл 
+pscp.exe -P 22 -i "C:\Users\dubin\.ssh\ssh\privat-saved.ppk" "D:\WORK\Programming\capital\target\capital.jar" dav@78.40.219.225:/home/dav/WORK/capital
+
+
 

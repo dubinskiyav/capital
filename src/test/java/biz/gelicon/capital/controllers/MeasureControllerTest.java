@@ -26,11 +26,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -81,13 +83,26 @@ public class MeasureControllerTest {
     }
 
     /**
+     * Вызов формы добавления - возвращает пустой json
+     * @throws Exception
+     */
+    @Test
+    public void testAdd() throws Exception {
+        String jsonExpect = "{\"id\":null,\"name\":null}";
+        this.mockMvc.perform(get("/measure/add")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(jsonExpect)));
+    }
+
+    /**
      * Тестирование выборки данных
      * @throws Exception
      */
     @Test
     void measureSelectTest() throws Exception {
         logger.info("test measure start ");
-        if (true) return; // todo непонятно почему валится
         // /Создадим json равный GridDataOption для передачи в контроллер
         List<GridDataOption.OrderBy> sort = new ArrayList<>();
         sort.add(new GridDataOption.OrderBy("name", 0));
@@ -110,10 +125,10 @@ public class MeasureControllerTest {
                 .andExpect(content().string(containsString("{\"id\":")));
         // Проверим пагинацию
         List<Measure> measureListExpected = Stream.of(
+                new Measure(6, "Количество вечества"),
                 new Measure(26, "Магнитная индукция"),
                 new Measure(25, "Магнитный поток"),
-                new Measure(17, "Мощность"),
-                new Measure(20, "Освещенность"))
+                new Measure(17, "Мощность"))
                 .collect(Collectors.toList());
         MvcResult result = this.mockMvc.perform(post("/measure/json")
                 .content(
@@ -125,7 +140,6 @@ public class MeasureControllerTest {
         List<Measure> measureList =
                 objectMapper.readValue(content, new TypeReference<>() {
                 });
-        //Assert.assertTrue(measureList.get(0).getName().equals("Магнитный поток"));
         Assert.assertArrayEquals(measureListExpected.toArray(), measureList.toArray());
 
         logger.info("measureSelectTest() - Ok");
@@ -147,6 +161,7 @@ public class MeasureControllerTest {
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof BadPagingException))
+                .andExpect(content().string(containsString("SQL build error")))
                 .andExpect(content().string(containsString("LIMIT")))
                 .andExpect(content().string(containsString("OFFSET")))
         ;
@@ -171,7 +186,7 @@ public class MeasureControllerTest {
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof PostRecordException))
-                .andExpect(content().string(containsString("SQL execute filed: INSERT INTO measure (id, name) VALUES (:id, :name)")))
+                .andExpect(content().string(containsString("SQL execute filed: INSERT INTO measure")))
         ;
         logger.info("insertErrorTest() - Ok");
     }
@@ -183,9 +198,10 @@ public class MeasureControllerTest {
     @Test
     void InsertUpdateDeleteOkTest() throws Exception {
         logger.info("InsertUpdateDeleteOkTest() - Start");
-        if (true) return; // todo Сделать тест - валится почему то
         // Добавление
-        Measure measure = new Measure(null, "Новая мера измерения");
+        // Имя - случайное, начинается с Z чтобы было в конце и пагинация не сдохла
+        String nameNew = "Z Мера с номером " + String.valueOf(ThreadLocalRandom.current().nextInt(1000000000) + 1000000000);
+        Measure measure = new Measure(null, nameNew);
         ObjectMapper objectMapper = new ObjectMapper();
         String measureAsString = objectMapper.writeValueAsString(measure);
         MvcResult result = this.mockMvc.perform(post("/measure/post")
@@ -193,16 +209,9 @@ public class MeasureControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andDo(print()) // выводить результат в консоль
-                .andExpect(content().string(containsString("Новая мера измерения")))
+                .andExpect(content().string(containsString(nameNew)))
                 .andReturn()
         ;
-        // Вызовем изменение
-        result = this.mockMvc.perform(post("/upd/{" + measure.getId() + "}")
-                )
-                .andDo(print()).andReturn();
-        String content = result.getResponse().getContentAsString();
-        measure = null;
-        // upd
         logger.info("InsertUpdateDeleteOkTest() - Ok");
     }
 

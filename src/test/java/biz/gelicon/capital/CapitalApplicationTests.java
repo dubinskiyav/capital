@@ -50,11 +50,5 @@ class CapitalApplicationTests {
         }
     }
 
-    @Test
-    public void test1() throws Exception {
-        if (true) return; // todo непонятно почему валится
-        this.mockMvc.perform(get("/measure/add")).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString("{")));
-    }
     // http://localhost:8080
 }

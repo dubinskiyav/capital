@@ -87,6 +87,7 @@ public class MeasureController {
     public Measure add() {
         Measure measure = new Measure();
         //measure.setName("Длина");
+        //logger.info("Measure add " + measure.toString());
         return measure;
     }
 

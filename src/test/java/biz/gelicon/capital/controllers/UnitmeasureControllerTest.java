@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,7 +88,6 @@ public class UnitmeasureControllerTest {
     // todo - доделать
     @Test
     void unitmeasureSelectTest() throws Exception {
-        if (true) return; // todo непонятно почему валится
         logger.info("test unitmeasure start ");
 
         // /Создадим json равный GridDataOption для передачи в контроллер
@@ -112,10 +112,10 @@ public class UnitmeasureControllerTest {
                 .andExpect(content().string(containsString("{\"id\":")));
         // Проверим пагинацию
         List<Unitmeasure> unitmeasureListExpected = Stream.of(
+                new Unitmeasure(39, "Единица",null),
                 new Unitmeasure(40, "Житель",null),
                 new Unitmeasure(7, "Кандела","кд"),
-                new Unitmeasure(21, "Карат",null),
-                new Unitmeasure(25, "Квартал","кв"))
+                new Unitmeasure(21, "Карат",null))
                 .collect(Collectors.toList());
         //List<Integer> expected = Arrays.asList(10, 7, 21, 25);
         List<Integer> expected = unitmeasureListExpected.stream()
@@ -166,7 +166,6 @@ public class UnitmeasureControllerTest {
      */
     @Test
     void insertErrorTest() throws Exception {
-        if (true) return; // todo непонятно почему валится
         // Создадим unitmeasure который уже существует
         Unitmeasure unitmeasure = new Unitmeasure(null, "Вес","");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -179,7 +178,7 @@ public class UnitmeasureControllerTest {
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof PostRecordException))
-                .andExpect(content().string(containsString("SQL execute filed: INSERT INTO unitmeasure (id, name) VALUES (:id, :name)")))
+                .andExpect(content().string(containsString("SQL execute filed: INSERT INTO unitmeasure (id, name, short_name) VALUES")))
         ;
         logger.info("insertErrorTest() - Ok");
     }
@@ -190,10 +189,12 @@ public class UnitmeasureControllerTest {
      */
     @Test
     void InsertUpdateDeleteOkTest() throws Exception {
-        if (true) return; // todo непонятно почему валится
         logger.info("InsertUpdateDeleteOkTest() - Start");
         // Добавление
-        Unitmeasure unitmeasure = new Unitmeasure(null, "Новая мера измерения","");
+        // Имя - случайное, начинается с Z чтобы было в конце и пагинация не сдохла
+        String nameNew = "Z Единица измерения с номером " + String.valueOf(
+                ThreadLocalRandom.current().nextInt(1000000000) + 1000000000);
+        Unitmeasure unitmeasure = new Unitmeasure(null, nameNew,"");
         ObjectMapper objectMapper = new ObjectMapper();
         String unitmeasureAsString = objectMapper.writeValueAsString(unitmeasure);
         MvcResult result = this.mockMvc.perform(post("/unitmeasure/post")
@@ -201,16 +202,9 @@ public class UnitmeasureControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // Ошибки быть не должно
                 .andDo(print()) // выводить результат в консоль
-                .andExpect(content().string(containsString("Новая мера измерения")))
+                .andExpect(content().string(containsString(nameNew)))
                 .andReturn()
                 ;
-        // Вызовем изменение
-        result = this.mockMvc.perform(post("/upd/{" + unitmeasure.getId() + "}")
-        )
-                .andDo(print()).andReturn();
-        String content = result.getResponse().getContentAsString();
-        unitmeasure = null;
-        // upd
         logger.info("InsertUpdateDeleteOkTest() - Ok");
     }
 
