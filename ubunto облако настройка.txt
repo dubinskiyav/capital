@@ -189,6 +189,14 @@ chmod 500 capital-0.0.1-SNAPSHOT.jar
 
 sudo service capital-0.0.1-SNAPSHOT.jar start
 
+	<properties>
+		<java.version>11</java.version>
+		<downloadSources>true</downloadSources>
+		<downloadJavadocs>true</downloadJavadocs>
+		<jar.finalName>capital</jar.finalName>
+	</properties>
+
+
 <packaging>jar</packaging>
 
 <parent>
