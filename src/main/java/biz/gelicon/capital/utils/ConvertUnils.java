@@ -180,13 +180,7 @@ public class ConvertUnils {
                         if (columnNameNew != null) {
                             // Нашли - переприсваиваем
                             columnName = columnNameNew;
-                        } else {
-                            // Не нашли - исключение
-                            String errText = columnName + " not found in columns of table "
-                                    + tableMetadata.getTableName();
-                            logger.error(errText);
-                            throw new RuntimeException(errText);
-                        }
+                         }
                     }
                     orders.add(new Sort.Order(s.getDirection(), columnName));
                 });

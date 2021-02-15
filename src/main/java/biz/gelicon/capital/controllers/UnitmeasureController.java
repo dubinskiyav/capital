@@ -1,15 +1,22 @@
 package biz.gelicon.capital.controllers;
 
+import biz.gelicon.capital.dto.UnitmeasureDTO;
 import biz.gelicon.capital.exceptions.PostRecordException;
 import biz.gelicon.capital.model.Unitmeasure;
+import biz.gelicon.capital.repository.TableRepository;
 import biz.gelicon.capital.repository.UnitmeasureRepository;
+import biz.gelicon.capital.utils.ConvertUnils;
+import biz.gelicon.capital.utils.DatabaseUtils;
 import biz.gelicon.capital.utils.GridDataOption;
+import biz.gelicon.capital.utils.TableMetadata;
 import biz.gelicon.capital.validators.UnitmeasureValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.DataBinder;
@@ -21,6 +28,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +55,9 @@ public class UnitmeasureController {
     @Autowired
     private UnitmeasureValidator unitmeasureValidator; // Валидатор для дополнительной проверки полей
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
     @InitBinder   // Чтобы не вызывать самому валидатор - он сам вызовется
     protected void initBinder(WebDataBinder binder) { // todo Непонятно что это
         //binder.setValidator(unitmeasureValidator); // todo вернуть установку автовалидатора - непонятно что
@@ -53,7 +67,6 @@ public class UnitmeasureController {
     public List<Unitmeasure> unitmeasure(
             @RequestBody GridDataOption gridDataOption
     ) {
-        logger.info("unitmeasure: gridDataOption = " + gridDataOption.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         String gridDataOptionAsString = null;
         try {
@@ -68,6 +81,79 @@ public class UnitmeasureController {
                 unitmeasureRepository.findAll(gridDataOption.buildPageRequest());
         return unitmeasureList;
     }
+
+    @RequestMapping(value = "dto", method = RequestMethod.POST)
+    public List<UnitmeasureDTO> unitmeasureDTO(
+            @RequestBody GridDataOption gridDataOption
+    ) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String gridDataOptionAsString = null;
+        try {
+            gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);
+        } catch (JsonProcessingException e) {
+            String errText = "Ошимбка при преобразовании";
+            logger.error(errText);
+            throw new RuntimeException(errText);
+        }
+        logger.info("unitmeasure: gridDataOptionAsString = " + gridDataOptionAsString);
+        String sqlText = "\n"
+                + "SELECT UM.id,\n"
+                + "       UM.name,\n"
+                + "       UM.short_name,\n"
+                + "       MU.id measureunitId,\n"
+                + "       MU.priority,\n"
+                + "       M.id measureId,\n"
+                + "       M.name measureName\n"
+                + "FROM   unitmeasure UM,\n"
+                + "       measureunit MU,\n"
+                + "       measure M\n"
+                + "WHERE  MU.unitmeasure_id = UM.id \n"
+                + "  AND  M.id = MU.measure_id \n";
+
+        // из параметра получим page
+        Pageable page = gridDataOption.buildPageRequest();
+        // Найдем в коллекции описание таблицы по имени
+        TableMetadata tableMetadata = TableRepository.tableMetadataMap.get("unitmeasure");
+        // Поправим названия полей - заменим имена на колонки
+        // все остальыне поля должны совпадать с выбираемыми !!!
+        page = ConvertUnils.transformSortColumnName(page, tableMetadata);
+
+        String orderBy = ConvertUnils.buildOrderByFromPegable(page);
+        String limit = ConvertUnils.buildLimitFromPegable(page);
+        if (orderBy != null) {
+            sqlText = sqlText + " " + orderBy;
+        }
+        if (limit != null) {
+            sqlText = sqlText + " " + limit;
+        }
+        logger.info(sqlText);
+        Connection connection = DatabaseUtils.getJdbcTemplateConnection(jdbcTemplate);
+
+        List<UnitmeasureDTO> unitmeasureDTOs = new ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlText);
+            //ps.setString(1, tableName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                UnitmeasureDTO unitmeasureDTO = new UnitmeasureDTO(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("short_name"),
+                        rs.getInt("measureunitId"),
+                        rs.getInt("priority"),
+                        rs.getInt("measureId"),
+                        rs.getString("measureName")
+                );
+                unitmeasureDTOs.add(unitmeasureDTO);
+            }
+            ps.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return unitmeasureDTOs;
+    }
+
 
 
 

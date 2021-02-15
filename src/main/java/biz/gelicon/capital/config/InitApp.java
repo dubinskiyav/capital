@@ -1,10 +1,13 @@
 package biz.gelicon.capital.config;
 
 import biz.gelicon.capital.CapitalApplication;
+import biz.gelicon.capital.controllers.UnitmeasureController;
 import biz.gelicon.capital.repository.TableRepository;
 import biz.gelicon.capital.utils.DatabaseUtils;
+import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.utils.RecreateDatabase;
 import biz.gelicon.capital.utils.TableMetadata;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -68,5 +73,26 @@ public class InitApp implements ApplicationRunner {
             logger.info("recreateDatabase...Ok");
         }
         logger.info("InitApp running...Ok");
+        test1();
+    }
+
+    @Autowired
+    UnitmeasureController unitmeasureController;
+    /**
+     * Для легких тестов во время разработки
+     */
+    private void test1() {
+        logger.info("test1...");
+
+        // /Создадим json равный GridDataOption для передачи в контроллер
+        List<GridDataOption.OrderBy> sort = new ArrayList<>();
+        sort.add(new GridDataOption.OrderBy("name", 0));
+        sort.add(new GridDataOption.OrderBy("measureName", 1));
+        GridDataOption gridDataOption = new GridDataOption();
+        gridDataOption.setPageNumber(2);
+        gridDataOption.setPageSize(4);
+        gridDataOption.setSort(sort);
+        unitmeasureController.unitmeasureDTO(gridDataOption).forEach(p -> System.out.println(p.toString()));
+        logger.info("test1...Ok");
     }
 }
