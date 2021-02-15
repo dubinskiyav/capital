@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/unitmeasure",    // задаёт "каталог", в котором будут размещаться методы контроллера
         consumes = "application/json; charset=UTF-8", // определяет, что Content-Type запроса клиента должен быть "application/json"
-        produces = "application/json; charset=UTF-8") // определяет, что возвращать будет "application/json"
+        produces = "application/json; charset=UTF-8")
+// определяет, что возвращать будет "application/json"
 public class UnitmeasureController {
 
     private static final Logger logger = LoggerFactory.getLogger(UnitmeasureController.class);
@@ -126,35 +128,21 @@ public class UnitmeasureController {
         if (limit != null) {
             sqlText = sqlText + " " + limit;
         }
-        logger.info(sqlText);
-        Connection connection = DatabaseUtils.getJdbcTemplateConnection(jdbcTemplate);
+        //logger.info(sqlText);
 
-        List<UnitmeasureDTO> unitmeasureDTOs = new ArrayList<>();
-        try {
-            PreparedStatement ps = connection.prepareStatement(sqlText);
-            //ps.setString(1, tableName);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                UnitmeasureDTO unitmeasureDTO = new UnitmeasureDTO(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("short_name"),
-                        rs.getInt("measureunitId"),
-                        rs.getInt("priority"),
-                        rs.getInt("measureId"),
-                        rs.getString("measureName")
-                );
-                unitmeasureDTOs.add(unitmeasureDTO);
-            }
-            ps.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
-        return unitmeasureDTOs;
+        return jdbcTemplate.query(sqlText,
+                (rs, rowNum) ->
+                        new UnitmeasureDTO(
+                                rs.getInt("id"),
+                                rs.getString("name"),
+                                rs.getString("short_name"),
+                                rs.getInt("measureunitId"),
+                                rs.getInt("priority"),
+                                rs.getInt("measureId"),
+                                rs.getString("measureName")
+                        )
+        );
     }
-
-
 
 
     /**
@@ -238,7 +226,8 @@ public class UnitmeasureController {
         } catch (RuntimeException e) {
             String errText = "Ошибка сохранения записи " + unitmeasure.toString();
             logger.error(errText);
-            dataBinder.getBindingResult().rejectValue("id", "", unitmeasure.toString() + " " + e.getMessage());
+            dataBinder.getBindingResult()
+                    .rejectValue("id", "", unitmeasure.toString() + " " + e.getMessage());
             throw new PostRecordException(dataBinder.getBindingResult(), e);
         }
         return unitmeasure;

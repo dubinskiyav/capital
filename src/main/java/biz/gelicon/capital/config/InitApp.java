@@ -82,6 +82,7 @@ public class InitApp implements ApplicationRunner {
      * Для легких тестов во время разработки
      */
     private void test1() {
+        if (true) {return;}
         logger.info("test1...");
 
         // /Создадим json равный GridDataOption для передачи в контроллер
