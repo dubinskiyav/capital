@@ -106,12 +106,9 @@ public class UnitmeasureController {
                 + "       MU.priority,\n"
                 + "       M.id measureId,\n"
                 + "       M.name measureName\n"
-                + "FROM   unitmeasure UM,\n"
-                + "       measureunit MU,\n"
-                + "       measure M\n"
-                + "WHERE  MU.unitmeasure_id = UM.id \n"
-                + "  AND  M.id = MU.measure_id \n";
-
+                + "FROM   unitmeasure UM\n"
+                + "       LEFT OUTER JOIN measureunit MU ON MU.unitmeasure_id = UM.id\n"
+                + "       LEFT OUTER JOIN measure M ON M.id = MU.measure_id ";
         // из параметра получим page
         Pageable page = gridDataOption.buildPageRequest();
         // Найдем в коллекции описание таблицы по имени
