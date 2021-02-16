@@ -245,6 +245,8 @@ sudo service capital-0.0.1-SNAPSHOT.jar stop
 
 cp capital-0.0.1-SNAPSHOT.jar capital.jar
 $ sudo ln -s /home/dav/capital.jar /etc/init.d/capital.jar
+// Создать или обновить ссылку
+$ sudo ln -sf /home/dav/capital.jar /etc/init.d/capital.jar
 
 sudo service capital.jar start
 
@@ -252,6 +254,8 @@ service --status-all
 
 автозапуск сервиса
 update-rc.d capital.jar defaults
+
+systemctl daemon-reload
 
 
 
