@@ -248,7 +248,9 @@ $ sudo ln -s /home/dav/capital.jar /etc/init.d/capital.jar
 // Создать или обновить ссылку
 $ sudo ln -sf /home/dav/capital.jar /etc/init.d/capital.jar
 
+sudo service capital.jar stop
 sudo service capital.jar start
+sudo service /etc/init.d/capital.jar start
 
 service --status-all
 

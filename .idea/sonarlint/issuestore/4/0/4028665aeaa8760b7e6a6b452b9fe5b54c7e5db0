@@ -1,0 +1,12 @@
+
+\	java:S112‡"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+o
+java:S2139ƒ"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+A
+java:S3457„"%String contains no format specifiers.(¸Êø°ÿÿÿÿÿ
+l
+java:S2229"Q"drop's" @Transactional requirement is incompatible with the one for this method.(¿›¾òüÿÿÿÿ
+o
+java:S2229€"S"create's" @Transactional requirement is incompatible with the one for this method.(›Š›™üÿÿÿÿ
+m
+java:S2229"Q"load's" @Transactional requirement is incompatible with the one for this method.(¸Ä©…üÿÿÿÿ
