@@ -165,7 +165,7 @@ public class UnitmeasureControllerTest {
     @Test
     void insertErrorTest() throws Exception {
         // Создадим unitmeasure который уже существует
-        Unitmeasure unitmeasure = new Unitmeasure(null, "Вес","");
+        Unitmeasure unitmeasure = new Unitmeasure(null, "Килограмм","");
         ObjectMapper objectMapper = new ObjectMapper();
         String unitmeasureAsString = objectMapper.writeValueAsString(unitmeasure);
         this.mockMvc.perform(post("/unitmeasure/post")
