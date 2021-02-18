@@ -1,6 +1,7 @@
 package biz.gelicon.capital.model;
 
 import biz.gelicon.capital.utils.ConvertUnils;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -12,28 +13,35 @@ import java.util.Date;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
+@Schema(description = "Сущность уровень материалов")
 @Table(name = "materiallevel")
 public class Materiallevel {
 
+    @Schema(description = "Идентификатор")
     @Id
     @Column(name = "materiallevel_id")
     private Integer materiallevelId;
 
+    @Schema(description = "Вышестоящий уровень")
     @Column(name = "materiallevel_idmaster", nullable = false, columnDefinition = "Вышестоящий уровень")
     private Integer materiallevelIdMaster;
 
+    @Schema(description = "Наименование")
     @Size(max = 255, message = "Наименование должно содержать не более {1} символов")
     @Column(name = "materiallevel_name", nullable = false, columnDefinition = "Наименование")
     private String materiallevelName;
 
+    @Schema(description = "Код")
     @NotEmpty(message = "Код не может быть пустым")
     @Size(max = 100, message = "Код должно содержать не более {1} символов")
     @Column(name = "materiallevel_code", nullable = true, columnDefinition = "Код")
     private String materiallevelCode;
 
+    @Schema(description = "Дата начала действия")
     @Column(name = "materiallevel_datebeg", nullable = false, columnDefinition = "Дата начала действия")
     private Date materiallevelDatebeg;
 
+    @Schema(description = "Дата окончания действия")
     @Column(name = "materiallevel_dateend", nullable = false, columnDefinition = "Дата окончания действия")
     private Date materiallevelDateend;
 

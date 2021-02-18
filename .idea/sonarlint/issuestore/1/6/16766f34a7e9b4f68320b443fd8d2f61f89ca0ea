@@ -1,50 +1,52 @@
 
-‚
-java:S1488’"_Immediately return this expression instead of assigning it to the temporary variable "retList".(¹†™Œøÿÿÿÿ8âÉç¢û.
 g
-java:S4488L"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(½¹¿¯8Ú®Œú.
-c	java:S112¿"FDefine and throw a dedicated exception instead of using a generic one.(û”8ã¹—¶ú.
-M
-java:S1128""0Remove this unused import 'java.sql.Connection'.(¥ËôÖ8ŠÁÎ¶ú.
-c
-java:S3457["AFormat specifiers should be used instead of string concatenation.(½¡úóøÿÿÿÿ8Ú®Œú.
-b	java:S112r"FDefine and throw a dedicated exception instead of using a generic one.(û”8ñ‡æªú.
-L
-java:S1128%"/Remove this unused import 'java.sql.Statement'.(ÏÖÔø8š×À¶ú.
-Y
-java:S1128#"7Remove this unused import 'java.sql.PreparedStatement'.(òÄ™ƒÿÿÿÿÿ8ùÎ¶ú.
-O
-java:S1135D"2Complete the task associated to this TODO comment.(ê«ƒ‡8Ú®Œú.
-†
-java:S1488«"cImmediately return this expression instead of assigning it to the temporary variable "unitmeasure".(ÜÇŞºùÿÿÿÿ8­“ û.
-m
-java:S4488È"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(î–€äıÿÿÿÿ8ã¹—¶ú.
-f
-java:S4488´"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(ùËéÙ8ã¹—¶ú.
-K
-java:S1128$"/Remove this unused import 'java.sql.ResultSet'.(ˆóÚw8ùÎ¶ú.
-^	java:S125¬"<This block of commented-out lines of code should be removed.(Ñ‹üºøÿÿÿÿ8­“ û.
-B
-java:S2629ê"$Invoke method(s) only conditionally.(ûı¨ğ8ã¹—¶ú.
-‰
-java:S1488]"gImmediately return this expression instead of assigning it to the temporary variable "unitmeasureList".(Ø‹Š¼øÿÿÿÿ8Ú®Œú.
-O
-java:S1135E"2Complete the task associated to this TODO comment.(ù³‰£8Ú®Œú.
-Y
-java:S2629t"7Use the built-in formatting to construct this argument.(½¡úóøÿÿÿÿ8ñ‡æªú.
-g
-java:S4488e"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(à§ÚŞ8ñ‡æªú.
-c
-java:S3457t"AFormat specifiers should be used instead of string concatenation.(½¡úóøÿÿÿÿ8ñ‡æªú.
-^	java:S125"<This block of commented-out lines of code should be removed.(Ğç ¿üÿÿÿÿ8’ÖÕ¶ú.
-M
-java:S1128&"0Remove this unused import 'java.util.ArrayList'.(÷‰îƒ8£İÏ¶ú.
-Y
-java:S2629["7Use the built-in formatting to construct this argument.(½¡úóøÿÿÿÿ8Ú®Œú.
-k
-java:S4488¦"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(íùÁµÿÿÿÿÿ8ã¹—¶ú.
+java:S4488c"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(à§ÚŞ8”©Û«û.
 a
 java:S1128	"DRemove this unused import 'biz.gelicon.capital.utils.DatabaseUtils'.(À…ÉÄ8ŠÁÎ¶ú.
+Y
+java:S1128#"7Remove this unused import 'java.sql.PreparedStatement'.(òÄ™ƒÿÿÿÿÿ8ùÎ¶ú.
+^	java:S125Œ"<This block of commented-out lines of code should be removed.(Ğç ¿üÿÿÿÿ8”©Û«û.
+‚
+java:S1488"_Immediately return this expression instead of assigning it to the temporary variable "retList".(¹†™Œøÿÿÿÿ8”©Û«û.
+b	java:S112W"FDefine and throw a dedicated exception instead of using a generic one.(û”8”©Û«û.
+k
+java:S4488¢"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(íùÁµÿÿÿÿÿ8£½í«û.
+O
+java:S1135E"2Complete the task associated to this TODO comment.(ù³‰£8Ú®Œú.
+c	java:S112¹"FDefine and throw a dedicated exception instead of using a generic one.(û”8”©Û«û.
+O
+java:S1135D"2Complete the task associated to this TODO comment.(ê«ƒ‡8Ú®Œú.
+b	java:S112n"FDefine and throw a dedicated exception instead of using a generic one.(û”8”©Û«û.
+c
+java:S3457p"AFormat specifiers should be used instead of string concatenation.(½¡úóøÿÿÿÿ8”©Û«û.
+K
+java:S1128$"/Remove this unused import 'java.sql.ResultSet'.(ˆóÚw8ùÎ¶ú.
+Y
+java:S2629Y"7Use the built-in formatting to construct this argument.(½¡úóøÿÿÿÿ8”©Û«û.
+Y
+java:S2629p"7Use the built-in formatting to construct this argument.(½¡úóøÿÿÿÿ8”©Û«û.
+m
+java:S4488Â"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(î–€äıÿÿÿÿ8”©Û«û.
+^	java:S125¨"<This block of commented-out lines of code should be removed.(Ñ‹üºøÿÿÿÿ8£½í«û.
+L
+java:S1128%"/Remove this unused import 'java.sql.Statement'.(ÏÖÔø8š×À¶ú.
+g
+java:S4488H"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(½¹¿¯8Ú®Œú.
+M
+java:S1128&"0Remove this unused import 'java.util.ArrayList'.(÷‰îƒ8£İÏ¶ú.
+†
+java:S1488§"cImmediately return this expression instead of assigning it to the temporary variable "unitmeasure".(ÜÇŞºùÿÿÿÿ8£½í«û.
+c
+java:S3457Y"AFormat specifiers should be used instead of string concatenation.(½¡úóøÿÿÿÿ8”©Û«û.
+a
+java:S1128"DRemove this unused import 'io.swagger.v3.oas.annotations.Parameter'.(ñÕ¶€8Ñ™º¬û.
+M
+java:S1128""0Remove this unused import 'java.sql.Connection'.(¥ËôÖ8ŠÁÎ¶ú.
 h
-java:S4488à"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(‡¿²8ã¹—¶ú.
-b	java:S112Y"FDefine and throw a dedicated exception instead of using a generic one.(û”8Ú®Œú.
+java:S4488Ú"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(‡¿²8”©Û«û.
+‰
+java:S1488["gImmediately return this expression instead of assigning it to the temporary variable "unitmeasureList".(Ø‹Š¼øÿÿÿÿ8”©Û«û.
+f
+java:S4488°"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(ùËéÙ8”©Û«û.
+B
+java:S2629â"$Invoke method(s) only conditionally.(ûı¨ğ8”©Û«û.

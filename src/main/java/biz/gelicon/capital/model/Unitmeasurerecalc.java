@@ -1,5 +1,7 @@
 package biz.gelicon.capital.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -7,19 +9,25 @@ import javax.persistence.Table;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
+@Schema(description = "Сущность Пересчет единиц измерения")
 @Table(name = "unitmeasurerecalc")
 public class Unitmeasurerecalc {
 
+    @Schema(description = "Идентификатор")
     @Id
     @Column(name = "unitmeasurerecalc_id")
     private Integer unitmeasurerecalcId;
 
+    @Schema(description = "Исходная единица измерения")
     @Column(name = "unitmeasure_idfrom", nullable = false, columnDefinition = "Исходная единица измерения")
     private Integer unitmeasureIdFrom;
 
+    @Schema(description = "Целевая единица измерения")
     @Column(name = "unitmeasure_idto", nullable = false, columnDefinition = "Целевая единица измерения")
     private Integer unitmeasureIdTo;
 
+    @Schema(description = "Коэффициент пересчета - цисло, на которое надо умножить исходную единицу измерения, чтобы получить конечную",
+            example = "Исходная - метр, конечная - километр, коэффициент - 0.001")
     @Column(name = "unitmeasurerecalc_factor", nullable = false, columnDefinition = "Коэффициент пересчета")
     private Double unitmeasurerecalcFactor;
 

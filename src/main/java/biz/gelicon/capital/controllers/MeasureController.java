@@ -97,7 +97,7 @@ public class MeasureController {
     )
     @RequestMapping(value = "upd/{id}", method = RequestMethod.GET)
     public Measure upd(
-            // Берем из пути id https://coderoad.ru/19803731/Spring-%D0%B2-MVC-PathVariable
+            @Parameter(description = "Идентификатор сущности")
             @PathVariable("id") Integer id
     ) {
         Measure measure = measureRepository.findById(id);
@@ -111,7 +111,7 @@ public class MeasureController {
 
     @Operation(
             summary = "Удаление",
-            description = "Удяление списка сущностей разделенных запятой"
+            description = "Удаление списка сущностей разделенных запятой"
     )
     @RequestMapping(value = "del/{ids}", method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED)

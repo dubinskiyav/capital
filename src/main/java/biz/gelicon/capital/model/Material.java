@@ -1,5 +1,7 @@
 package biz.gelicon.capital.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -9,26 +11,32 @@ import javax.validation.constraints.Size;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
+@Schema(description = "Сущность материала")
 @Table(name = "material")
 public class Material {
 
+    @Schema(description = "Идентификатор")
     @Id
     @Column(name = "material_id")
     private Integer materialId;
 
+    @Schema(description = "Уровень")
     @Column(name = "materiallevel_id", nullable = false, columnDefinition = "Уровень")
     private Integer materiallevelId;
 
+    @Schema(description = "Тип", example = "1 - Материал, 2 - Услуга")
     @Column(name = "material_kind", nullable = false, columnDefinition = "1 - Материал, 2 - Услуга")
     private Integer materialKind;
 
+    @Schema(description = "Наименование")
     @NotEmpty(message="Наименование не может быть пустым")
     @Size(max = 255, message = "Наименование должно содержать не более {1} символов")
     @Column(name = "material_name", nullable = false, columnDefinition = "Наименование")
     private String materialName;
 
-    @Size(max = 100, message = "Сокращение должно содержать не более {1} символов")
-    @Column(name = "material_code", nullable = true, columnDefinition = "Наименование")
+    @Schema(description = "Код")
+    @Size(max = 100, message = "Код должно содержать не более {1} символов")
+    @Column(name = "material_code", nullable = true, columnDefinition = "Код")
     private String materialCode;
 
     public Material(

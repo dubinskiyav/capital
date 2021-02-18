@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Connection;
@@ -175,7 +176,7 @@ public class UnitmeasureController {
     )
     @RequestMapping(value = "upd/{id}", method = RequestMethod.GET)
     public Unitmeasure upd(
-            // Берем из пути id https://coderoad.ru/19803731/Spring-%D0%B2-MVC-PathVariable
+            @Parameter(description = "Идентификатор сущности")
             @PathVariable("id") Integer id
     ) {
         Unitmeasure unitmeasure = unitmeasureRepository.findById(id);
@@ -189,7 +190,7 @@ public class UnitmeasureController {
 
     @Operation(
             summary = "Удаление",
-            description = "Удяление списка сущностей разделенных запятой"
+            description = "Удаление списка сущностей разделенных запятой"
     )
     @RequestMapping(value = "del/{ids}", method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED)
