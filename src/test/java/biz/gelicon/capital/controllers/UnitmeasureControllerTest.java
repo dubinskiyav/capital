@@ -173,8 +173,6 @@ public class UnitmeasureControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()) // выводить результат в консоль
                 .andExpect(status().isOk()) // Ошибки быть не должно
-                .andExpect(result -> assertTrue(
-                        result.getResolvedException() instanceof PostRecordException))
                 .andExpect(content().string(containsString("SQL execute filed: INSERT INTO unitmeasure")))
         ;
         logger.info("insertErrorTest() - Ok");
