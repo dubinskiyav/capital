@@ -1,5 +1,7 @@
 package biz.gelicon.capital.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -10,13 +12,16 @@ import java.util.Objects;
 // Обязательно public иначе в шаблоне не увидит!!!! На поля обязательно геттеры и сеттеры!!!!!
 // Добавить в репозиторий 2 класса
 // Добавить валидатор
+@Schema(description = "Сущность меры измерения")
 @Table(name = "measure")
 public class Measure {
 
+    @Schema(description = "Идентификатор")
     @Id
     @Column(name = "measure_id")
     private Integer measureId;
 
+    @Schema(description = "Наименование")
     @NotEmpty(message = "Наименование не может быть пустым")
     @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
     @Column(name = "measure_name", nullable = false, columnDefinition = "Наименование")

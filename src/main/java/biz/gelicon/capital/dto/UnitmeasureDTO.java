@@ -1,35 +1,29 @@
 package biz.gelicon.capital.dto;
 
-/**
- * Единицы измерения DTO - аналог выборки
- * SELECT UM.unitmeasure_id,
- *        UM.unitmeasure_name,
- *        UM.unitmeasure_shortname,
- *        MU.measureunit_id,
- *        MU.measureunit_priority,
- *        M.measure_id,
- *        M.measure_name
- * FROM   unitmeasure UM,
- *        measureunit MU,
- *        measure M
- * WHERE  MU.unitmeasure_id = UM.unitmeasure_id
- *   AND  M.measure_id = MU.measure_id
- * ORDER BY UM.unitmeasure_id
- */
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Единица измерения DTO")
 public class UnitmeasureDTO {
 
+    @Schema(description = "Первичный ключ")
     private Integer unitmeasureId;
 
+    @Schema(description = "Наименование")
     private String unitmeasureName;
 
+    @Schema(description = "Обозначение", example = "кг.")
     private String unitmeasureShortname;
 
+    @Schema(description = "ИД связи с мерой измерения - measureunit_id")
     private Integer measureunitId;
 
+    @Schema(description = "Приоритет связи с мерой измерения - measureunit_priority")
     private Integer measureunitPriority;
 
+    @Schema(description = "Мера измерения measure_id")
     private Integer measureId;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String measureName;
 
     public UnitmeasureDTO(Integer unitmeasureId, String unitmeasureName,

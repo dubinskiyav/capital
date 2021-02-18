@@ -238,7 +238,8 @@ sudo service capital-0.0.1-SNAPSHOT.jar start
 
 sudo chmod 555 capital-0.0.1-SNAPSHOT.jar
 chmod 555 capital.jar
-
+cp capital.jar /home/dav
+ 
 $ sudo ln -s /home/dav/capital-0.0.1-SNAPSHOT.jar /etc/init.d/capital-0.0.1-SNAPSHOT.jar
 $ sudo service capital-0.0.1-SNAPSHOT.jar start
 sudo service capital-0.0.1-SNAPSHOT.jar stop
@@ -247,6 +248,9 @@ cp capital-0.0.1-SNAPSHOT.jar capital.jar
 $ sudo ln -s /home/dav/capital.jar /etc/init.d/capital.jar
 // Создать или обновить ссылку
 $ sudo ln -sf /home/dav/capital.jar /etc/init.d/capital.jar
+
+
+
 
 sudo service capital.jar stop
 sudo service capital.jar start
@@ -285,5 +289,8 @@ systemctl start capital
 Залить файл 
 pscp.exe -P 22 -i "C:\Users\dubin\.ssh\ssh\privat-saved.ppk" "D:\WORK\Programming\capital\target\capital.jar" dav@78.40.219.225:/home/dav/WORK/capital
 
+Документирование
+https://habr.com/ru/post/536388/
+localhost:8080/swagger-ui.html
 
 

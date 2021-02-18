@@ -1,5 +1,6 @@
 package biz.gelicon.capital.utils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -12,15 +13,19 @@ import java.util.stream.Collectors;
  * страницы в строках и какая сортировка.
  * Нумерация страниц начинается с нуля
  */
+@Schema(description = "Параметры выборки данных в таблицу")
 public class GridDataOption {
 
     public static final int DEFAULT_PAGE_SIZE = 25; // Рзамер страницы в строках по умолчанию
 
-    private int pageNumber; // Текущая страница, нумерация с 0
+    @Schema(description = "Текущая страница, нумерация с 0")
+    private int pageNumber;
 
-    private int pageSize; // Размер страницы в строках
+    @Schema(description = "Размер страницы в строках")
+    private int pageSize; //
 
-    private List<OrderBy> sort; // Установленные сортировки
+    @Schema(description = "Установленные сортировки")
+    private List<OrderBy> sort; //
 
     public GridDataOption() {
         this.pageNumber = 0;
@@ -77,9 +82,12 @@ public class GridDataOption {
     /**
      * Вспомогательный класс для сортровки Имя поля - как в мобели, а не как в базе
      */
+    @Schema(description = "Сортировка по полю")
     public static class OrderBy {
 
+        @Schema(description = "Имя поля для сортировки", example = "measure_name или measureName")
         private String fieldName;
+        @Schema(description = "Направление сортировки", example = "0 - по возрастанию, 1 - по убыванию")
         private int direction;
 
         public OrderBy() {

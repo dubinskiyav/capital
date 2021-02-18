@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\main\java\biz\gelicon\capital\controllers\UnitmeasureController.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\main\java\biz\gelicon\capital\dto\UnitmeasureDTO.java">
           <value>
             <Attribute>

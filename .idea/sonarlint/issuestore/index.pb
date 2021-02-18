@@ -141,3 +141,9 @@ T
 $src/main/resources/sql/db_create.sql,6\f\6f5751feef5274ec47faf37fb83f57f65f199362
 P
  target/classes/sql/db_create.sql,2\a\2a80b23d23e7a3edafb8af296b29e3c1eccee107
+;
+capital.iml,d\b\dbe14d8c59b03bb36d74bdae792c516018711f15
+w
+G.idea/libraries/Maven__io_swagger_core_v3_swagger_annotations_2_1_6.xml,c\3\c388a15234a7d653ab5f03fd5a62ee9e50afac02
+k
+;src/main/java/biz/gelicon/capital/config/SwaggerConfig.java,e\2\e2c2a7124a2fb8643622c583508fdd6b986e1941

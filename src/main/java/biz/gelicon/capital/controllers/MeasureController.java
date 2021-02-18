@@ -7,6 +7,9 @@ import biz.gelicon.capital.utils.GridDataOption;
 import biz.gelicon.capital.validators.MeasureValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import java.util.List;
 // @ResponceBody уже не требуется
 // https://java.fandom.com/ru/wiki/@RequestMapping
 @RestController
+@Tag(name = "Меры измерения", description = "Контроллер для справочника мер измерения")
 @RequestMapping(value = "/measure",    // задаёт "каталог", в котором будут размещаться методы контроллера
         consumes = "application/json; charset=UTF-8", // определяет, что Content-Type запроса клиента должен быть "application/json"
         produces = "application/json; charset=UTF-8") // определяет, что возвращать будет "application/json"
@@ -49,11 +53,10 @@ public class MeasureController {
         //binder.setValidator(measureValidator); // todo вернуть установку автовалидатора - непонятно что
     }
 
-    /**
-     * Выборка
-     * @param gridDataOption
-     * @return
-     */
+    @Operation(
+            summary = "Список мер измерения",
+            description = "Возвращает список мер измерения"
+    )
     @RequestMapping(value = "json", method = RequestMethod.POST)
     public List<Measure> measure(
             @RequestBody GridDataOption gridDataOption
@@ -73,12 +76,10 @@ public class MeasureController {
         return measureList;
     }
 
-    /**
-     * Добавление меры измерения Получение данных для заполнения формы добавления начальными
-     * значениями
-     *
-     * @return
-     */
+    @Operation(
+            summary = "Начальные данные для добавления",
+            description = "Возвращает сущность с установленными начальными данными для добавления"
+    )
     @RequestMapping(value = "add", // если не указать "/" в начале, то будет добавляться к value
             // всего класса, в данном случае "/measure/add"
             method = RequestMethod.GET) // Получение данных
@@ -90,11 +91,10 @@ public class MeasureController {
         return measure;
     }
 
-    /**
-     * Редактирование меры измерения
-     *
-     * @return
-     */
+    @Operation(
+            summary = "Начальные данные для изменения",
+            description = "Возвращает сущность по id с установленными начальными данными для изменения"
+    )
     @RequestMapping(value = "upd/{id}", method = RequestMethod.GET)
     public Measure upd(
             // Берем из пути id https://coderoad.ru/19803731/Spring-%D0%B2-MVC-PathVariable
@@ -109,11 +109,10 @@ public class MeasureController {
         return measure;
     }
 
-    /**
-     * Множественное удаление
-     *
-     * @param ids
-     */
+    @Operation(
+            summary = "Удаление",
+            description = "Удяление списка сущностей разделенных запятой"
+    )
     @RequestMapping(value = "del/{ids}", method = RequestMethod.POST)
     @Transactional(propagation = Propagation.REQUIRED)
     public void del(@PathVariable("ids") String ids) {
@@ -133,11 +132,10 @@ public class MeasureController {
         }
     }
 
-    /**
-     * Выполнение добавления или изменения
-     *
-     * @return
-     */
+    @Operation(
+            summary = "Сохранение",
+            description = "Добавляет или изменяет сущность в базе данных"
+    )
     @Transactional(propagation = Propagation.REQUIRED)
     @RequestMapping(value = "post", method = RequestMethod.POST)
     public Measure post(
