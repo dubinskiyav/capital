@@ -11,8 +11,8 @@ import javax.persistence.Table;
 public class Measureunit {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "measureunit_id")
+    private Integer measureunitId;
 
     @Column(name = "measure_id", nullable = false, columnDefinition = "Мера измерения")
     private Integer measureId;
@@ -20,19 +20,19 @@ public class Measureunit {
     @Column(name = "unitmeasure_id", nullable = false, columnDefinition = "Единица измерения")
     private Integer unitmeasureId;
 
-    @Column(name = "priority", nullable = false, columnDefinition = "Приоритет (0-высший, 9-низщий, 99..99-наинижайший)")
-    private Integer priority;
+    @Column(name = "measureunit_priority", nullable = false, columnDefinition = "Приоритет (0-высший, 9-низщий, 99..99-наинижайший)")
+    private Integer measureunitPriority;
 
     public Measureunit(
-            Integer id,
+            Integer measureunitId,
             Integer measureId,
             Integer unitmeasureId,
-            Integer priority
+            Integer measureunitPriority
     ) {
-        this.id = id;
+        this.measureunitId = measureunitId;
         this.measureId = measureId;
         this.unitmeasureId = unitmeasureId;
-        this.priority = priority;
+        this.measureunitPriority = measureunitPriority;
     }
 
     public Measureunit() {
@@ -41,12 +41,21 @@ public class Measureunit {
     // Обязательнго геттеры и сеттеры,
     // иначе не будет работать передача в форму и из формы
 
+
+    public Integer getMeasureunitId() {
+        return measureunitId;
+    }
+
+    public void setMeasureunitId(Integer measureunitId) {
+        this.measureunitId = measureunitId;
+    }
+
     public Integer getId() {
-        return id;
+        return measureunitId;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.measureunitId = id;
     }
 
     public Integer getMeasureId() {
@@ -65,21 +74,21 @@ public class Measureunit {
         this.unitmeasureId = unitmeasureId;
     }
 
-    public Integer getPriority() {
-        return priority;
+    public Integer getMeasureunitPriority() {
+        return measureunitPriority;
     }
 
-    public void setPriority(Integer priority) {
-        this.priority = priority;
+    public void setMeasureunitPriority(Integer measureunitPriority) {
+        this.measureunitPriority = measureunitPriority;
     }
 
     @Override
     public String toString() {
         return "Measureunit{"
-                + "id=" + id + ", "
+                + "measureunitId=" + measureunitId + ", "
                 + "measureId=" + measureId + ", "
                 + "unitmeasureId=" + unitmeasureId + ", "
-                + "priority=" + priority
+                + "measureunitPriority=" + measureunitPriority
                 + "}";
     }
 

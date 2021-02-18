@@ -1,9 +1,16 @@
 package biz.gelicon.capital.controllers;
 
+import biz.gelicon.capital.CapitalApplication;
+import biz.gelicon.capital.utils.RecreateDatabase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class CapitalControllerTest {
+
+    static Logger logger = LoggerFactory.getLogger(CapitalControllerTest.class);
 
     @Autowired
     private MockMvc mockMvc;

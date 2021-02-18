@@ -28,9 +28,9 @@ public class UnitmeasureValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Unitmeasure unitmeasure = (Unitmeasure) target;
         // Дополнительные ручные проверки
-        if (unitmeasure.getName() != null && unitmeasure.getName().equalsIgnoreCase("наименование")) {
+        if (unitmeasure.getUnitmeasureName() != null && unitmeasure.getUnitmeasureName().equalsIgnoreCase("наименование")) {
             errors.rejectValue("name", "",
-                    "Наименование не должны быть равно значению '" + unitmeasure.getName() + "'");
+                    "Наименование не должны быть равно значению '" + unitmeasure.getUnitmeasureName() + "'");
         }
 
         if (true) {return;} // Так как стандартный валидлатор вызываем в контроллере почему то

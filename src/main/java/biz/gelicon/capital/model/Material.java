@@ -13,31 +13,36 @@ import javax.validation.constraints.Size;
 public class Material {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "material_id")
+    private Integer materialId;
 
     @Column(name = "materiallevel_id", nullable = false, columnDefinition = "Уровень")
     private Integer materiallevelId;
 
+    @Column(name = "material_kind", nullable = false, columnDefinition = "1 - Материал, 2 - Услуга")
+    private Integer materialKind;
+
     @NotEmpty(message="Наименование не может быть пустым")
     @Size(max = 255, message = "Наименование должно содержать не более {1} символов")
-    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
-    private String name;
+    @Column(name = "material_name", nullable = false, columnDefinition = "Наименование")
+    private String materialName;
 
     @Size(max = 100, message = "Сокращение должно содержать не более {1} символов")
-    @Column(name = "code", nullable = true, columnDefinition = "Наименование")
-    private String code;
+    @Column(name = "material_code", nullable = true, columnDefinition = "Наименование")
+    private String materialCode;
 
     public Material(
-            Integer id,
+            Integer materialId,
             Integer materiallevelId,
-            String name,
-            String code
+            Integer materialKind,
+            String materialName,
+            String materialCode
     ) {
-        this.id = id;
+        this.materialId = materialId;
         this.materiallevelId = materiallevelId;
-        this.name = name;
-        this.code = code;
+        this.materialKind = materialKind;
+        this.materialName = materialName;
+        this.materialCode = materialCode;
     }
 
     public Material() {
@@ -46,47 +51,64 @@ public class Material {
     // Обязательнго геттеры и сеттеры,
     // иначе не будет работать передача в форму и из формы
 
-    public Integer getId() {
-        return id;
+
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
+    }
+
+    public Integer getId() {
+        return materialId;
     }
 
     public Integer getMateriallevelId() {
         return materiallevelId;
     }
 
+    public Integer getMaterialKind() {
+        return materialKind;
+    }
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public String getMaterialCode() {
+        return materialCode;
+    }
+
+    public void setId(Integer id) {
+        this.materialId = id;
+    }
+
     public void setMateriallevelId(Integer materiallevelId) {
         this.materiallevelId = materiallevelId;
     }
 
-
-    public String getName() {
-        return name;
+    public void setMaterialKind(Integer materialKind) {
+        this.materialKind = materialKind;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
-    public String getCode() {
-        return name;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    public void setMaterialCode(String materialCode) {
+        this.materialCode = materialCode;
     }
 
     @Override
     public String toString() {
-        return "Material{"
-                + "id=" + id + ", "
-                + "materiallevelId=" + materiallevelId + ", "
-                + "name=" + name + ", "
-                + "code=" + code
-                + "}";
+        return "Material{" +
+                "materialId=" + materialId +
+                ", materiallevelId=" + materiallevelId +
+                ", materialKind=" + materialKind +
+                ", materialName='" + materialName + '\'' +
+                ", materialCode='" + materialCode + '\'' +
+                '}';
     }
 
 }

@@ -28,10 +28,10 @@ public class MeasureValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Measure measure = (Measure) target;
         // Дополнительные ручные проверки
-        if (measure.getName() != null && measure.getName().equalsIgnoreCase("наименование")) {
+        if (measure.getMeasureName() != null && measure.getMeasureName().equalsIgnoreCase("наименование")) {
             // Добавляем к полю id так как потом из него вытаскиваем
             errors.rejectValue("id", "",
-                    "Наименование не должны быть равно значению равному '" + measure.getName() + "'");
+                    "Наименование не должны быть равно значению равному '" + measure.getMeasureName() + "'");
         }
         if (measure.getId() != null && measure.getId() == -1) {
             errors.rejectValue("id", "",

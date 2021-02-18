@@ -74,7 +74,7 @@ public class UnitmeasureController {
         try {
             gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);
         } catch (JsonProcessingException e) {
-            String errText = "Ошимбка при преобразовании";
+            String errText = "Ошибка при преобразовании";
             logger.error(errText);
             throw new RuntimeException(errText);
         }
@@ -99,16 +99,16 @@ public class UnitmeasureController {
         }
         logger.info("unitmeasure: gridDataOptionAsString = " + gridDataOptionAsString);
         String sqlText = "\n"
-                + "SELECT UM.id,\n"
-                + "       UM.name,\n"
-                + "       UM.short_name,\n"
-                + "       MU.id measureunitId,\n"
-                + "       MU.priority,\n"
-                + "       M.id measureId,\n"
-                + "       M.name measureName\n"
+                + "SELECT UM.unitmeasure_id,\n"
+                + "       UM.unitmeasure_name,\n"
+                + "       UM.unitmeasure_shortname,\n"
+                + "       MU.measureunit_id,\n"
+                + "       MU.measureunit_priority,\n"
+                + "       M.measure_id,\n"
+                + "       M.measure_name\n"
                 + "FROM   unitmeasure UM\n"
-                + "       LEFT OUTER JOIN measureunit MU ON MU.unitmeasure_id = UM.id\n"
-                + "       LEFT OUTER JOIN measure M ON M.id = MU.measure_id ";
+                + "       LEFT OUTER JOIN measureunit MU ON MU.unitmeasure_id = UM.unitmeasure_id\n"
+                + "       LEFT OUTER JOIN measure M ON M.measure_id = MU.measure_id\n";
         // из параметра получим page
         Pageable page = gridDataOption.buildPageRequest();
         // Найдем в коллекции описание таблицы по имени
@@ -127,18 +127,19 @@ public class UnitmeasureController {
         }
         //logger.info(sqlText);
 
-        return jdbcTemplate.query(sqlText,
+        List<UnitmeasureDTO> retList = jdbcTemplate.query(sqlText,
                 (rs, rowNum) ->
                         new UnitmeasureDTO(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("short_name"),
-                                rs.getInt("measureunitId"),
-                                rs.getInt("priority"),
-                                rs.getInt("measureId"),
-                                rs.getString("measureName")
+                                rs.getInt("unitmeasure_id"),
+                                rs.getString("unitmeasure_name"),
+                                rs.getString("unitmeasure_shortname"),
+                                rs.getInt("measureunit_id"),
+                                rs.getInt("measureunit_priority"),
+                                rs.getInt("measure_id"),
+                                rs.getString("measure_name")
                         )
         );
+        return retList;
     }
 
 
@@ -154,7 +155,7 @@ public class UnitmeasureController {
     // будет производить json в результате, и он будет отправлен в ответ.
     public Unitmeasure add() {
         Unitmeasure unitmeasure = new Unitmeasure();
-        unitmeasure.setName("Длина");
+        //unitmeasure.setUnitmeasureName("Длина");
         return unitmeasure;
     }
 

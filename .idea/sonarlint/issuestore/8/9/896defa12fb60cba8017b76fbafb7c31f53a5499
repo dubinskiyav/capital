@@ -1,0 +1,24 @@
+
+d
+java:S1128"NRemove this unused import 'biz.gelicon.capital.exceptions.BadPagingException'.(®¿ç”
+`
+java:S1124"EReorder the modifiers to comply with the Java Language Specification.(²ï›ùÿÿÿÿ
+s
+java:S2139?"XEither log this exception and handle it, or rethrow it with some contextual information.(âÃƒŠıÿÿÿÿ
+P
+java:S1118":Add a private constructor to hide the implicit public one.(±–©Æ
+=
+java:S2885"'Make "dateFormat" an instance variable.(Ò•Çã
+`	java:S112e"FDefine and throw a dedicated exception instead of using a generic one.(Ê“Åıÿÿÿÿ
+s
+java:S2139Z"XEither log this exception and handle it, or rethrow it with some contextual information.(âÃƒŠıÿÿÿÿ
+[
+java:S1124"EReorder the modifiers to comply with the Java Language Specification.(Ò•Çã
+s
+java:S2139c"XEither log this exception and handle it, or rethrow it with some contextual information.(âÃƒŠıÿÿÿÿ
+[	java:S112B"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+`	java:S112\"FDefine and throw a dedicated exception instead of using a generic one.(Ê“Åıÿÿÿÿ
+M
+java:S1068"2Remove this unused "datetimeFormat" private field.(²ï›ùÿÿÿÿ
+F
+java:S2885"+Make "datetimeFormat" an instance variable.(²ï›ùÿÿÿÿ

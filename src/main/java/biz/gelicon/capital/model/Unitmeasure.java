@@ -13,65 +13,69 @@ import javax.validation.constraints.Size;
 public class Unitmeasure {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "unitmeasure_id")
+    private Integer unitmeasureId;
 
     @NotEmpty(message="Наименование не может быть пустым")
     @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
-    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
-    private String name;
+    @Column(name = "unitmeasure_name", nullable = false, columnDefinition = "Наименование")
+    private String unitmeasureName;
 
     @Size(max = 20, message = "Обозначение должно содержать не более {1} символов")
-    @Column(name = "short_name", nullable = true, columnDefinition = "Обозначение")
-    private String shortName;
+    @Column(name = "unitmeasure_shortname", nullable = true, columnDefinition = "Обозначение")
+    private String unitmeasureShortname;
 
     public Unitmeasure(
-            Integer id,
-            String name,
-            String shortName
+            Integer unitmeasureId,
+            String unitmeasureName,
+            String unitmeasureShortname
     ) {
-        this.id = id;
-        this.name = name;
-        this.shortName = shortName;
+        this.unitmeasureId = unitmeasureId;
+        this.unitmeasureName = unitmeasureName;
+        this.unitmeasureShortname = unitmeasureShortname;
     }
 
     public Unitmeasure() {
     }
 
-    // Обязательнго геттеры и сеттеры,
-    // иначе не будет работать передача в форму и из формы
+    public Integer getUnitmeasureId() {
+        return unitmeasureId;
+    }
+
+    public void setUnitmeasureId(Integer unitmeasureId) {
+        this.unitmeasureId = unitmeasureId;
+    }
 
     public Integer getId() {
-        return id;
+        return unitmeasureId;
+    }
+
+    public String getUnitmeasureName() {
+        return unitmeasureName;
+    }
+
+    public String getUnitmeasureShortname() {
+        return unitmeasureShortname;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.unitmeasureId = id;
     }
 
-    public String getName() {
-        return name;
+    public void setUnitmeasureName(String unitmeasureName) {
+        this.unitmeasureName = unitmeasureName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public void setUnitmeasureShortname(String unitmeasureShortname) {
+        this.unitmeasureShortname = unitmeasureShortname;
     }
 
     @Override
     public String toString() {
-        return "Unitmeasure{"
-                + "id=" + id + ", "
-                + "name=" + name + ", "
-                + "shortName=" + shortName
-                + "}";
+        return "Unitmeasure{" +
+                "unitmeasureId=" + unitmeasureId +
+                ", unitmeasureName='" + unitmeasureName + '\'' +
+                ", unitmeasureShortname='" + unitmeasureShortname + '\'' +
+                '}';
     }
-
 }

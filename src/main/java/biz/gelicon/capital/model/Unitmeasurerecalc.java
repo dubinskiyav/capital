@@ -11,76 +11,81 @@ import javax.persistence.Table;
 public class Unitmeasurerecalc {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "unitmeasurerecalc_id")
+    private Integer unitmeasurerecalcId;
 
-    @Column(name = "unitmeasurefrom_id", nullable = false, columnDefinition = "Исходная единица измерения")
-    private Integer unitmeasurefromId;
+    @Column(name = "unitmeasure_idfrom", nullable = false, columnDefinition = "Исходная единица измерения")
+    private Integer unitmeasureIdFrom;
 
-    @Column(name = "unitmeasureto_id", nullable = false, columnDefinition = "Целевая единица измерения")
-    private Integer unitmeasuretoId;
+    @Column(name = "unitmeasure_idto", nullable = false, columnDefinition = "Целевая единица измерения")
+    private Integer unitmeasureIdTo;
 
-    @Column(name = "factor", nullable = false, columnDefinition = "Коэффициент пересчета")
-    private Double factor;
+    @Column(name = "unitmeasurerecalc_factor", nullable = false, columnDefinition = "Коэффициент пересчета")
+    private Double unitmeasurerecalcFactor;
 
     public Unitmeasurerecalc(
-            Integer id,
-            Integer unitmeasurefromId,
-            Integer unitmeasuretoId,
-            Double factor
+            Integer unitmeasurerecalcId,
+            Integer unitmeasureIdFrom,
+            Integer unitmeasureIdTo,
+            Double unitmeasurerecalcFactor
     ) {
-        this.id = id;
-        this.unitmeasurefromId = unitmeasurefromId;
-        this.unitmeasuretoId = unitmeasuretoId;
-        this.factor = factor;
+        this.unitmeasurerecalcId = unitmeasurerecalcId;
+        this.unitmeasureIdFrom = unitmeasureIdFrom;
+        this.unitmeasureIdTo = unitmeasureIdTo;
+        this.unitmeasurerecalcFactor = unitmeasurerecalcFactor;
     }
 
     public Unitmeasurerecalc() {
     }
 
-    // Обязательнго геттеры и сеттеры,
-    // иначе не будет работать передача в форму и из формы
+    public Integer getUnitmeasurerecalcId() {
+        return unitmeasurerecalcId;
+    }
+
+    public void setUnitmeasurerecalcId(Integer unitmeasurerecalcId) {
+        this.unitmeasurerecalcId = unitmeasurerecalcId;
+    }
 
     public Integer getId() {
-        return id;
+        return unitmeasurerecalcId;
+    }
+
+    public Integer getUnitmeasureIdFrom() {
+        return unitmeasureIdFrom;
+    }
+
+    public Integer getUnitmeasureIdTo() {
+        return unitmeasureIdTo;
+    }
+
+    public Double getUnitmeasurerecalcFactor() {
+        return unitmeasurerecalcFactor;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.unitmeasurerecalcId = id;
     }
 
-    public Integer getunitmeasurefromId() {
-        return unitmeasurefromId;
+    public void setUnitmeasureIdFrom(Integer unitmeasureIdFrom) {
+        this.unitmeasureIdFrom = unitmeasureIdFrom;
     }
 
-    public void setunitmeasurefromId(Integer unitmeasurefromId) {
-        this.unitmeasurefromId = unitmeasurefromId;
+    public void setUnitmeasureIdTo(Integer unitmeasureIdTo) {
+        this.unitmeasureIdTo = unitmeasureIdTo;
     }
 
-    public Integer getunitmeasuretoId() {
-        return unitmeasuretoId;
-    }
-
-    public void setunitmeasuretoId(Integer unitmeasuretoId) {
-        this.unitmeasuretoId = unitmeasuretoId;
-    }
-
-    public Double getfactor() {
-        return factor;
-    }
-
-    public void setfactor(Double factor) {
-        this.factor = factor;
+    public void setUnitmeasurerecalcFactor(Double unitmeasurerecalcFactor) {
+        this.unitmeasurerecalcFactor = unitmeasurerecalcFactor;
     }
 
     @Override
     public String toString() {
-        return "Unitmeasurerecalc{"
-                + "id=" + id + ", "
-                + "unitmeasurefromId=" + unitmeasurefromId + ", "
-                + "unitmeasuretoId=" + unitmeasuretoId + ", "
-                + "factor=" + factor
-                + "}";
+        return "Unitmeasurerecalc{" +
+                "unitmeasurerecalcId=" + unitmeasurerecalcId +
+                ", unitmeasureIdFrom=" + unitmeasureIdFrom +
+                ", unitmeasureIdTo=" + unitmeasureIdTo +
+                ", unitmeasurerecalcFactor=" + unitmeasurerecalcFactor +
+                '}';
     }
 
 }

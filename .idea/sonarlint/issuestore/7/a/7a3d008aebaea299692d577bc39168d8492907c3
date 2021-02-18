@@ -1,0 +1,82 @@
+
+F
+java:S5411Ò"*Use the primitive boolean expression here.(ìëÑêşÿÿÿÿ
+F
+java:S5411Ê"*Use the primitive boolean expression here.(ìëÑêşÿÿÿÿ
+h
+java:S1104"RMake dbType a static final constant or non-public and provide accessors if needed.(Ì©…
+\	java:S112Ó"FDefine and throw a dedicated exception instead of using a generic one.(üÉñ¾
+`
+java:S2583É"DChange this condition so that it does not always evaluate to "false"(Ûáúÿÿÿÿ
+\	java:S112®"FDefine and throw a dedicated exception instead of using a generic one.(ÃÔ÷ı
+}
+java:S1488z"bImmediately return this expression instead of assigning it to the temporary variable "driverName".(Åƒöºüÿÿÿÿ
+G
+java:S1168Û"+Return an empty collection instead of null.(¹ş¬²ûÿÿÿÿ
+o
+java:S2139¬"XEither log this exception and handle it, or rethrow it with some contextual information.(É®£
+\	java:S112Ë"FDefine and throw a dedicated exception instead of using a generic one.(ƒòâÄ
+L
+java:S1444"1Make this "public static trySequence" field final(…¨÷ÿúÿÿÿÿ
+E
+java:S1066H"/Merge this if statement with the enclosing one.(¬ÈåÔ
+a	java:S112§"FDefine and throw a dedicated exception instead of using a generic one.(û¸´×úÿÿÿÿ
+a	java:S112Ç"FDefine and throw a dedicated exception instead of using a generic one.(û¸´×úÿÿÿÿ
+c
+java:S2259¤"LA "NullPointerException" could be thrown; "getDataSource()" can return null.(È°ÌÄ
+S
+java:S1481y"8Remove this unused "databaseProductName" local variable.(Ó¾Òóúÿÿÿÿ
+Š
+java:S1192¦"sDefine a constant instead of duplicating this literal "jdbcTemplate.getDataSource().getConnection() filed" 5 times.(ä˜¾ü
+`
+java:S1192g"KDefine a constant instead of duplicating this literal "postgresql" 6 times.(óÍª$
+b
+java:S1854y"GRemove this useless assignment to local variable "databaseProductName".(Ó¾Òóúÿÿÿÿ
+E
+java:S5411G"*Use the primitive boolean expression here.(õ»Í‰ùÿÿÿÿ
+M
+java:S1135 "2Complete the task associated to this TODO comment.(ø¥Ğışÿÿÿÿ
+M
+java:S1135f"2Complete the task associated to this TODO comment.(µ´º‘ùÿÿÿÿ
+E
+java:S5411I"*Use the primitive boolean expression here.(ëĞĞıÿÿÿÿ
+A
+java:S1168£"+Return an empty collection instead of null.( Ã©a
+B
+java:S1444",Make this "public static dbType" field final(Ì©…
+o
+java:S2139À"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+E
+java:S1066K"/Merge this if statement with the enclosing one.(“Î÷
+U
+java:S1118":Add a private constructor to hide the implicit public one.(æäÀşÿÿÿÿ
+`	java:S112~"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+a	java:S112À"FDefine and throw a dedicated exception instead of using a generic one.(ñŸçĞúÿÿÿÿ
+c
+java:S2259Ä"LA "NullPointerException" could be thrown; "getDataSource()" can return null.(È°ÌÄ
+M
+java:S2629´"7Use the built-in formatting to construct this argument.(ù—ÆT
+M
+java:S1135s"2Complete the task associated to this TODO comment.(ù·Åıÿÿÿÿ
+o
+java:S2139"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+Z
+java:S1854æ">Remove this useless assignment to local variable "dataSource".(üˆÁÿÿÿÿÿ
+W
+java:S3457´"AFormat specifiers should be used instead of string concatenation.(ù—ÆT
+o
+java:S2139¥"XEither log this exception and handle it, or rethrow it with some contextual information.(É®£
+K
+java:S1481æ"/Remove this unused "dataSource" local variable.(üˆÁÿÿÿÿÿ
+o
+java:S2139Å"XEither log this exception and handle it, or rethrow it with some contextual information.(É®£
+r
+java:S1104"WMake trySequence a static final constant or non-public and provide accessors if needed.(…¨÷ÿúÿÿÿÿ
+J
+java:S1066I"/Merge this if statement with the enclosing one.(ëĞĞıÿÿÿÿ
+\	java:S112Ë"FDefine and throw a dedicated exception instead of using a generic one.(ª§¤ 
+\	java:S112Ä"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+\	java:S112“"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+_
+java:S2095¤"HUse try-with-resources or close this "Connection" in a "finally" clause.(È°ÌÄ
+V	java:S125|"<This block of commented-out lines of code should be removed.(¯ÊÒ‰øÿÿÿÿ

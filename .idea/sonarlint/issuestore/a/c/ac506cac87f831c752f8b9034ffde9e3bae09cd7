@@ -1,0 +1,28 @@
+
+;
+java:S2629–"$Invoke method(s) only conditionally.(ûý¨ð
+`
+java:S44889"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(½¹¿¯
+e
+java:S4488u"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(î–€äýÿÿÿÿ
+H
+java:S11350"2Complete the task associated to this TODO comment.(ê«ƒ‡
+X	java:S125X"<This block of commented-out lines of code should be removed.(¢ª¾±8¦¡Ž û.
+[	java:S112k"FDefine and throw a dedicated exception instead of using a generic one.(ûž”
+c
+java:S4488R"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(íùÁµÿÿÿÿÿ
+~
+java:S1488H"cImmediately return this expression instead of assigning it to the temporary variable "measureList".(Þ®¶üþÿÿÿÿ
+R
+java:S2629F"7Use the built-in formatting to construct this argument.(ÈÄÌ‘üÿÿÿÿ
+|
+java:S1488W"_Immediately return this expression instead of assigning it to the temporary variable "measure".(‚¶ÑŽ8¦¡Ž û.
+\
+java:S3457F"AFormat specifiers should be used instead of string concatenation.(ÈÄÌ‘üÿÿÿÿ
+^
+java:S4488b"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(ùËéÙ
+a
+java:S4488Ž"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(‡¿²
+[	java:S112D"FDefine and throw a dedicated exception instead of using a generic one.(ûž”
+H
+java:S11351"2Complete the task associated to this TODO comment.(àŒ¼š

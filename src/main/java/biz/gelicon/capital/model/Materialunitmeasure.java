@@ -11,8 +11,8 @@ import javax.persistence.Table;
 public class Materialunitmeasure  {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "materialunitmeasure_id")
+    private Integer materialunitmeasureId;
 
     @Column(name = "material_id", nullable = false, columnDefinition = "Материал")
     private Integer materialId;
@@ -21,11 +21,11 @@ public class Materialunitmeasure  {
     private Integer unitmeasureId;
 
     public Materialunitmeasure(
-            Integer id,
+            Integer materialunitmeasureId,
             Integer materialId,
             Integer unitmeasureId
     ) {
-        this.id = id;
+        this.materialunitmeasureId = materialunitmeasureId;
         this.materialId = materialId;
         this.unitmeasureId = unitmeasureId;
     }
@@ -36,12 +36,22 @@ public class Materialunitmeasure  {
     // Обязательнго геттеры и сеттеры,
     // иначе не будет работать передача в форму и из формы
 
+
+
+    public Integer getMaterialunitmeasureId() {
+        return materialunitmeasureId;
+    }
+
+    public void setMaterialunitmeasureId(Integer materialunitmeasureId) {
+        this.materialunitmeasureId = materialunitmeasureId;
+    }
+
     public Integer getId() {
-        return id;
+        return materialunitmeasureId;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.materialunitmeasureId = id;
     }
 
     public Integer getMaterialId() {
@@ -64,7 +74,7 @@ public class Materialunitmeasure  {
     @Override
     public String toString() {
         return "Materialmeasureunit{"
-                + "id=" + id + ", "
+                + "materialunitmeasureId=" + materialunitmeasureId + ", "
                 + "materialId=" + materialId + ", "
                 + "unitmeasureId=" + unitmeasureId
                 + "}";

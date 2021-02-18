@@ -16,111 +16,111 @@ import java.util.Date;
 public class Materiallevel {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "materiallevel_id")
+    private Integer materiallevelId;
 
-    @Column(name = "master_id", nullable = false, columnDefinition = "Вышестоящий уровень")
-    private Integer masterId;
+    @Column(name = "materiallevel_idmaster", nullable = false, columnDefinition = "Вышестоящий уровень")
+    private Integer materiallevelIdMaster;
 
     @Size(max = 255, message = "Наименование должно содержать не более {1} символов")
-    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
-    private String name;
+    @Column(name = "materiallevel_name", nullable = false, columnDefinition = "Наименование")
+    private String materiallevelName;
 
     @NotEmpty(message = "Код не может быть пустым")
     @Size(max = 100, message = "Код должно содержать не более {1} символов")
-    @Column(name = "code", nullable = true, columnDefinition = "Код")
-    private String code;
+    @Column(name = "materiallevel_code", nullable = true, columnDefinition = "Код")
+    private String materiallevelCode;
 
-    @Column(name = "date_beg", nullable = false, columnDefinition = "Дата начала действия")
-    private Date dateBeg;
+    @Column(name = "materiallevel_datebeg", nullable = false, columnDefinition = "Дата начала действия")
+    private Date materiallevelDatebeg;
 
-    @Column(name = "date_end", nullable = false, columnDefinition = "Дата окончания действия")
-    private Date dateEnd;
-
+    @Column(name = "materiallevel_dateend", nullable = false, columnDefinition = "Дата окончания действия")
+    private Date materiallevelDateend;
 
     public Materiallevel(
-            Integer id,
-            Integer masterId,
-            String name,
-            String code,
-            Date dateBeg,
-            Date dateEnd
+            Integer materiallevelId,
+            Integer materiallevelIdMaster,
+            String materiallevelName,
+            String materiallevelCode,
+            Date materiallevelDatebeg,
+            Date materiallevelDateend
     ) {
-        this.id = id;
-        this.masterId = masterId;
-        this.name = name;
-        this.code = code;
-        this.dateBeg = dateBeg;
-        this.dateEnd = dateEnd;
+        this.materiallevelId = materiallevelId;
+        this.materiallevelIdMaster = materiallevelIdMaster;
+        this.materiallevelName = materiallevelName;
+        this.materiallevelCode = materiallevelCode;
+        this.materiallevelDatebeg = materiallevelDatebeg;
+        this.materiallevelDateend = materiallevelDateend;
     }
 
     public Materiallevel() {
     }
 
-    // Обязательнго геттеры и сеттеры,
-    // иначе не будет работать передача в форму и из формы
+    public Integer getMateriallevelId() {
+        return materiallevelId;
+    }
+
+    public void setMateriallevelId(Integer materiallevelId) {
+        this.materiallevelId = materiallevelId;
+    }
 
     public Integer getId() {
-        return id;
+        return materiallevelId;
+    }
+
+    public Integer getMateriallevelIdMaster() {
+        return materiallevelIdMaster;
+    }
+
+    public String getMateriallevelName() {
+        return materiallevelName;
+    }
+
+    public String getMateriallevelCode() {
+        return materiallevelCode;
+    }
+
+    public Date getMateriallevelDatebeg() {
+        return materiallevelDatebeg;
+    }
+
+    public Date getMateriallevelDateend() {
+        return materiallevelDateend;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.materiallevelId = id;
     }
 
-    public Integer getMasterId() {
-        return masterId;
+    public void setMateriallevelIdMaster(Integer materiallevelIdMaster) {
+        this.materiallevelIdMaster = materiallevelIdMaster;
     }
 
-    public void setMasterId(Integer masterId) {
-        this.masterId = masterId;
+    public void setMateriallevelName(String materiallevelName) {
+        this.materiallevelName = materiallevelName;
     }
 
-
-    public String getName() {
-        return name;
+    public void setMateriallevelCode(String materiallevelCode) {
+        this.materiallevelCode = materiallevelCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMateriallevelDatebeg(Date materiallevelDatebeg) {
+        this.materiallevelDatebeg = materiallevelDatebeg;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Date getDateBeg() {
-        return dateBeg;
-    }
-
-    public void setDateBeg(Date dateBeg) {
-        // Начало и окончание - даты, а не время
-        this.dateBeg = ConvertUnils.datetimeToDate(dateBeg);
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        // Начало и окончание - даты, а не время
-        this.dateEnd = ConvertUnils.datetimeToDate(dateEnd);
+    public void setMateriallevelDateend(Date materiallevelDateend) {
+        this.materiallevelDateend = materiallevelDateend;
     }
 
     @Override
     public String toString() {
-        return "Materiallevel{"
-                + "id=" + id + ", "
-                + "masterId=" + masterId + ", "
-                + "name=" + name + ", "
-                + "code=" + code + ", "
-                + "dateBeg=" + dateBeg + ", "
-                + "dateEnd=" + dateEnd + ", "
-                + "}";
+        return "Materiallevel{" +
+                "materiallevelId=" + materiallevelId +
+                ", materiallevelIdMaster=" + materiallevelIdMaster +
+                ", materiallevelName='" + materiallevelName + '\'' +
+                ", materiallevelCode='" + materiallevelCode + '\'' +
+                ", materiallevelDatebeg=" + materiallevelDatebeg +
+                ", materiallevelDateend=" + materiallevelDateend +
+                '}';
     }
-
 }

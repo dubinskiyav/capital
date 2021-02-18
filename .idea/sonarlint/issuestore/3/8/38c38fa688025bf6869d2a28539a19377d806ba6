@@ -1,0 +1,67 @@
+
+N
+java:S2629"7Use the built-in formatting to construct this argument.(ªîéï
+A
+java:S5411 "*Use the primitive boolean expression here.(ÿ¢»Ÿ
+E
+java:S1905€")Remove this unnecessary cast to "Object".(ÃÂ¹Âûÿÿÿÿ
+J
+java:S37404"/Provide the parametrized type for this generic.(¾»»ûÿÿÿÿ
+K
+java:S3740ç"/Provide the parametrized type for this generic.(¾»»ûÿÿÿÿ
+\	java:S112ş"FDefine and throw a dedicated exception instead of using a generic one.(û”
+N
+java:S2629¥"7Use the built-in formatting to construct this argument.(ØÌñ¹
+W	java:S125"<This block of commented-out lines of code should be removed.(ìÖèíûÿÿÿÿ
+n
+java:S2139^"XEither log this exception and handle it, or rethrow it with some contextual information.(Å¡ß
+o
+java:S2139Ì"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+X
+java:S3457"AFormat specifiers should be used instead of string concatenation.(ªîéï
+K
+java:S3740 "/Provide the parametrized type for this generic.(¾»»ûÿÿÿÿ
+o
+java:S2139ó"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+Q
+java:S2386-";Move "tableMetadataMap" to a class and lower its visibility(úÅœ
+t	java:S115'"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(İ‰„øÿÿÿÿ
+E
+java:S1066"/Merge this if statement with the enclosing one.( îó
+U
+java:S1155ø">Use isEmpty() to check whether the collection is empty or not.(è²¡ˆ
+K
+java:S3740À"/Provide the parametrized type for this generic.(¾»»ûÿÿÿÿ
+\	java:S112ğ"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+\	java:S112Ú"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+n
+java:S2139c"XEither log this exception and handle it, or rethrow it with some contextual information.(åşáÿ
+K
+java:S3740‰"/Provide the parametrized type for this generic.(¾»»ûÿÿÿÿ
+\	java:S112Œ"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+\	java:S112Ï"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+N
+java:S2629•"7Use the built-in formatting to construct this argument.(Œ“†«
+\	java:S112µ"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+\	java:S112ö"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+n
+java:S2139}"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+X
+java:S3457¥"AFormat specifiers should be used instead of string concatenation.(ØÌñ¹
+[	java:S112g"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+y
+java:S1488Ò"]Immediately return this expression instead of assigning it to the temporary variable "tList".(Ó´™şÿÿÿÿ
+a	java:S112†"FDefine and throw a dedicated exception instead of using a generic one.(‡Îıáüÿÿÿÿ
+o
+java:S2139²"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+h
+java:S3776C"RRefactor this method to reduce its Cognitive Complexity from 22 to the 15 allowed.(É»ÛŞ
+K
+java:S3740¯"/Provide the parametrized type for this generic.(¾»»ûÿÿÿÿ
+X
+java:S3457•"AFormat specifiers should be used instead of string concatenation.(Œ“†«
+o
+java:S2139í"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+[	java:S112b"FDefine and throw a dedicated exception instead of using a generic one.(Ğ³Ö‚
+A
+java:S5411"*Use the primitive boolean expression here.(¨°á

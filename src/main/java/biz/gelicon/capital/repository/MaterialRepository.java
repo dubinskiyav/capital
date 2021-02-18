@@ -34,7 +34,7 @@ public class MaterialRepository implements TableRepository<Material>{
     }
     @Override
     public int load() {
-        Resource resource = new ClassPathResource("sql/600600-material-load.sql");
+        Resource resource = new ClassPathResource("sql/500610-material-load.sql");
         ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator(resource);
         databasePopulator.execute(jdbcTemplate.getDataSource());
         logger.info("material loaded");

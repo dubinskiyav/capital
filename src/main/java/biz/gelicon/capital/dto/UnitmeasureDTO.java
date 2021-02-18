@@ -2,50 +2,44 @@ package biz.gelicon.capital.dto;
 
 /**
  * Единицы измерения DTO - аналог выборки
- * SELECT UM.id,
- *        UM.name,
- *        UM.short_name,
- *        MU.id measureunitId,
- *        MU.priority,
- *        M.id measureId,
- *        M.name measureName
+ * SELECT UM.unitmeasure_id,
+ *        UM.unitmeasure_name,
+ *        UM.unitmeasure_shortname,
+ *        MU.measureunit_id,
+ *        MU.measureunit_priority,
+ *        M.measure_id,
+ *        M.measure_name
  * FROM   unitmeasure UM,
  *        measureunit MU,
  *        measure M
- * WHERE  MU.unitmeasure_id = UM.id
- *   AND  M.id = MU.measure_id
- * ORDER BY UM.id
+ * WHERE  MU.unitmeasure_id = UM.unitmeasure_id
+ *   AND  M.measure_id = MU.measure_id
+ * ORDER BY UM.unitmeasure_id
  */
 public class UnitmeasureDTO {
 
-    private Integer id;
+    private Integer unitmeasureId;
 
-    private String name;
+    private String unitmeasureName;
 
-    private String shortName;
+    private String unitmeasureShortname;
 
     private Integer measureunitId;
 
-    private Integer priority;
+    private Integer measureunitPriority;
 
     private Integer measureId;
 
     private String measureName;
 
-    public UnitmeasureDTO(
-            Integer id,
-            String name,
-            String shortName,
-            Integer measureunitId,
-            Integer priority,
-            Integer measureId,
-            String measureName
-    ) {
-        this.id = id;
-        this.name = name;
-        this.shortName = shortName;
+    public UnitmeasureDTO(Integer unitmeasureId, String unitmeasureName,
+            String unitmeasureShortname, Integer measureunitId, Integer measureunitPriority,
+            Integer measureId, String measureName) {
+        this.unitmeasureId = unitmeasureId;
+        this.unitmeasureName = unitmeasureName;
+        this.unitmeasureShortname = unitmeasureShortname;
         this.measureunitId = measureunitId;
-        this.priority = priority;
+        this.measureunitPriority = measureunitPriority;
         this.measureId = measureId;
         this.measureName = measureName;
     }
@@ -53,24 +47,24 @@ public class UnitmeasureDTO {
     public UnitmeasureDTO() {
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getUnitmeasureId() {
+        return unitmeasureId;
     }
 
-    public String getName() {
-        return name;
+    public String getUnitmeasureName() {
+        return unitmeasureName;
     }
 
-    public String getShortName() {
-        return shortName;
+    public String getUnitmeasureShortname() {
+        return unitmeasureShortname;
     }
 
     public Integer getMeasureunitId() {
         return measureunitId;
     }
 
-    public Integer getPriority() {
-        return priority;
+    public Integer getMeasureunitPriority() {
+        return measureunitPriority;
     }
 
     public Integer getMeasureId() {
@@ -81,24 +75,24 @@ public class UnitmeasureDTO {
         return measureName;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUnitmeasureId(Integer unitmeasureId) {
+        this.unitmeasureId = unitmeasureId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUnitmeasureName(String unitmeasureName) {
+        this.unitmeasureName = unitmeasureName;
     }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public void setUnitmeasureShortname(String unitmeasureShortname) {
+        this.unitmeasureShortname = unitmeasureShortname;
     }
 
     public void setMeasureunitId(Integer measureunitId) {
         this.measureunitId = measureunitId;
     }
 
-    public void setPriority(Integer priority) {
-        this.priority = priority;
+    public void setMeasureunitPriority(Integer measureunitPriority) {
+        this.measureunitPriority = measureunitPriority;
     }
 
     public void setMeasureId(Integer measureId) {
@@ -112,11 +106,11 @@ public class UnitmeasureDTO {
     @Override
     public String toString() {
         return "UnitmeasureDTO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", shortName='" + shortName + '\'' +
+                "unitmeasureId=" + unitmeasureId +
+                ", unitmeasureName='" + unitmeasureName + '\'' +
+                ", unitmeasureShortname='" + unitmeasureShortname + '\'' +
                 ", measureunitId=" + measureunitId +
-                ", priority=" + priority +
+                ", measureunitPriority=" + measureunitPriority +
                 ", measureId=" + measureId +
                 ", measureName='" + measureName + '\'' +
                 '}';

@@ -14,20 +14,20 @@ import java.util.Objects;
 public class Measure {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "measure_id")
+    private Integer measureId;
 
     @NotEmpty(message = "Наименование не может быть пустым")
     @Size(max = 100, message = "Наименование должно содержать не более {1} символов")
-    @Column(name = "name", nullable = false, columnDefinition = "Наименование")
-    private String name;
+    @Column(name = "measure_name", nullable = false, columnDefinition = "Наименование")
+    private String measureName;
 
     public Measure(
-            Integer id,
-            String name
+            Integer measureId,
+            String measureName
     ) {
-        this.id = id;
-        this.name = name;
+        this.measureId = measureId;
+        this.measureName = measureName;
     }
 
     public Measure() {
@@ -36,37 +36,36 @@ public class Measure {
     // Обязательнго геттеры и сеттеры,
     // иначе не будет работать передача в форму и из формы
 
+
+    public Integer getMeasureId() {
+        return measureId;
+    }
+
+    public void setMeasureId(Integer measureId) {
+        this.measureId = measureId;
+    }
+
     public Integer getId() {
-        return id;
+        return measureId;
+    }
+
+    public String getMeasureName() {
+        return measureName;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.measureId = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setMeasureName(String measureName) {
+        this.measureName = measureName;
     }
 
     @Override
     public String toString() {
-        return "Measure{"
-                + "id=" + id + ", "
-                + "name=" + name
-                + "}";
+        return "Measure{" +
+                "measureId=" + measureId +
+                ", measureName='" + measureName + '\'' +
+                '}';
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {return true;}
-        if (obj.getClass() != this.getClass()) { return false; }
-        Measure model = (Measure) obj;
-        return Integer.compare(id, model.id) == 0
-                && Objects.equals(name, model.name);
-    }
-
 }

@@ -63,7 +63,7 @@ public class MeasureController {
         try {
             gridDataOptionAsString = objectMapper.writeValueAsString(gridDataOption);
         } catch (JsonProcessingException e) {
-            String errText = "Ошимбка при преобразовании";
+            String errText = "Ошибка при преобразовании";
             logger.error(errText);
             throw new RuntimeException(errText);
         }
@@ -85,7 +85,7 @@ public class MeasureController {
     // будет производить json в результате, и он будет отправлен в ответ.
     public Measure add() {
         Measure measure = new Measure();
-        //measure.setName("Длина");
+        //measure.setMeasureName("Длина");
         //logger.info("Measure add " + measure.toString());
         return measure;
     }
