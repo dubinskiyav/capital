@@ -147,3 +147,6 @@ w
 G.idea/libraries/Maven__io_swagger_core_v3_swagger_annotations_2_1_6.xml,c\3\c388a15234a7d653ab5f03fd5a62ee9e50afac02
 k
 ;src/main/java/biz/gelicon/capital/config/SwaggerConfig.java,e\2\e2c2a7124a2fb8643622c583508fdd6b986e1941
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302

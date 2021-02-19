@@ -1,30 +1,28 @@
 
-l
-java:S4488t"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(î–€äıÿÿÿÿ8‘š“¨û.
-…
-java:S1488K"cImmediately return this expression instead of assigning it to the temporary variable "measureList".(Ş®¶üşÿÿÿÿ8‘š“¨û.
-B
-java:S2629”"$Invoke method(s) only conditionally.(ûı¨ğ8‘š“¨û.
-O
-java:S11355"2Complete the task associated to this TODO comment.(àŒ¼š8‘š“¨û.
-c
-java:S3457I"AFormat specifiers should be used instead of string concatenation.(ÈÄÌ‘üÿÿÿÿ8‘š“¨û.
 Y
 java:S2629I"7Use the built-in formatting to construct this argument.(ÈÄÌ‘üÿÿÿÿ8‘š“¨û.
-h
-java:S4488Œ"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(‡¿²8‘š“¨û.
+l
+java:S4488t"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(î–€äıÿÿÿÿ8‘š“¨û.
 H
 java:S11354"2Complete the task associated to this TODO comment.(ê«ƒ‡
+…
+java:S1488K"cImmediately return this expression instead of assigning it to the temporary variable "measureList".(Ş®¶üşÿÿÿÿ8‘š“¨û.
+j
+java:S4488S"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(íùÁµÿÿÿÿÿ8‘š“¨û.
+O
+java:S11355"2Complete the task associated to this TODO comment.(àŒ¼š8‘š“¨û.
+h
+java:S4488Œ"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(‡¿²8‘š“¨û.
+b	java:S112G"FDefine and throw a dedicated exception instead of using a generic one.(û”8‘š“¨û.
+c
+java:S3457I"AFormat specifiers should be used instead of string concatenation.(ÈÄÌ‘üÿÿÿÿ8‘š“¨û.
+X	java:S125Y"<This block of commented-out lines of code should be removed.(¢ª¾±8‘š“¨û.
+b	java:S112k"FDefine and throw a dedicated exception instead of using a generic one.(û”8‘š“¨û.
+e
+java:S4488b"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(ùËéÙ8‘š“¨û.
 |
 java:S1488X"_Immediately return this expression instead of assigning it to the temporary variable "measure".(‚¶Ñ8‘š“¨û.
 g
 java:S4488<"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(½¹¿¯8‘š“¨û.
-a
-java:S1128"DRemove this unused import 'io.swagger.v3.oas.annotations.Parameter'.(ñÕ¶€8ø­Í¬û.
-e
-java:S4488b"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(ùËéÙ8‘š“¨û.
-X	java:S125Y"<This block of commented-out lines of code should be removed.(¢ª¾±8‘š“¨û.
-b	java:S112G"FDefine and throw a dedicated exception instead of using a generic one.(û”8‘š“¨û.
-j
-java:S4488S"HReplace "@RequestMapping(method = RequestMethod.GET)" with "@GetMapping"(íùÁµÿÿÿÿÿ8‘š“¨û.
-b	java:S112k"FDefine and throw a dedicated exception instead of using a generic one.(û”8‘š“¨û.
+B
+java:S2629”"$Invoke method(s) only conditionally.(ûı¨ğ8‘š“¨û.
